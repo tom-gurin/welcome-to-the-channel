@@ -101,12 +101,12 @@
             a.setBins(3);
             a.setSmooth(0.8);
             a.setScale(4);
-            a.setCutoff(0.1);
+            a.setCutoff(0.05);
             a.hide();
 
             s0.initCam();
             src(s0)
-                .color(() => a.fft[0] * modulateValue + 0.0001, () => 1 - a.fft[1], () => a.fft[2], () => 1 - a.fft[0])
+                .color(() => a.fft[0] * modulateValue + 0.0001, () => 1 - a.fft[1], () => a.fft[2], () => Math.exp(-1.5 * a.fft[0]))
                 .blend(o0, 0.1)
                 .modulate(o0, 0.01)
                 .out(o0);
