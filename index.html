@@ -81,7 +81,22 @@
             
             if (countdown <= 0) {
                 clearInterval(countInterval);
-                loadingScreen.style.display = 'none';
+                loadingScreen.textContent = "m@ke s0me n0ise";
+                setTimeout(() => {
+                    loadingScreen.textContent = "m@ke s0me NOISE";
+                    setTimeout(() => {
+                        loadingScreen.textContent = "m@ke s0me n0ise";
+                            setTimeout(() => {
+                                loadingScreen.textContent = "m@ke s0me n0!se";
+                                    setTimeout(() => {
+                                        loadingScreen.textContent = "m@ke s0me n0ise";
+                                            setTimeout (() => {
+                                                loadingScreen.style.display = 'none';
+                                            }, 200); // fifth message duration
+                                    }, 70); // fourth message duration
+                            }, 300); // third message duration
+                    }, 80); // second message duration
+                 }, 400); // first message duration
             }
         }, 1000);
 
