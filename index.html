@@ -53,13 +53,14 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="overlay"><button id="startButton">Play</button></div>
+<div id="overlay"><button id="startButton">1. Accept Mic & Webcam Request <br> 2. Click to Play</button></div>
 <div id="loading-screen">10</div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
     import { CSS3DRenderer, CSS3DObject } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/renderers/CSS3DRenderer.js';
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
     import { Box3 } from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js';
     import { PositionalAudioHelper } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/helpers/PositionalAudioHelper.js';
 
@@ -83,9 +84,9 @@
                 clearInterval(countInterval);
                 loadingScreen.textContent = "m@ke s0me n0ise";
                 setTimeout(() => {
-                    loadingScreen.textContent = "m@ke s0me NOISE";
+                    loadingScreen.textContent = "m@ke s0me no!se";
                     setTimeout(() => {
-                        loadingScreen.textContent = "m@ke s0me n0ise";
+                        loadingScreen.textContent = "m@ke s0me N0ise";
                             setTimeout(() => {
                                 loadingScreen.textContent = "m@ke s0me n0!se";
                                     setTimeout(() => {
@@ -125,8 +126,8 @@
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-        camera.position.set(1550, 30, -600);  //actual camera starting position for game
-   //  camera.position.set(0, 30, 5440);
+        camera.position.set(1550, 30, -700);  //actual camera starting position for game
+  //   camera.position.set(-1450, 30, 5400);
 
         const controls = new PointerLockControls(camera, renderer.domElement);
         const listener = new THREE.AudioListener();
@@ -423,6 +424,77 @@
         gltf.animations.forEach((clip) => {
         const action = mixer2.clipAction(clip);
         action.setEffectiveTimeScale(0); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+
+        //load 3d model of bell3 with animation
+        const loaderBell3 = new GLTFLoader();
+        loaderBell3.setPath('');
+        let mixer3;
+      
+        loaderBell3.load('the_accumoli_bell_animated_glitch_32 copy.glb', function (gltf) {
+            gltf.scene.position.set(-1450, -100, 1000);
+            gltf.scene.scale.set(200, 200, 200);
+            gltf.scene.rotation.set(Math.PI/4, 0, 0);
+            scene.add(gltf.scene);
+       
+        mixer3 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer3.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+            // Create a DRACOLoader instance
+        const dracoLoader = new DRACOLoader();
+        // Specify the path to the Draco decoder
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
+        // Create GLTFLoader and attach DRACOLoader
+        const loaderBell4 = new GLTFLoader();
+        loaderBell4.setDRACOLoader(dracoLoader);
+        loaderBell4.setPath('');
+
+        let mixer4;
+
+        loaderBell4.load('bell4-compressed.glb', function (gltf) {
+            gltf.scene.position.set(0, -500, 5250);
+            gltf.scene.scale.set(200, 200, 200);
+            gltf.scene.rotation.set(0, 3*Math.PI/4, Math.PI/4);
+            scene.add(gltf.scene);
+
+            mixer4 = new THREE.AnimationMixer(gltf.scene);
+            
+            gltf.animations.forEach((clip) => {
+                const action = mixer4.clipAction(clip);
+                action.setEffectiveTimeScale(.8);
+                action.play();
+            });
+        });
+
+        // dispose of the decoder when done
+        // dracoLoader.dispose();
+
+         //load 3d model of bell5 with animation
+         const loaderBell5 = new GLTFLoader();
+        loaderBell5.setPath('');
+        let mixer5;
+      
+        loaderBell5.load('', function (gltf) {
+            gltf.scene.position.set(1550, 0, 3250);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(0, 0, 0);
+            scene.add(gltf.scene);
+       
+        mixer5 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer5.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
         action.play();
           });
         });
@@ -1170,6 +1242,9 @@ setupAudioInput();
         hydraLoader25
     ); 
                     
+  //   const positionalAudioAnalyzer = audioContext.createAnalyser();
+  //   positionalAudioAnalyzer.fftSize = 2048;
+
             // Add positional audio
             const positionalAudio = new THREE.PositionalAudio(listener);
             audioLoader.load(soundPath, function (buffer) {
@@ -1182,6 +1257,9 @@ setupAudioInput();
                 positionalAudio.setMaxDistance(1800);
                 positionalAudio.loop = true;
                 positionalAudio.play();
+
+        //        positionalAudio.getOutput().connect(positionalAudioAnalyzer);
+        //        positionalAudio.getOutput().connect(audioContext.destination);
 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
@@ -1212,6 +1290,7 @@ setupAudioInput();
               });
               
               scene.add(newSoundSource);
+              
     
           const newSoundSource2 = new THREE.PositionalAudio(listener);
               audioLoader.load('Sound_21.mp3', function (buffer) {
@@ -1421,64 +1500,117 @@ updateTimer(); // Call once immediately to show 00:00
 }
 
 //End of gamepad setup
-          
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
 let speed = 0; // Movement speed
 let rms = 0;
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+//Start microphone input capture and analysis
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 async function setupAudioInput() {
     try {
         // Get user media permission
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        const analyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaStreamSource(stream);
-        source.connect(analyser);
-        analyser.fftSize = 2048;
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Float32Array(bufferLength);
-        const frequencies = new Float32Array(bufferLength);
-        let targetSpeed = 0;
-        const speedFactor = .3;
-        const AMPLITUDE_THRESHOLD = 0.005;
+const analyser = audioContext.createAnalyser();
+const source = audioContext.createMediaStreamSource(stream);
+source.connect(analyser);
+analyser.fftSize = 2048;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Float32Array(bufferLength);
+const frequencies = new Float32Array(bufferLength);
+let targetSpeed = 0;
+const speedFactor = 0.3;
+const AMPLITUDE_THRESHOLD = 0.005;
+let previousFrequencies = new Float32Array(bufferLength);
 
-        function calculateSpectralCentroid(frequencyData) {
-            let numerator = 0;
-            let denominator = 0;
+function calculateSpectralCentroid(frequencyData) {
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
+        const magnitude = Math.abs(frequencyData[i]);
+        numerator += frequency * magnitude;
+        denominator += magnitude;
+    }
+    return denominator !== 0 ? numerator / denominator : 0;
+}
+
+function calculateSpectralSpread(frequencyData, centroid) {
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
+        const magnitude = Math.abs(frequencyData[i]);
+        numerator += magnitude * Math.pow(frequency - centroid, 2);
+        denominator += magnitude;
+    }
+    return denominator !== 0 ? Math.sqrt(numerator / denominator) : 0;
+}
+
+function calculateSpectralKurtosis(frequencyData, centroid, spread) {
+            let numerator = 0, denominator = 0;
             for (let i = 0; i < frequencyData.length; i++) {
                 const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
                 const magnitude = Math.abs(frequencyData[i]);
-                numerator += frequency * magnitude;
+                numerator += magnitude * Math.pow((frequency - centroid) / spread, 4);
                 denominator += magnitude;
             }
-            return denominator !== 0 ? numerator / denominator : 0;
+            return denominator !== 0 ? (numerator / denominator) - 3 : 0; // Subtract 3 to center at zero
         }
 
-        function analyzeAudio() {
-            analyser.getFloatTimeDomainData(dataArray);
-            let sumSquares = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                sumSquares += dataArray[i] * dataArray[i];
+        function calculateSpectralFlux(currentFrequencies, previousFrequencies) {
+            let sum = 0;
+            for (let i = 0; i < currentFrequencies.length; i++) {
+                const diff = currentFrequencies[i] - previousFrequencies[i];
+                sum += diff * diff;
             }
-            rms = Math.sqrt(sumSquares / dataArray.length);
-
-            if (rms >= AMPLITUDE_THRESHOLD) {
-                analyser.getFloatFrequencyData(frequencies);
-                const linearFrequencies = frequencies.map(db => Math.pow(10, db / 20));
-                const centroid = calculateSpectralCentroid(linearFrequencies);
-                
-                if (centroid > 0) {
-                    targetSpeed = (centroid - 1000) * 0.5;
-                    console.log('Spectral Centroid:', centroid);
-                }
-            } else {
-                targetSpeed = 0;
-            }
-            
-            speed += (targetSpeed - speed) * speedFactor;
-            requestAnimationFrame(analyzeAudio);
+            return Math.sqrt(sum) / currentFrequencies.length;
         }
+
+function analyzeAudio() {
+    analyser.getFloatTimeDomainData(dataArray);
+    let sumSquares = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+        sumSquares += dataArray[i] * dataArray[i];
+    }
+    rms = Math.sqrt(sumSquares / dataArray.length);
+//    console.log("Amplitude (RMS):", rms);
+
+    if (rms >= AMPLITUDE_THRESHOLD) {
+        analyser.getFloatFrequencyData(frequencies);
+        const linearFrequencies = frequencies.map(db => Math.pow(10, db / 20));
+        const centroid = calculateSpectralCentroid(linearFrequencies);
+        const spread = calculateSpectralSpread(linearFrequencies, centroid);
+        const flux = calculateSpectralFlux(linearFrequencies, previousFrequencies);
+        const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread);
+        
+        if (centroid > 0) {
+       //   targetSpeed = ((((centroid + spread)/2) - 1500) / 2) + ((kurtosis - 0.5) * 100);
+        //    targetSpeed = ((0.99 - kurtosis) * 70000) + ((Math.sqrt(spread) - 50) * 7) + ((flux - 0.01) * 700);
+        //    targetSpeed = (Math.sqrt(spread) - 55) * 7;
+      //  targetSpeed = (((centroid / 5000) * 600 - 300) + ((spread / 5000) * 400 - 200) - ((1-kurtosis) * 4000) + (flux * 10000 - 50));
+       //     targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) * 5 + 300;
+         //   targetSpeed = (((spread - 2500)/100) - (kurtosis)) * 3;
+         // targetSpeed = (centroid - 1000) * 0.5;
+         targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) * 3;
+
+       //     console.log('Spectral Centroid:', centroid/100);
+            console.log('Spectral Spread:', ((spread - 2500)/50));
+            console.log('Spectral Flux:', flux*10000000);
+            console.log('Spectral Kurtosis:', -kurtosis*2);
+            console.log('Target Speed:', targetSpeed);
+        }
+        previousFrequencies.set(linearFrequencies);
+    } else {
+        targetSpeed = 0;
+    }
+    
+    speed += (targetSpeed - speed) * speedFactor;
+    requestAnimationFrame(analyzeAudio);
+}
+
+analyzeAudio();
 
         // Wait for 10 seconds before starting audio analysis
      //   console.log('Waiting for 10 seconds before processing audio...');
@@ -1490,7 +1622,7 @@ async function setupAudioInput() {
 
     } catch (err) {
         console.error('Error accessing microphone:', err);
-    }
+    } 
 }
     
 function animate() {
@@ -1512,6 +1644,18 @@ function animate() {
   
      if (mixer2) {
         mixer2.update(delta);
+    }
+
+    if (mixer3) {
+        mixer3.update(delta);
+    }
+
+    if (mixer4) {
+        mixer4.update(delta);
+    }
+
+    if (mixer5) {
+        mixer5.update(delta);
     }
     
  //   const speed = 150 * delta;
