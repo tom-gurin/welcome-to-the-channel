@@ -66,6 +66,8 @@
 
     const startButton = document.getElementById('startButton');
     const loadingScreen = document.getElementById('loading-screen');
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
     let sceneReady = false;
   
     startButton.addEventListener('click', init);
@@ -131,7 +133,12 @@
 
         const controls = new PointerLockControls(camera, renderer.domElement);
         const listener = new THREE.AudioListener();
+        const threeJsAudioContext = listener.context;
+      //  listener.context = audioContext;
         camera.add(listener);
+
+        const positionalAudioAnalyser = threeJsAudioContext.createAnalyser();
+        positionalAudioAnalyser.fftSize = 2048;
 
         document.addEventListener('click', () => controls.lock());
       
@@ -1242,8 +1249,8 @@ setupAudioInput();
         hydraLoader25
     ); 
                     
-  //   const positionalAudioAnalyzer = audioContext.createAnalyser();
-  //   positionalAudioAnalyzer.fftSize = 2048;
+ //    const positionalAudioAnalyzer = audioContext.createAnalyser();
+ //    positionalAudioAnalyzer.fftSize = 2048;
 
             // Add positional audio
             const positionalAudio = new THREE.PositionalAudio(listener);
@@ -1258,8 +1265,8 @@ setupAudioInput();
                 positionalAudio.loop = true;
                 positionalAudio.play();
 
-        //        positionalAudio.getOutput().connect(positionalAudioAnalyzer);
-        //        positionalAudio.getOutput().connect(audioContext.destination);
+                positionalAudio.getOutput().connect(analyser);
+          //      positionalAudio.getOutput().connect(audioContext.destination);
 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
@@ -1274,13 +1281,15 @@ setupAudioInput();
 
                   newSoundSource.setBuffer(buffer);
                   newSoundSource.setRefDistance(1);
-                  newSoundSource.position.set(1220, 50, -1450);
+               //   newSoundSource.position.set(1220, 50, -1450);
+                  newSoundSource.position.set(0, 50, 5250);
                   newSoundSource.setDistanceModel('linear');
                   newSoundSource.setRolloffFactor(8);
                   newSoundSource.setMaxDistance(850);
                   newSoundSource.setVolume(1);
                   newSoundSource.loop = true;
                   newSoundSource.play();
+                  newSoundSource.getOutput().connect(positionalAudioAnalyser);
                 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
@@ -1293,17 +1302,19 @@ setupAudioInput();
               
     
           const newSoundSource2 = new THREE.PositionalAudio(listener);
-              audioLoader.load('Sound_21.mp3', function (buffer) {
+              audioLoader.load('sax_clicks_mono.mp3', function (buffer) {
 
                   newSoundSource2.setBuffer(buffer);
                   newSoundSource2.setRefDistance(1);
-                  newSoundSource2.position.set(-1420, 50, -1400);
+              //    newSoundSource2.position.set(-1420, 50, -1400);
+                  newSoundSource2.position.set(-1450, 50, 1000);
                   newSoundSource2.setDistanceModel('linear');
                   newSoundSource2.setRolloffFactor(8);
                   newSoundSource2.setMaxDistance(1650);
                   newSoundSource2.setVolume(1);
                   newSoundSource2.loop = true;
                   newSoundSource2.play();
+                  newSoundSource2.getOutput().connect(positionalAudioAnalyser);
                 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
@@ -1327,6 +1338,7 @@ setupAudioInput();
                   newSoundSource3.setVolume(1);
                   newSoundSource3.loop = true;
                   newSoundSource3.play();
+                  newSoundSource3.getOutput().connect(positionalAudioAnalyser);
                 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
@@ -1346,18 +1358,19 @@ setupAudioInput();
                   newSoundSource4.setDistanceModel('linear');
                   newSoundSource4.setRolloffFactor(.9);
                   newSoundSource4.setMaxDistance(1650);
-                  newSoundSource4.setVolume(1);
+                  newSoundSource4.setVolume(6);
                   newSoundSource4.setDirectionalCone(60, 120, .1);
                   newSoundSource4.rotation.set(-Math.PI/4, -Math.PI/4, 0);
                   newSoundSource4.loop = true;
-                  newSoundSource4.play();
+             //     newSoundSource4.play();
+             //     newSoundSource4.getOutput().connect(positionalAudioAnalyser);
 
                   const airNoiseHelper = new PositionalAudioHelper(newSoundSource4, 100);
             //      newSoundSource4.add(airNoiseHelper);
                 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
-                    positionalAudio.setVolume(1);
+                    positionalAudio.setVolume(6);
                 },  100); // Wait 100ms
                 
               });
@@ -1373,18 +1386,19 @@ setupAudioInput();
                 newSoundSource5.setDistanceModel('linear');
                 newSoundSource5.setRolloffFactor(.9);
                 newSoundSource5.setMaxDistance(1650);
-                newSoundSource5.setVolume(1);
+                newSoundSource5.setVolume(2);
                 newSoundSource5.setDirectionalCone(60, 120, .1);
                 newSoundSource5.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
                 newSoundSource5.loop = true;
-                newSoundSource5.play();
+          //      newSoundSource5.play();
+          //      newSoundSource5.getOutput().connect(positionalAudioAnalyser);
 
                 const quietClicksHelper = new PositionalAudioHelper(newSoundSource5, 100);
           //      newSoundSource5.add(quietClicksHelper);
 
               // Bring up the volume after short delay, giving all parameters time to load
               setTimeout(() => {
-                  positionalAudio.setVolume(1);
+                  positionalAudio.setVolume(2);
               },  100); // Wait 100ms
 
             });
@@ -1506,17 +1520,15 @@ let rms = 0;
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 //Start microphone input capture and analysis
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 async function setupAudioInput() {
     try {
         // Get user media permission
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-const analyser = audioContext.createAnalyser();
-const source = audioContext.createMediaStreamSource(stream);
-source.connect(analyser);
-analyser.fftSize = 2048;
-const bufferLength = analyser.frequencyBinCount;
+const source = threeJsAudioContext.createMediaStreamSource(stream);
+source.connect(positionalAudioAnalyser);
+positionalAudioAnalyser.fftSize = 2048;
+const bufferLength = positionalAudioAnalyser.frequencyBinCount;
 const dataArray = new Float32Array(bufferLength);
 const frequencies = new Float32Array(bufferLength);
 let targetSpeed = 0;
@@ -1569,7 +1581,7 @@ function calculateSpectralKurtosis(frequencyData, centroid, spread) {
         }
 
 function analyzeAudio() {
-    analyser.getFloatTimeDomainData(dataArray);
+    positionalAudioAnalyser.getFloatTimeDomainData(dataArray);
     let sumSquares = 0;
     for (let i = 0; i < dataArray.length; i++) {
         sumSquares += dataArray[i] * dataArray[i];
@@ -1578,7 +1590,7 @@ function analyzeAudio() {
 //    console.log("Amplitude (RMS):", rms);
 
     if (rms >= AMPLITUDE_THRESHOLD) {
-        analyser.getFloatFrequencyData(frequencies);
+        positionalAudioAnalyser.getFloatFrequencyData(frequencies);
         const linearFrequencies = frequencies.map(db => Math.pow(10, db / 20));
         const centroid = calculateSpectralCentroid(linearFrequencies);
         const spread = calculateSpectralSpread(linearFrequencies, centroid);
