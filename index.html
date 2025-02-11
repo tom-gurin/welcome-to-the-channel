@@ -1254,18 +1254,18 @@ setupAudioInput();
 
             // Add positional audio
             const positionalAudio = new THREE.PositionalAudio(listener);
-            audioLoader.load(soundPath, function (buffer) {
-                positionalAudio.setBuffer(buffer);
-                positionalAudio.setVolume(0); // Start with volume at 0 until parameters load
-                positionalAudio.setRefDistance(1);
-                positionalAudio.position.set(position[0], position[1] + 2, position[2] + 30);
+            audioLoader.load('Sound_22.mp3', function (buffer) {
+                positionalAudio.setBuffer(buffer);    
+                positionalAudio.setRefDistance(1);        
+                positionalAudio.position.set(1220, 50, -1450);
                 positionalAudio.setDistanceModel('linear');
-                positionalAudio.setRolloffFactor(10);
-                positionalAudio.setMaxDistance(1800);
+                positionalAudio.setRolloffFactor(8);
+                positionalAudio.setMaxDistance(800);
+                positionalAudio.setVolume(1);
                 positionalAudio.loop = true;
                 positionalAudio.play();
 
-                positionalAudio.getOutput().connect(analyser);
+          //      positionalAudio.getOutput().connect(analyser);
           //      positionalAudio.getOutput().connect(audioContext.destination);
 
                 // Bring up the volume after short delay, giving all parameters time to load
