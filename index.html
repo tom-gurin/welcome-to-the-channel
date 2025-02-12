@@ -128,13 +128,12 @@
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-        camera.position.set(1550, 30, -700);  //actual camera starting position for game
-  //   camera.position.set(-1450, 30, 5400);
+   //     camera.position.set(1550, 30, -700);  //actual camera starting position for game
+     camera.position.set(-1450, 30, 700);
 
         const controls = new PointerLockControls(camera, renderer.domElement);
         const listener = new THREE.AudioListener();
         const threeJsAudioContext = listener.context;
-      //  listener.context = audioContext;
         camera.add(listener);
 
         const positionalAudioAnalyser = threeJsAudioContext.createAnalyser();
