@@ -53,7 +53,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="overlay"><button id="startButton">1. Accept Mic & Webcam Request <br> 2. Click to Play</button></div>
+<div id="overlay"><button id="startButton">Play</button></div>
 <div id="loading-screen">10</div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
@@ -128,8 +128,8 @@
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-        camera.position.set(1550, 30, -700);  //actual camera starting position for game
- //    camera.position.set(-1450, 30, 700);
+        camera.position.set(1550, 30, 2200);  //actual camera starting position for game
+   //  camera.position.set(-1500, 30, 900);
 
         const controls = new PointerLockControls(camera, renderer.domElement);
         const listener = new THREE.AudioListener();
@@ -170,7 +170,7 @@
         }
 
         const gridHelper = new THREE.GridHelper(20000, 200, getRandomColor(), getRandomColor());
-      //  scene.add(gridHelper);
+     //   scene.add(gridHelper);
 
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -269,7 +269,7 @@
         const geometry13 = new THREE.BoxGeometry( 440, 230, 100 ); 
         const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube13 = new THREE.Mesh( geometry13, material13 ); 
-        cube13.position.set(-2800, 70, 5250);
+        cube13.position.set(-2800, 70, 5150);
         cube13.userData.collidable = true;
         scene.add( cube13 );
       
@@ -399,7 +399,7 @@
         let mixer;
       
         loader.load('bell-ascii.glb', function (gltf) {
-            gltf.scene.position.set(-900, -125, -1350);
+            gltf.scene.position.set(-900, -125, 5450);
             gltf.scene.scale.set(1000, 75, 125);
             gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
@@ -409,6 +409,26 @@
         gltf.animations.forEach((clip) => {
         const action = mixer.clipAction(clip);
         action.setEffectiveTimeScale(0); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+        //load 3d model of bell with animation
+        const firstBellLoader = new GLTFLoader();
+        firstBellLoader.setPath('');
+        let firstBellMixer;
+      
+        firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
+            gltf.scene.position.set(-200, 50, -1450);
+            gltf.scene.scale.set(70, 70, 70);
+            gltf.scene.rotation.set(0, 0, 0);
+            scene.add(gltf.scene);
+       
+        firstBellMixer = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = firstBellMixer.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
         action.play();
           });
         });
@@ -435,15 +455,19 @@
         });
 
 
+        const dracoLoader1 = new DRACOLoader();
+        dracoLoader1.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
         //load 3d model of bell3 with animation
         const loaderBell3 = new GLTFLoader();
+        loaderBell3.setDRACOLoader(dracoLoader1);
         loaderBell3.setPath('');
         let mixer3;
       
-        loaderBell3.load('the_accumoli_bell_animated_glitch_32_copy.glb', function (gltf) {
-            gltf.scene.position.set(-1450, -100, 1000);
-            gltf.scene.scale.set(200, 200, 200);
-            gltf.scene.rotation.set(Math.PI/4, 0, 0);
+        loaderBell3.load('bell4-compressed.glb', function (gltf) {
+            gltf.scene.position.set(-1500, -200, 800);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(Math.PI/4, Math.PI/4, 0);
             scene.add(gltf.scene);
        
         mixer3 = new THREE.AnimationMixer(gltf.scene);
@@ -509,10 +533,20 @@
      //load 3d model of wooden speaker
         const loaderWoodenSpeaker = new GLTFLoader();
         loaderWoodenSpeaker.setPath('');  
-        loaderWoodenSpeaker.load('hornspeaker.glb', function (gltf) {
-            gltf.scene.position.set(1590, 50, 1000);
-            gltf.scene.scale.set(40, 40, 40);
+        loaderWoodenSpeaker.load('colorful-speaker.glb', function (gltf) {
+            gltf.scene.position.set(1550, 25, 500);
+            gltf.scene.scale.set(50, 50, 50);
             gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
+            scene.add(gltf.scene);
+        });
+
+    //load 3d model of speaker wall
+    const loaderSpeakerWall = new GLTFLoader();
+        loaderSpeakerWall.setPath('');  
+        loaderSpeakerWall.load('colorful-speaker.glb', function (gltf) {
+            gltf.scene.position.set(1525, 25, 1800);
+            gltf.scene.scale.set(50, 50, 50);
+            gltf.scene.rotation.set(-Math.PI/4, -Math.PI/4, 0);
             scene.add(gltf.scene);
         });
 
@@ -520,12 +554,31 @@
     const loaderHornSpeaker = new GLTFLoader();
     loaderHornSpeaker.setPath('');  
     loaderHornSpeaker.load('hornspeaker.glb', function (gltf) {
-        gltf.scene.position.set(1500, 50, 2000);
+        gltf.scene.position.set(1520, 50, 1000);
         gltf.scene.scale.set(40, 40, 40);
         gltf.scene.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
         scene.add(gltf.scene);
     });
+
+    //load 3d model of wooden speaker
+    const loaderWoodenSpeaker2 = new GLTFLoader();
+        loaderWoodenSpeaker2.setPath('');  
+        loaderWoodenSpeaker2.load('woodspeaker.glb', function (gltf) {
+            gltf.scene.position.set(1590, 50, 1500);
+            gltf.scene.scale.set(20, 20, 20);
+            gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
+            scene.add(gltf.scene);
+        });
     
+        //load 3d model of horn speaker
+    const loaderHornSpeaker2 = new GLTFLoader();
+    loaderHornSpeaker2.setPath('');  
+    loaderHornSpeaker2.load('hornspeaker.glb', function (gltf) {
+        gltf.scene.position.set(1520, 50, 2000);
+        gltf.scene.scale.set(40, 40, 40);
+        gltf.scene.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
+        scene.add(gltf.scene);
+    });
       
  
   /*    
@@ -1256,13 +1309,14 @@ setupAudioInput();
             audioLoader.load('Sound_22.mp3', function (buffer) {
                 positionalAudio.setBuffer(buffer);    
                 positionalAudio.setRefDistance(1);        
-                positionalAudio.position.set(1220, 50, -1450);
+                positionalAudio.position.set(-200, 50, -1450);
                 positionalAudio.setDistanceModel('linear');
-                positionalAudio.setRolloffFactor(8);
-                positionalAudio.setMaxDistance(800);
+                positionalAudio.setRolloffFactor(2);
+                positionalAudio.setMaxDistance(1700);
                 positionalAudio.setVolume(1);
                 positionalAudio.loop = true;
                 positionalAudio.play();
+                positionalAudio.getOutput().connect(positionalAudioAnalyser);
 
           //      positionalAudio.getOutput().connect(analyser);
           //      positionalAudio.getOutput().connect(audioContext.destination);
@@ -1301,7 +1355,7 @@ setupAudioInput();
               
     
           const newSoundSource2 = new THREE.PositionalAudio(listener);
-              audioLoader.load('sax_clicks_mono.mp3', function (buffer) {
+              audioLoader.load('pulsar_1.mp3', function (buffer) {
 
                   newSoundSource2.setBuffer(buffer);
                   newSoundSource2.setRefDistance(1);
@@ -1349,19 +1403,19 @@ setupAudioInput();
               scene.add(newSoundSource3);
           
              const newSoundSource4 = new THREE.PositionalAudio(listener);
-              audioLoader.load('sam-sax-air-noise.mp3', function (buffer) {
+              audioLoader.load('pulsar_1.mp3', function (buffer) {
 
                   newSoundSource4.setBuffer(buffer);
                   newSoundSource4.setRefDistance(1);
-                  newSoundSource4.position.set(1590, 50, 1000);
+                  newSoundSource4.position.set(1590, 25, 500);
                   newSoundSource4.setDistanceModel('linear');
-                  newSoundSource4.setRolloffFactor(.9);
-                  newSoundSource4.setMaxDistance(1650);
-                  newSoundSource4.setVolume(6);
+                  newSoundSource4.setRolloffFactor(3);
+                  newSoundSource4.setMaxDistance(1500);
+                  newSoundSource4.setVolume(1);
                   newSoundSource4.setDirectionalCone(60, 120, .1);
                   newSoundSource4.rotation.set(-Math.PI/4, -Math.PI/4, 0);
                   newSoundSource4.loop = true;
-             //     newSoundSource4.play();
+                  newSoundSource4.play();
              //     newSoundSource4.getOutput().connect(positionalAudioAnalyser);
 
                   const airNoiseHelper = new PositionalAudioHelper(newSoundSource4, 100);
@@ -1369,7 +1423,7 @@ setupAudioInput();
                 
                 // Bring up the volume after short delay, giving all parameters time to load
                 setTimeout(() => {
-                    positionalAudio.setVolume(6);
+                    positionalAudio.setVolume(1);
                 },  100); // Wait 100ms
                 
               });
@@ -1377,32 +1431,88 @@ setupAudioInput();
               scene.add(newSoundSource4);
 
           const newSoundSource5 = new THREE.PositionalAudio(listener);
-            audioLoader.load('sam-quiet-key-clicks.mp3', function (buffer) {
+            audioLoader.load('pulsar_2.mp3', function (buffer) {
 
                 newSoundSource5.setBuffer(buffer);
                 newSoundSource5.setRefDistance(1);
-                newSoundSource5.position.set(1500, 50, 2000);
+                newSoundSource5.position.set(1500, 50, 1000);
                 newSoundSource5.setDistanceModel('linear');
-                newSoundSource5.setRolloffFactor(.9);
-                newSoundSource5.setMaxDistance(1650);
-                newSoundSource5.setVolume(2);
+                newSoundSource5.setRolloffFactor(3);
+                newSoundSource5.setMaxDistance(1500);
+                newSoundSource5.setVolume(1);
                 newSoundSource5.setDirectionalCone(60, 120, .1);
                 newSoundSource5.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
                 newSoundSource5.loop = true;
-          //      newSoundSource5.play();
-          //      newSoundSource5.getOutput().connect(positionalAudioAnalyser);
+                newSoundSource5.play();
+           //     newSoundSource5.getOutput().connect(positionalAudioAnalyser);
 
                 const quietClicksHelper = new PositionalAudioHelper(newSoundSource5, 100);
           //      newSoundSource5.add(quietClicksHelper);
 
               // Bring up the volume after short delay, giving all parameters time to load
               setTimeout(() => {
-                  positionalAudio.setVolume(2);
+                  positionalAudio.setVolume(1);
               },  100); // Wait 100ms
 
             });
 
             scene.add(newSoundSource5);
+
+            const newSoundSource6 = new THREE.PositionalAudio(listener);
+              audioLoader.load('pulsar_1.mp3', function (buffer) {
+
+                  newSoundSource6.setBuffer(buffer);
+                  newSoundSource6.setRefDistance(1);
+                  newSoundSource6.position.set(1590, 50, 1500);
+                  newSoundSource6.setDistanceModel('linear');
+                  newSoundSource6.setRolloffFactor(3);
+                  newSoundSource6.setMaxDistance(1500);
+                  newSoundSource6.setVolume(1);
+                  newSoundSource6.setDirectionalCone(60, 120, .1);
+                  newSoundSource6.rotation.set(-Math.PI/4, -Math.PI/4, 0);
+                  newSoundSource6.loop = true;
+                  newSoundSource6.play();
+           //       newSoundSource6.getOutput().connect(positionalAudioAnalyser);
+
+                  const airNoiseHelper = new PositionalAudioHelper(newSoundSource6, 100);
+            //      newSoundSource4.add(airNoiseHelper);
+                
+                // Bring up the volume after short delay, giving all parameters time to load
+                setTimeout(() => {
+                    positionalAudio.setVolume(1);
+                },  100); // Wait 100ms
+                
+              });
+              
+              scene.add(newSoundSource6);
+
+              const newSoundSource7 = new THREE.PositionalAudio(listener);
+            audioLoader.load('pulsar_2.mp3', function (buffer) {
+
+                newSoundSource7.setBuffer(buffer);
+                newSoundSource7.setRefDistance(1);
+                newSoundSource7.position.set(1500, 50, 2000);
+                newSoundSource7.setDistanceModel('linear');
+                newSoundSource7.setRolloffFactor(3);
+                newSoundSource7.setMaxDistance(1500);
+                newSoundSource7.setVolume(1);
+                newSoundSource7.setDirectionalCone(60, 120, .1);
+                newSoundSource7.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
+                newSoundSource7.loop = true;
+                newSoundSource7.play();
+           //     newSoundSource7.getOutput().connect(positionalAudioAnalyser);
+
+                const quietClicksHelper = new PositionalAudioHelper(newSoundSource7, 100);
+          //      newSoundSource5.add(quietClicksHelper);
+
+              // Bring up the volume after short delay, giving all parameters time to load
+              setTimeout(() => {
+                  positionalAudio.setVolume(1);
+              },  100); // Wait 100ms
+
+            });
+
+            scene.add(newSoundSource7);
           
         }
       
@@ -1531,7 +1641,7 @@ const bufferLength = positionalAudioAnalyser.frequencyBinCount;
 const dataArray = new Float32Array(bufferLength);
 const frequencies = new Float32Array(bufferLength);
 let targetSpeed = 0;
-const speedFactor = 0.3;
+const speedFactor = .3;
 const AMPLITUDE_THRESHOLD = 0.005;
 let previousFrequencies = new Float32Array(bufferLength);
 
@@ -1604,7 +1714,7 @@ function analyzeAudio() {
        //     targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) * 5 + 300;
          //   targetSpeed = (((spread - 2500)/100) - (kurtosis)) * 3;
          // targetSpeed = (centroid - 1000) * 0.5;
-         targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) * 3;
+         targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) + 100;
 
        //     console.log('Spectral Centroid:', centroid/100);
             console.log('Spectral Spread:', ((spread - 2500)/50));
@@ -1653,6 +1763,10 @@ function animate() {
         mixer.update(delta);
     }
   
+    if (firstBellMixer) {
+        firstBellMixer.update(delta);
+    }
+
      if (mixer2) {
         mixer2.update(delta);
     }
