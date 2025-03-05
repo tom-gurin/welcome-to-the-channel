@@ -67,7 +67,28 @@
     const startButton = document.getElementById('startButton');
     const loadingScreen = document.getElementById('loading-screen');
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = audioContext.createAnalyser();
+
+    // Check the maximum number of audio channels supported
+console.log("Maximum channels supported:", audioContext.destination.maxChannelCount);
+
+// Create a variable to track if we're in stereo or quad mode
+let isQuadSupported = audioContext.destination.maxChannelCount >= 4;
+
+// Set up the appropriate number of channels
+if (isQuadSupported) {
+    // Original code path - use all available channels for quad
+    audioContext.destination.channelCount = audioContext.destination.maxChannelCount;
+    audioContext.destination.channelCountMode = "explicit";
+    audioContext.destination.channelInterpretation = "discrete";
+    console.log("Using quad audio output with", audioContext.destination.channelCount, "channels");
+} else {
+    // New code path - only 2 channels available, use stereo mode
+    audioContext.destination.channelCount = 2;
+    audioContext.destination.channelCountMode = "explicit";
+    audioContext.destination.channelInterpretation = "speakers";
+    console.log("Using stereo audio output with downmixing");
+}
+
     let sceneReady = false;
   
     startButton.addEventListener('click', init);
@@ -123,26 +144,55 @@
         cssRenderer.domElement.style.top = 0;
         document.body.appendChild(cssRenderer.domElement);
 
+        function adjustForDisplayScaling() {
+        // Get the current zoom level and device pixel ratio
+        const devicePixelRatio = window.devicePixelRatio;
+        
+        console.log("Current device pixel ratio:", devicePixelRatio);
+        
+        // For high-resolution displays, adjust the renderer pixel ratio
+        if (devicePixelRatio > 1.5) {
+            // For high-DPI displays, use a custom pixel ratio
+            renderer.setPixelRatio(1.0); // Force 1:1 pixel ratio
+            console.log("High-DPI display detected, adjusting pixel ratio");
+        } else {
+            // For standard displays, use the device's pixel ratio
+            renderer.setPixelRatio(devicePixelRatio);
+        }
+        
+        // Update sizes based on the adjusted pixel ratio
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Update camera
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        }
+
         const clock = new THREE.Clock();
         const scene = new THREE.Scene();
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-        camera.position.set(1550, 30, 2200);  //actual camera starting position for game
-   //  camera.position.set(-1500, 30, 900);
+     //   camera.position.set(-2550, 30, 4500);  //for DEVELOPMENT
+        camera.position.set(1550, 30, -700);  //for performance
+
+        adjustForDisplayScaling();
+
+        //Add the resize listener
+        window.addEventListener('resize', adjustForDisplayScaling);
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', adjustForDisplayScaling);
+        }
 
         const controls = new PointerLockControls(camera, renderer.domElement);
         const listener = new THREE.AudioListener();
         const threeJsAudioContext = listener.context;
         camera.add(listener);
 
-        const positionalAudioAnalyser = threeJsAudioContext.createAnalyser();
-        positionalAudioAnalyser.fftSize = 2048;
-
         document.addEventListener('click', () => controls.lock());
       
-     
-
         const move = { forward: false, backward: false, left: false, right: false };
 
         document.addEventListener('keydown', (event) => {
@@ -168,9 +218,8 @@
             const color = Math.floor(Math.random() * 0xffffff);
             return color;
         }
-
-        const gridHelper = new THREE.GridHelper(20000, 200, getRandomColor(), getRandomColor());
-     //   scene.add(gridHelper);
+        const gridHelper = new THREE.GridHelper(12000, 60, 0x151515, 0x151515);
+       // scene.add(gridHelper);
 
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -180,8 +229,7 @@
             }
             return result;
         }
-           
-      
+             
       const geometry = new THREE.BoxGeometry( 40, 200, 2830 ); 
         const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube = new THREE.Mesh( geometry, material ); 
@@ -230,14 +278,14 @@
         cube7.position.set(1610, 50, 2000);
         cube7.userData.collidable = true;
         scene.add( cube7 );
-    /*  
+      
         const geometry8 = new THREE.BoxGeometry( 100, 200, 200 ); 
         const material8 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube8 = new THREE.Mesh( geometry8, material8 ); 
-        cube8.position.set(1540, 50, -450);
+        cube8.position.set(1540, 50, -350);
         cube8.userData.collidable = true;
         scene.add( cube8 );
-    */  
+      
         const geometry9 = new THREE.BoxGeometry( 1145, 230, 40 ); 
         const material9 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube9 = new THREE.Mesh( geometry9, material9 ); 
@@ -264,35 +312,35 @@
         const cube12 = new THREE.Mesh( geometry12, material12 ); 
         cube12.position.set(-2325, 70, 5370);
         cube12.userData.collidable = true;
-        scene.add( cube12 );
+     //   scene.add( cube12 );
       
         const geometry13 = new THREE.BoxGeometry( 440, 230, 100 ); 
         const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube13 = new THREE.Mesh( geometry13, material13 ); 
         cube13.position.set(-2800, 70, 5150);
         cube13.userData.collidable = true;
-        scene.add( cube13 );
+     //   scene.add( cube13 );
       
         const geometry14 = new THREE.BoxGeometry( 300, 230, 840 ); 
         const material14 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube14 = new THREE.Mesh( geometry14, material14 ); 
         cube14.position.set(-3000, 70, 5300);
         cube14.userData.collidable = true;
-        scene.add( cube14 );
+     //   scene.add( cube14 );
       
         const geometry15 = new THREE.BoxGeometry( 3490, 230, 100 ); 
         const material15 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube15 = new THREE.Mesh( geometry15, material15 ); 
         cube15.position.set(-225, 70, 5370);
         cube15.userData.collidable = true;
-        scene.add( cube15 );
+     //   scene.add( cube15 );
       
         const geometry16 = new THREE.BoxGeometry( 5200, 230, 100 ); 
         const material16 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube16 = new THREE.Mesh( geometry16, material16 ); 
         cube16.position.set(-225, 70, 5600);
         cube16.userData.collidable = true;
-        scene.add( cube16 );
+     //   scene.add( cube16 );
       
       
       // Add bounding box 1
@@ -330,12 +378,12 @@
       const boundingBox7 = new THREE.Box3().setFromObject(cube7);
       const boundingBox7Helper = new THREE.BoxHelper(cube7, 0xff0000);
   //    scene.add(boundingBox7Helper);
- /*     
+      
        // Add bounding box 8
       const boundingBox8 = new THREE.Box3().setFromObject(cube8);
       const boundingBox8Helper = new THREE.BoxHelper(cube8, 0xff0000);
- //    scene.add(boundingBox8Helper);
- */     
+  //   scene.add(boundingBox8Helper);
+      
          // Add bounding box 9
       const boundingBox9 = new THREE.Box3().setFromObject(cube9);
       const boundingBox9Helper = new THREE.BoxHelper(cube9, 0xff0000);
@@ -391,8 +439,6 @@
           cameraBoundingBox.setFromObject(cameraBoundingHelper);
       }
       
-
-     
       //load 3d model of bell with animation
         const loader = new GLTFLoader();
         loader.setPath('');
@@ -402,7 +448,7 @@
             gltf.scene.position.set(-900, -125, 5450);
             gltf.scene.scale.set(1000, 75, 125);
             gltf.scene.rotation.set(0, 0, 0);
-            scene.add(gltf.scene);
+    //        scene.add(gltf.scene);
        
         mixer = new THREE.AnimationMixer(gltf.scene);
         
@@ -454,7 +500,6 @@
           });
         });
 
-
         const dracoLoader1 = new DRACOLoader();
         dracoLoader1.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
 
@@ -495,7 +540,7 @@
             gltf.scene.position.set(0, -500, 5250);
             gltf.scene.scale.set(200, 200, 200);
             gltf.scene.rotation.set(0, 3*Math.PI/4, Math.PI/4);
-            scene.add(gltf.scene);
+       //     scene.add(gltf.scene);
 
             mixer4 = new THREE.AnimationMixer(gltf.scene);
             
@@ -529,24 +574,23 @@
           });
         });
       
-      
-     //load 3d model of wooden speaker
+     //load 3d model of colorful speaker
         const loaderWoodenSpeaker = new GLTFLoader();
         loaderWoodenSpeaker.setPath('');  
         loaderWoodenSpeaker.load('colorful-speaker.glb', function (gltf) {
-            gltf.scene.position.set(1550, 25, 500);
-            gltf.scene.scale.set(50, 50, 50);
-            gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
+            gltf.scene.position.set(-2800, 44, 6000);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
         });
 
-    //load 3d model of speaker wall
+    //load 3d model of colorful speaker
     const loaderSpeakerWall = new GLTFLoader();
         loaderSpeakerWall.setPath('');  
         loaderSpeakerWall.load('colorful-speaker.glb', function (gltf) {
-            gltf.scene.position.set(1525, 25, 1800);
-            gltf.scene.scale.set(50, 50, 50);
-            gltf.scene.rotation.set(-Math.PI/4, -Math.PI/4, 0);
+            gltf.scene.position.set(-2050, 50, 6600);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(-Math.PI/8, -3*Math.PI/4, 0);
             scene.add(gltf.scene);
         });
 
@@ -554,9 +598,10 @@
     const loaderHornSpeaker = new GLTFLoader();
     loaderHornSpeaker.setPath('');  
     loaderHornSpeaker.load('hornspeaker.glb', function (gltf) {
-        gltf.scene.position.set(1520, 50, 1000);
-        gltf.scene.scale.set(40, 40, 40);
-        gltf.scene.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
+   //     gltf.scene.position.set(1520, 50, 1000);
+        gltf.scene.position.set(-3200, 150, 6800);
+        gltf.scene.scale.set(80, 80, 80);
+        gltf.scene.rotation.set(-Math.PI/4, 7*Math.PI/8, 0);
         scene.add(gltf.scene);
     });
 
@@ -564,9 +609,19 @@
     const loaderWoodenSpeaker2 = new GLTFLoader();
         loaderWoodenSpeaker2.setPath('');  
         loaderWoodenSpeaker2.load('woodspeaker.glb', function (gltf) {
-            gltf.scene.position.set(1590, 50, 1500);
-            gltf.scene.scale.set(20, 20, 20);
-            gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
+            gltf.scene.position.set(-2250, 90, 6610);
+            gltf.scene.scale.set(30, 30, 30);
+            gltf.scene.rotation.set(0, Math.PI, -Math.PI/2);
+            scene.add(gltf.scene);
+        });
+
+     //load 3d model of wooden speaker
+     const loaderWoodenSpeaker3 = new GLTFLoader();
+        loaderWoodenSpeaker3.setPath('');  
+        loaderWoodenSpeaker3.load('woodspeaker.glb', function (gltf) {
+            gltf.scene.position.set(-2780, -60, 5970);
+            gltf.scene.scale.set(30, 30, 30);
+            gltf.scene.rotation.set(0, Math.PI/4, 0);
             scene.add(gltf.scene);
         });
     
@@ -574,970 +629,1071 @@
     const loaderHornSpeaker2 = new GLTFLoader();
     loaderHornSpeaker2.setPath('');  
     loaderHornSpeaker2.load('hornspeaker.glb', function (gltf) {
-        gltf.scene.position.set(1520, 50, 2000);
-        gltf.scene.scale.set(40, 40, 40);
-        gltf.scene.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
+        gltf.scene.position.set(-2350, 100, 6050);
+        gltf.scene.scale.set(80, 80, 80);
+        gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
+        scene.add(gltf.scene);
+    });
+
+         //load 3d model of black speaker
+         const loaderBlackSpeaker = new GLTFLoader();
+    loaderBlackSpeaker.setPath('');  
+    loaderBlackSpeaker.load('dusty_speaker.glb', function (gltf) {
+        gltf.scene.position.set(-2300, -50, 6000);
+        gltf.scene.scale.set(20, 20, 20);
+        gltf.scene.rotation.set(0, 0, 0);
         scene.add(gltf.scene);
     });
       
+      //load 3d model of black speaker
+      const loaderBlackSpeaker2 = new GLTFLoader();
+    loaderBlackSpeaker2.setPath('');  
+    loaderBlackSpeaker2.load('dusty_speaker.glb', function (gltf) {
+        gltf.scene.position.set(-2900, -20, 6600);
+        gltf.scene.scale.set(20, 20, 20);
+        gltf.scene.rotation.set(0, -5*Math.PI/4, 0);
+        scene.add(gltf.scene);
+    });
+
+    //load 3d model of black speaker
+    const loaderBlackSpeaker3 = new GLTFLoader();
+    loaderBlackSpeaker3.setPath('');  
+    loaderBlackSpeaker3.load('dusty_passive_stage_speaker.glb', function (gltf) {
+        gltf.scene.position.set(-2950, -50, 6600);
+        gltf.scene.scale.set(100, 100, 100);
+        gltf.scene.rotation.set(Math.PI/2, 0, -Math.PI/2);
+        scene.add(gltf.scene);
+    });
+
+    //load 3d model of black speaker
+    const loaderBlackSpeaker4 = new GLTFLoader();
+    loaderBlackSpeaker4.setPath('');  
+    loaderBlackSpeaker4.load('dusty_passive_stage_speaker.glb', function (gltf) {
+        gltf.scene.position.set(-2300, -50, 6600);
+        gltf.scene.scale.set(100, 100, 100);
+        gltf.scene.rotation.set(0, Math.PI/2, 0);
+        scene.add(gltf.scene);
+    });
  
-  /*    
-      //load 3d model of speaker horn 1
-        const loaderHorn = new GLTFLoader();
-        loaderHorn.setPath('https://cdn.glitch.global/4bb80715-9a2a-437d-b131-f6f804a2598f/');  
-        loaderHorn.load('loudspeakers__horn__speaker_9_mb.glb?v=1733663371454', function (gltf) {
-            gltf.scene.position.set(300, 300, -1430);
-            gltf.scene.scale.set(100, 100, 100);
-            gltf.scene.rotation.set(Math.PI/2, -Math.PI/8, Math.PI/3);
-      //      scene.add(gltf.scene);
-        });
-         
-   */   
+   
         const light = new THREE.HemisphereLight(0xffffff, 0x444444, 6);
         scene.add(light);
-            
-        const soundList = [""];
-        const iframePositions = [
-            [-3350, 90, 5350],  // 2
-            
-        ];
-        const audioLoader = new THREE.AudioLoader();
-      
-      let hydraIframeObject = null; // declare on global level
-      let hydraIframeObject2 = null;
-      let hydraIframeObject3 = null;
-      let hydraIframeObject4 = null;
-      let hydraIframeObject5 = null;
-      let hydraIframeObject6 = null;
-      let hydraIframeObject7 = null;
-      let hydraIframeObject8 = null;
-      let hydraIframeObject9 = null;
-      let hydraIframeObject10 = null;
-      let hydraIframeObject11 = null;
-      let hydraIframeObject12 = null;
-      let hydraIframeObject13 = null;
-      let hydraIframeObject14 = null;
-      let hydraIframeObject15 = null;
-      let hydraIframeObject16 = null;
-      let hydraIframeObject17 = null;
-      let hydraIframeObject18 = null;
-      let hydraIframeObject19 = null;
-      let hydraIframeObject20 = null;
-      let hydraIframeObject21 = null;
-      let hydraIframeObject22 = null;
-      let hydraIframeObject23 = null;
-      let hydraIframeObject24 = null;
-      let hydraIframeObject25 = null;
-      let hydraIframeObject26 = null;
 
+// Define constants for iframe loading
+const LOAD_DISTANCE = 2500;    // Distance at which iframes are loaded
+const UNLOAD_DISTANCE = 2500;  // Distance at which iframes are unloaded
 
-
-      const LOAD_DISTANCE = 2500; // Distance at which iframes are loaded
-      const UNLOAD_DISTANCE = 2500; // Distance at which iframes are unloaded
-
-// Class to manage iframe loading states
+// Improved IframeLazyLoader class
 class IframeLazyLoader {
-    constructor(iframeObject, srcUrl) {
-        this.iframeObject = iframeObject;
+    constructor(position, rotation, scale, srcUrl, dimensions = { width: '1000px', height: '1000px' }, options = { pointerEvents: 'none' }) {
+        // Store position and other details for distance calculations
+        this.position = new THREE.Vector3(position.x, position.y, position.z);
+        this.rotation = rotation;
+        this.scale = scale;
         this.srcUrl = srcUrl;
+        this.dimensions = dimensions;
+        this.options = options;
         this.isLoaded = false;
-        this.div = iframeObject.element;
-        this.iframe = this.div.querySelector('iframe');
-        this.div.style.display = 'none';
-        this.iframe.src = 'about:blank';
+        
+        // Create the iframe object
+        this.iframeObject = this.createIframeObject(this.position, this.rotation, this.scale, this.srcUrl, this.dimensions, this.options);
     }
-
+    
+    createIframeObject(position, rotation, scale, srcUrl, dimensions, options) {
+        // Create container div
+        const iframeDiv = document.createElement('div');
+        iframeDiv.style.width = dimensions.width;
+        iframeDiv.style.height = dimensions.height;
+        iframeDiv.style.pointerEvents = options.pointerEvents;
+        iframeDiv.style.zIndex = '-1';
+        
+        // Create iframe element with initially blank src
+        const iframe = document.createElement('iframe');
+        iframe.src = 'about:blank';  // Start with blank page
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = '0';
+        iframe.style.pointerEvents = options.pointerEvents;  // Apply same pointer events to iframe
+        
+        // Set permissions
+        iframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+        iframe.allowFullscreen = true;
+        
+        // Append iframe to container
+        iframeDiv.appendChild(iframe);
+        
+        // Create 3D object and set position, rotation, scale
+        const iframeObject = new CSS3DObject(iframeDiv);
+        iframeObject.position.set(position.x, position.y, position.z);
+        iframeObject.rotation.set(rotation[0], rotation[1], rotation[2]);
+        iframeObject.scale.set(scale[0], scale[1], scale[2]);
+        iframeObject.renderOrder = -1;
+        
+        // Store references to DOM elements
+        this.div = iframeDiv;
+        this.iframe = iframe;
+        
+        // Add to CSS scene
+        cssScene.add(iframeObject);
+        
+        return iframeObject;
+    }
+    
     load() {
-        if (!this.isLoaded) {
-            this.iframe.src = this.srcUrl;
+        if (!this.isLoaded && this.iframe) {
+            console.log(`Loading iframe: ${this.srcUrl}`);
+            
+            // Special handling for interactive iframes
+            if (this.options.pointerEvents === 'auto') {
+                // For interactive iframes (like index.html), we need to handle loading differently
+                // to ensure they capture user input correctly
+                this.iframe.src = this.srcUrl;
+                
+                // Make sure the iframe is visible and active
+                this.div.style.display = 'block';
+                this.iframe.style.pointerEvents = 'auto';
+                this.div.style.pointerEvents = 'auto';
+            } else {
+                // Normal loading for non-interactive iframes
+                this.iframe.src = this.srcUrl;
+            }
+            
             this.isLoaded = true;
-            this.div.style.display = 'block';
         }
     }
-
+    
     unload() {
-        if (this.isLoaded) {
+        if (this.isLoaded && this.iframe) {
+            console.log(`Unloading iframe: ${this.srcUrl}`);
             this.iframe.src = 'about:blank';
             this.isLoaded = false;
-            this.div.style.display = 'none';
         }
     }
-
-    // Check if iframe should be loaded based on camera position and orientation
-   updateVisibility(camera) {
-        const distance = camera.position.distanceTo(this.iframeObject.position);
+    
+    updateVisibility(camera) {
+        const distance = camera.position.distanceTo(this.position);
         
-        if (distance < LOAD_DISTANCE) {
+        if (distance < LOAD_DISTANCE && !this.isLoaded) {
             this.load();
-        } else if (distance > UNLOAD_DISTANCE) {
+        } else if (distance > UNLOAD_DISTANCE && this.isLoaded) {
             this.unload();
         }
     }
 }
 
-setupAudioInput();     
-      
-        function createIframeWithAudio(position, rotation, soundPath) {
-            const iframeDiv = document.createElement('div');
-            iframeDiv.style.width = '470px';
-            iframeDiv.style.height = '300px';
-
-            const iframe = document.createElement('iframe');
-            iframe.src = `index.html`;  //Most browsers limit recursion. For the performance, I will configure the server so that I can create infinite recursion by adding a random string of numbers at the end of the URL.
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = '0';
-            iframeDiv.appendChild(iframe);
-
-            const iframeObject = new CSS3DObject(iframeDiv);
-            iframeObject.position.set(...position);
-            iframeObject.rotation.set(...rotation);
-            iframeObject.scale.set(1, 1, 1); // increase visual size in 3D without increasing resolution
-      //      cssScene.add(iframeObject);
-          
-         // Create Hydra iframe 5 - Hall 3, right wall
-            const additionalIframeDiv5 = document.createElement('div');
-            additionalIframeDiv5.style.width = '1000px';
-            additionalIframeDiv5.style.height = '1000px';
-            additionalIframeDiv5.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv5.style.zIndex = '-1';
-
-            const additionalIframe5 = document.createElement('iframe');
-            additionalIframe5.src = 'hydrainwebpage2.html';
-            additionalIframe5.style.width = '100%';
-            additionalIframe5.style.height = '100%';
-            additionalIframe5.style.border = '0';
-            additionalIframe5.style.pointerEvents = 'none';
-
-            additionalIframe5.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe5.allowFullscreen = true;
-            additionalIframeDiv5.appendChild(additionalIframe5);
-
-            const additionalIframeObject5 = new CSS3DObject(additionalIframeDiv5);
-            additionalIframeObject5.position.set(1530, 0, -880);
-            additionalIframeObject5.rotation.set(0, -Math.PI/2, 0); // Set rotation
-            additionalIframeObject5.scale.set(1, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject5.renderOrder = -1; // Lower priority
-            hydraIframeObject5 = additionalIframeObject5; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject5);
-          
-          
-            // Create Hydra iframe 6 - Hall 3, left wall
-            const additionalIframeDiv6 = document.createElement('div');
-            additionalIframeDiv6.style.width = '1000px';
-            additionalIframeDiv6.style.height = '1000px';
-            additionalIframeDiv6.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv6.style.zIndex = '-1';
-
-            const additionalIframe6 = document.createElement('iframe');
-            additionalIframe6.src = 'hydrainwebpage2.html';
-            additionalIframe6.style.width = '100%';
-            additionalIframe6.style.height = '100%';
-            additionalIframe6.style.border = '0';
-            additionalIframe6.style.pointerEvents = 'none';
-
-            additionalIframe6.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe6.allowFullscreen = true;
-            additionalIframeDiv6.appendChild(additionalIframe6);
-
-            const additionalIframeObject6 = new CSS3DObject(additionalIframeDiv6);
-            additionalIframeObject6.position.set(1560, 0, -885);
-            additionalIframeObject6.rotation.set(0, -Math.PI/2, 0); // Set rotation
-            additionalIframeObject6.scale.set(1.15, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject6.renderOrder = -1; // Lower priority
-            hydraIframeObject6 = additionalIframeObject6; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject6);
-          
-          
-          // Create Hydra iframe 1 - Right wall
-            const additionalIframeDiv = document.createElement('div');
-            additionalIframeDiv.style.width = '1000px';
-            additionalIframeDiv.style.height = '1000px';
-            additionalIframeDiv.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv.style.zIndex = '-1';
-
-            const additionalIframe = document.createElement('iframe');
-            additionalIframe.src = 'hydrainwebpage2.html';
-            additionalIframe.style.width = '100%';
-            additionalIframe.style.height = '100%';
-            additionalIframe.style.border = '0';
-            additionalIframe.style.pointerEvents = 'none';
-
-            additionalIframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe.allowFullscreen = true;
-            additionalIframeDiv.appendChild(additionalIframe);
-
-            const additionalIframeObject = new CSS3DObject(additionalIframeDiv);
-            additionalIframeObject.position.set(-1350, 0, 0);
-            additionalIframeObject.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject.scale.set(3, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject.renderOrder = -1; // Lower priority
-            hydraIframeObject = additionalIframeObject; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject);
-          
-          
-           // Create Hydra iframe 2 - Left wall
-            const additionalIframeDiv2 = document.createElement('div');
-            additionalIframeDiv2.style.width = '1000px';
-            additionalIframeDiv2.style.height = '1000px';
-            additionalIframeDiv2.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv2.style.zIndex = '-1';
-
-            const additionalIframe2 = document.createElement('iframe');
-            additionalIframe2.src = 'hydrainwebpage2.html';
-            additionalIframe2.style.width = '100%';
-            additionalIframe2.style.height = '100%';
-            additionalIframe2.style.border = '0';
-            additionalIframe2.style.pointerEvents = 'none';
-
-            additionalIframe2.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe2.allowFullscreen = true;
-            additionalIframeDiv2.appendChild(additionalIframe2);
-
-            const additionalIframeObject2 = new CSS3DObject(additionalIframeDiv2);
-            additionalIframeObject2.position.set(-1600, 0, -300);
-            additionalIframeObject2.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject2.scale.set(3.2, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject2.renderOrder = -1; // Lower priority
-            hydraIframeObject2 = additionalIframeObject2; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject2);
-   
-          
-           // Create Hydra iframe 3 - Hall 2, left wall
-            const additionalIframeDiv3 = document.createElement('div');
-            additionalIframeDiv3.style.width = '1000px';
-            additionalIframeDiv3.style.height = '1000px';
-            additionalIframeDiv3.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv3.style.zIndex = '-1';
-
-            const additionalIframe3 = document.createElement('iframe');
-            additionalIframe3.src = 'hydrainwebpage2.html';
-            additionalIframe3.style.width = '100%';
-            additionalIframe3.style.height = '100%';
-            additionalIframe3.style.border = '0';
-            additionalIframe3.style.pointerEvents = 'none';
-
-            additionalIframe3.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe3.allowFullscreen = true;
-            additionalIframeDiv3.appendChild(additionalIframe3);
-
-            const additionalIframeObject3 = new CSS3DObject(additionalIframeDiv3);
-            additionalIframeObject3.position.set(0, 0, -1460);
-            additionalIframeObject3.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject3.scale.set(3.55, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject3.renderOrder = -1; // Lower priority
-            hydraIframeObject3 = additionalIframeObject3; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject3);
-          
-           // Create Hydra iframe 4 - Hall 2, right wall
-            const additionalIframeDiv4 = document.createElement('div');
-            additionalIframeDiv4.style.width = '1000px';
-            additionalIframeDiv4.style.height = '1000px';
-            additionalIframeDiv4.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv4.style.zIndex = '-1';
-
-            const additionalIframe4 = document.createElement('iframe');
-            additionalIframe4.src = 'hydrainwebpage2.html';
-            additionalIframe4.style.width = '100%';
-            additionalIframe4.style.height = '100%';
-            additionalIframe4.style.border = '0';
-            additionalIframe4.style.pointerEvents = 'none';
-
-            additionalIframe4.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe4.allowFullscreen = true;
-            additionalIframeDiv4.appendChild(additionalIframe4);
-
-            const additionalIframeObject4 = new CSS3DObject(additionalIframeDiv4);
-            additionalIframeObject4.position.set(150, 0, -1380);
-            additionalIframeObject4.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject4.scale.set(3, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject4.renderOrder = -1; // Lower priority
-            hydraIframeObject4 = additionalIframeObject4; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject4);
-          
-          
-            // Create Hydra iframe 11 - Hall 4 left wall
-            const additionalIframeDiv11 = document.createElement('div');
-            additionalIframeDiv11.style.width = '100px';
-            additionalIframeDiv11.style.height = '100px';
-            additionalIframeDiv11.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv11.style.zIndex = '-1';
-
-            const additionalIframe11 = document.createElement('iframe');
-            additionalIframe11.src = 'hydrainwebpage2.html';
-            additionalIframe11.style.width = '100%';
-            additionalIframe11.style.height = '100%';
-            additionalIframe11.style.border = '0';
-            additionalIframe11.style.pointerEvents = 'none';
-
-            additionalIframe11.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe11.allowFullscreen = true;
-            additionalIframeDiv11.appendChild(additionalIframe11);
-
-            const additionalIframeObject11 = new CSS3DObject(additionalIframeDiv11);
-            additionalIframeObject11.position.set(-1850, 45, 1450);
-            additionalIframeObject11.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject11.scale.set(10, 2.4, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject11.renderOrder = -1; // Lower priority
-            hydraIframeObject11 = additionalIframeObject11; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject11);
-          
-            // Create Hydra iframe 12 - Hall 4 right wall
-            const additionalIframeDiv12 = document.createElement('div');
-            additionalIframeDiv12.style.width = '100px';
-            additionalIframeDiv12.style.height = '100px';
-            additionalIframeDiv12.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv12.style.zIndex = '-1';
-
-            const additionalIframe12 = document.createElement('iframe');
-            additionalIframe12.src = 'hydrainwebpage2.html';
-            additionalIframe12.style.width = '100%';
-            additionalIframe12.style.height = '100%';
-            additionalIframe12.style.border = '0';
-            additionalIframe12.style.pointerEvents = 'none';
-
-            additionalIframe12.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe12.allowFullscreen = true;
-            additionalIframeDiv12.appendChild(additionalIframe12);
-
-            const additionalIframeObject12 = new CSS3DObject(additionalIframeDiv12);
-            additionalIframeObject12.position.set(-2100, 45, 1300);
-            additionalIframeObject12.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject12.scale.set(10, 2.4, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject12.renderOrder = -1; // Lower priority
-            hydraIframeObject12 = additionalIframeObject12; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject12);
-          
-          
-            // Create Hydra iframe 13 - Hall 5 right wall
-            const additionalIframeDiv13 = document.createElement('div');
-            additionalIframeDiv13.style.width = '50px';
-            additionalIframeDiv13.style.height = '50px';
-            additionalIframeDiv13.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv13.style.zIndex = '-1';
-
-            const additionalIframe13 = document.createElement('iframe');
-            additionalIframe13.src = 'hydrainwebpage2.html';
-            additionalIframe13.style.width = '100%';
-            additionalIframe13.style.height = '100%';
-            additionalIframe13.style.border = '0';
-            additionalIframe13.style.pointerEvents = 'none';
-
-            additionalIframe13.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe13.allowFullscreen = true;
-            additionalIframeDiv13.appendChild(additionalIframe13);
-
-            const additionalIframeObject13 = new CSS3DObject(additionalIframeDiv13);
-            additionalIframeObject13.position.set(-2600, 45, 3290);
-            additionalIframeObject13.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject13.scale.set(80, 4.8, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject13.renderOrder = -1; // Lower priority
-            hydraIframeObject13 = additionalIframeObject13; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject13);
-          
-            // Create Hydra iframe 14 - Hall 5 left wall
-            const additionalIframeDiv14 = document.createElement('div');
-            additionalIframeDiv14.style.width = '50px';
-            additionalIframeDiv14.style.height = '50px';
-            additionalIframeDiv14.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv14.style.zIndex = '-1';
-
-            const additionalIframe14 = document.createElement('iframe');
-            additionalIframe14.src = 'hydrainwebpage2.html';
-            additionalIframe14.style.width = '100%';
-            additionalIframe14.style.height = '100%';
-            additionalIframe14.style.border = '0';
-            additionalIframe14.style.pointerEvents = 'none';
-
-            additionalIframe14.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe14.allowFullscreen = true;
-            additionalIframeDiv14.appendChild(additionalIframe14);
-
-            const additionalIframeObject14 = new CSS3DObject(additionalIframeDiv14);
-            additionalIframeObject14.position.set(-2350, 45, 3400);
-            additionalIframeObject14.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject14.scale.set(78, 4.8, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject14.renderOrder = -1; // Lower priority
-            hydraIframeObject14 = additionalIframeObject14; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject14);
-          
-              // Create Hydra iframe 15 - Hall 6 left wall
-            const additionalIframeDiv15 = document.createElement('div');
-            additionalIframeDiv15.style.width = '50px';
-            additionalIframeDiv15.style.height = '50px';
-            additionalIframeDiv15.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv15.style.zIndex = '-1';
-
-            const additionalIframe15 = document.createElement('iframe');
-            additionalIframe15.src = 'hydrainwebpage2.html';
-            additionalIframe15.style.width = '100%';
-            additionalIframe15.style.height = '100%';
-            additionalIframe15.style.border = '0';
-            additionalIframe15.style.pointerEvents = 'none';
-
-            additionalIframe15.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe15.allowFullscreen = true;
-            additionalIframeDiv15.appendChild(additionalIframe15);
-
-            const additionalIframeObject15 = new CSS3DObject(additionalIframeDiv15);
-            additionalIframeObject15.position.set(-2400, 45, 5350);
-            additionalIframeObject15.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject15.scale.set(16, 4.8, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject15.renderOrder = -1; // Lower priority
-            hydraIframeObject15 = additionalIframeObject15; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject15);
-          
-             // Create Hydra iframe 16 - Hall 6 right wall
-            const additionalIframeDiv16 = document.createElement('div');
-            additionalIframeDiv16.style.width = '50px';
-            additionalIframeDiv16.style.height = '50px';
-            additionalIframeDiv16.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv16.style.zIndex = '-1';
-
-            const additionalIframe16 = document.createElement('iframe');
-            additionalIframe16.src = 'hydrainwebpage2.html';
-            additionalIframe16.style.width = '100%';
-            additionalIframe16.style.height = '100%';
-            additionalIframe16.style.border = '0';
-            additionalIframe16.style.pointerEvents = 'none';
-
-            additionalIframe16.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe16.allowFullscreen = true;
-            additionalIframeDiv16.appendChild(additionalIframe16);
-
-            const additionalIframeObject16 = new CSS3DObject(additionalIframeDiv16);
-            additionalIframeObject16.position.set(-2775, 45, 5290);
-            additionalIframeObject16.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject16.scale.set(7, 4.8, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject16.renderOrder = -1; // Lower priority
-            hydraIframeObject16 = additionalIframeObject16; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject16);
-          
-             // Create Hydra iframe 17 
-            const additionalIframeDiv17 = document.createElement('div');
-            additionalIframeDiv17.style.width = '100px';
-            additionalIframeDiv17.style.height = '100px';
-            additionalIframeDiv17.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv17.style.zIndex = '-1';
-
-            const additionalIframe17 = document.createElement('iframe');
-            additionalIframe17.src = 'hydrainwebpage2.html';
-            additionalIframe17.style.width = '100%';
-            additionalIframe17.style.height = '100%';
-            additionalIframe17.style.border = '0';
-            additionalIframe17.style.pointerEvents = 'none';
-
-            additionalIframe17.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe17.allowFullscreen = true;
-            additionalIframeDiv17.appendChild(additionalIframe17);
-
-            const additionalIframeObject17 = new CSS3DObject(additionalIframeDiv17);
-            additionalIframeObject17.position.set(-2875, 45, 5290);
-            additionalIframeObject17.rotation.set(0, -Math.PI/2, 0); // Set rotation
-            additionalIframeObject17.scale.set(10, 2.4, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject17.renderOrder = -1; // Lower priority
-            hydraIframeObject17 = additionalIframeObject17; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject17);
-          
-             // Create Hydra iframe 18 
-            const additionalIframeDiv18 = document.createElement('div');
-            additionalIframeDiv18.style.width = '1000px';
-            additionalIframeDiv18.style.height = '100px';
-            additionalIframeDiv18.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv18.style.zIndex = '-1';
-
-            const additionalIframe18 = document.createElement('iframe');
-            additionalIframe18.src = 'hydrainwebpage2.html';
-            additionalIframe18.style.width = '100%';
-            additionalIframe18.style.height = '100%';
-            additionalIframe18.style.border = '0';
-            additionalIframe18.style.pointerEvents = 'none';
-
-            additionalIframe18.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe18.allowFullscreen = true;
-            additionalIframeDiv18.appendChild(additionalIframe18);
-
-            const additionalIframeObject18 = new CSS3DObject(additionalIframeDiv18);
-            additionalIframeObject18.position.set(-675, 45, 5590);
-            additionalIframeObject18.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject18.scale.set(6, 2.4, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject18.renderOrder = -1; // Lower priority
-            hydraIframeObject18 = additionalIframeObject18; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject18);
-          
-              // Create Hydra iframe 19 
-            const additionalIframeDiv19 = document.createElement('div');
-            additionalIframeDiv19.style.width = '1000px';
-            additionalIframeDiv19.style.height = '1000px';
-            additionalIframeDiv19.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv19.style.zIndex = '-1';
-
-            const additionalIframe19 = document.createElement('iframe');
-            additionalIframe19.src = 'hydrainwebpage2.html';
-            additionalIframe19.style.width = '100%';
-            additionalIframe19.style.height = '100%';
-            additionalIframe19.style.border = '0';
-            additionalIframe19.style.pointerEvents = 'none';
-
-            additionalIframe19.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe19.allowFullscreen = true;
-            additionalIframeDiv19.appendChild(additionalIframe19);
-
-            const additionalIframeObject19 = new CSS3DObject(additionalIframeDiv19);
-            additionalIframeObject19.position.set(1560, 0, 900);
-            additionalIframeObject19.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject19.scale.set(3, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject19.renderOrder = -1; // Lower priority
-            hydraIframeObject19 = additionalIframeObject19; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject19);
-          
-             // Create Hydra iframe 20 
-            const additionalIframeDiv20 = document.createElement('div');
-            additionalIframeDiv20.style.width = '500px';
-            additionalIframeDiv20.style.height = '50px';
-            additionalIframeDiv20.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv20.style.zIndex = '-1';
-
-            const additionalIframe20 = document.createElement('iframe');
-            additionalIframe20.src = 'hydrainwebpage2.html';
-            additionalIframe20.style.width = '100%';
-            additionalIframe20.style.height = '100%';
-            additionalIframe20.style.border = '0';
-            additionalIframe20.style.pointerEvents = 'none';
-
-            additionalIframe20.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe20.allowFullscreen = true;
-            additionalIframeDiv20.appendChild(additionalIframe20);
-
-            const additionalIframeObject20 = new CSS3DObject(additionalIframeDiv20);
-            additionalIframeObject20.position.set(-256, 45, 5350);
-            additionalIframeObject20.rotation.set(0, 0, 0); // Set rotation
-            additionalIframeObject20.scale.set(7.14, 4.8, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject20.renderOrder = -1; // Lower priority
-            hydraIframeObject20 = additionalIframeObject20; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject20);
-          
-             // Create Hydra iframe 21 
-            const additionalIframeDiv21 = document.createElement('div');
-            additionalIframeDiv21.style.width = '1000px';
-            additionalIframeDiv21.style.height = '1000px';
-            additionalIframeDiv21.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv21.style.zIndex = '-1';
-
-            const additionalIframe21 = document.createElement('iframe');
-            additionalIframe21.src = 'hydrainwebpage2.html';
-            additionalIframe21.style.width = '100%';
-            additionalIframe21.style.height = '100%';
-            additionalIframe21.style.border = '0';
-            additionalIframe21.style.pointerEvents = 'none';
-
-            additionalIframe21.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe21.allowFullscreen = true;
-            additionalIframeDiv21.appendChild(additionalIframe21);
-
-            const additionalIframeObject21 = new CSS3DObject(additionalIframeDiv21);
-            additionalIframeObject21.position.set(1530, 0, 900);
-            additionalIframeObject21.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject21.scale.set(3.1, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject21.renderOrder = -1; // Lower priority
-            hydraIframeObject21 = additionalIframeObject21; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject21);
-          
-              // Create Hydra iframe 22 
-            const additionalIframeDiv22 = document.createElement('div');
-            additionalIframeDiv22.style.width = '1000px';
-            additionalIframeDiv22.style.height = '1000px';
-            additionalIframeDiv22.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv22.style.zIndex = '-1';
-
-            const additionalIframe22 = document.createElement('iframe');
-            additionalIframe22.src = 'hydrainwebpage2.html';
-            additionalIframe22.style.width = '100%';
-            additionalIframe22.style.height = '100%';
-            additionalIframe22.style.border = '0';
-            additionalIframe22.style.pointerEvents = 'none';
-
-            additionalIframe22.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe22.allowFullscreen = true;
-            additionalIframeDiv22.appendChild(additionalIframe22);
-
-            const additionalIframeObject22 = new CSS3DObject(additionalIframeDiv22);
-            additionalIframeObject22.position.set(1560, 0, 1680);
-            additionalIframeObject22.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject22.scale.set(8, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject22.renderOrder = -1; // Lower priority
-            hydraIframeObject22 = additionalIframeObject22; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject22);
-          
-             // Create Hydra iframe 23
-            const additionalIframeDiv23 = document.createElement('div');
-            additionalIframeDiv23.style.width = '1000px';
-            additionalIframeDiv23.style.height = '1000px';
-            additionalIframeDiv23.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv23.style.zIndex = '-1';
-
-            const additionalIframe23 = document.createElement('iframe');
-            additionalIframe23.src = 'hydrainwebpage2.html';
-            additionalIframe23.style.width = '100%';
-            additionalIframe23.style.height = '100%';
-            additionalIframe23.style.border = '0';
-            additionalIframe23.style.pointerEvents = 'none';
-
-            additionalIframe23.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe23.allowFullscreen = true;
-            additionalIframeDiv23.appendChild(additionalIframe23);
-
-            const additionalIframeObject23 = new CSS3DObject(additionalIframeDiv23);
-            additionalIframeObject23.position.set(1530, 0, 1680);
-            additionalIframeObject23.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject23.scale.set(5.1, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject23.renderOrder = -1; // Lower priority
-            hydraIframeObject23 = additionalIframeObject23; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject23);
-          
-             // Create Hydra iframe 24 
-            const additionalIframeDiv24 = document.createElement('div');
-            additionalIframeDiv24.style.width = '1000px';
-            additionalIframeDiv24.style.height = '1000px';
-            additionalIframeDiv24.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv24.style.zIndex = '-1';
-
-            const additionalIframe24 = document.createElement('iframe');
-            additionalIframe24.src = 'hydrainwebpage2.html';
-            additionalIframe24.style.width = '100%';
-            additionalIframe24.style.height = '100%';
-            additionalIframe24.style.border = '0';
-            additionalIframe24.style.pointerEvents = 'none';
-
-            additionalIframe24.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe24.allowFullscreen = true;
-            additionalIframeDiv24.appendChild(additionalIframe24);
-
-            const additionalIframeObject24 = new CSS3DObject(additionalIframeDiv24);
-            additionalIframeObject24.position.set(1560, 0, 3580);
-            additionalIframeObject24.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject24.scale.set(8, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject24.renderOrder = -1; // Lower priority
-            hydraIframeObject24 = additionalIframeObject24; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject24);
-          
-           // Create Hydra iframe 25
-            const additionalIframeDiv25 = document.createElement('div');
-            additionalIframeDiv25.style.width = '1000px';
-            additionalIframeDiv25.style.height = '1000px';
-            additionalIframeDiv25.style.pointerEvents = 'none'; // Click-through
-            additionalIframeDiv25.style.zIndex = '-1';
-
-            const additionalIframe25 = document.createElement('iframe');
-            additionalIframe25.src = 'hydrainwebpage2.html';
-            additionalIframe25.style.width = '100%';
-            additionalIframe25.style.height = '100%';
-            additionalIframe25.style.border = '0';
-            additionalIframe25.style.pointerEvents = 'none';
-
-            additionalIframe25.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-            additionalIframe25.allowFullscreen = true;
-            additionalIframeDiv25.appendChild(additionalIframe25);
-
-            const additionalIframeObject25 = new CSS3DObject(additionalIframeDiv25);
-            additionalIframeObject25.position.set(1530, 0, 3850);
-            additionalIframeObject25.rotation.set(0, Math.PI/2, 0); // Set rotation
-            additionalIframeObject25.scale.set(3, .33, 1); // Increase size in 3D without increasing resolution
-            additionalIframeObject25.renderOrder = -1; // Lower priority
-            hydraIframeObject25 = additionalIframeObject25; // Store Hydra iframe object globally
-            cssScene.add(additionalIframeObject25);
-          
-          
-    const mainIframeLoader = new IframeLazyLoader(iframeObject, 'index.html');
-    const hydraLoader1 = new IframeLazyLoader(additionalIframeObject, 'hydrainwebpage2.html');
-    const hydraLoader2 = new IframeLazyLoader(additionalIframeObject2, 'hydrainwebpage2.html');
-    const hydraLoader3 = new IframeLazyLoader(additionalIframeObject3, 'hydrainwebpage2.html');
-    const hydraLoader4 = new IframeLazyLoader(additionalIframeObject4, 'hydrainwebpage2.html');
-    const hydraLoader5 = new IframeLazyLoader(additionalIframeObject5, 'hydrainwebpage2.html');
-    const hydraLoader6 = new IframeLazyLoader(additionalIframeObject6, 'hydrainwebpage2.html');
-    const hydraLoader11 = new IframeLazyLoader(additionalIframeObject11, 'hydrainwebpage2.html');
-    const hydraLoader12 = new IframeLazyLoader(additionalIframeObject12, 'hydrainwebpage2.html');
-    const hydraLoader13 = new IframeLazyLoader(additionalIframeObject13, 'hydrainwebpage2.html');
-    const hydraLoader14 = new IframeLazyLoader(additionalIframeObject14, 'hydrainwebpage2.html');
-    const hydraLoader15 = new IframeLazyLoader(additionalIframeObject15, 'hydrainwebpage2.html');
-    const hydraLoader16 = new IframeLazyLoader(additionalIframeObject16, 'hydrainwebpage2.html');
-    const hydraLoader17 = new IframeLazyLoader(additionalIframeObject17, 'hydrainwebpage2.html');
-    const hydraLoader18 = new IframeLazyLoader(additionalIframeObject18, 'hydrainwebpage2.html');
-    const hydraLoader19 = new IframeLazyLoader(additionalIframeObject19, 'hydrainwebpage2.html');
-    const hydraLoader20 = new IframeLazyLoader(additionalIframeObject20, 'hydrainwebpage2.html');
-    const hydraLoader21 = new IframeLazyLoader(additionalIframeObject21, 'hydrainwebpage2.html');
-    const hydraLoader22 = new IframeLazyLoader(additionalIframeObject22, 'hydrainwebpage2.html');
-    const hydraLoader23 = new IframeLazyLoader(additionalIframeObject23, 'hydrainwebpage2.html');
-    const hydraLoader24 = new IframeLazyLoader(additionalIframeObject24, 'hydrainwebpage2.html');
-    const hydraLoader25 = new IframeLazyLoader(additionalIframeObject25, 'hydrainwebpage2.html');
-
-
-
-    if (!window.iframeLoaders) {
-        window.iframeLoaders = [];
-    }
-    window.iframeLoaders.push(
-        mainIframeLoader,
-        hydraLoader1,
-        hydraLoader2,
-        hydraLoader3,
-        hydraLoader4,
-        hydraLoader5,
-        hydraLoader6,
-        hydraLoader11,
-        hydraLoader12,
-        hydraLoader13,
-        hydraLoader14,
-        hydraLoader15,
-        hydraLoader16,
-        hydraLoader17,
-        hydraLoader18,
-        hydraLoader19,
-        hydraLoader20,
-        hydraLoader21,
-        hydraLoader22,
-        hydraLoader23,
-        hydraLoader24,
-        hydraLoader25
-    ); 
-                    
- //    const positionalAudioAnalyzer = audioContext.createAnalyser();
- //    positionalAudioAnalyzer.fftSize = 2048;
-
-            // Add positional audio
-            const positionalAudio = new THREE.PositionalAudio(listener);
-            audioLoader.load('Sound_22.mp3', function (buffer) {
-                positionalAudio.setBuffer(buffer);    
-                positionalAudio.setRefDistance(1);        
-                positionalAudio.position.set(-200, 50, -1450);
-                positionalAudio.setDistanceModel('linear');
-                positionalAudio.setRolloffFactor(2);
-                positionalAudio.setMaxDistance(1700);
-                positionalAudio.setVolume(1);
-                positionalAudio.loop = true;
-                positionalAudio.play();
-                positionalAudio.getOutput().connect(positionalAudioAnalyser);
-
-          //      positionalAudio.getOutput().connect(analyser);
-          //      positionalAudio.getOutput().connect(audioContext.destination);
-
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-            });
-            scene.add(positionalAudio);
-          
-          // Add a new positional sound source for the bell
-              const newSoundSource = new THREE.PositionalAudio(listener);
-              audioLoader.load('Sound_22.mp3', function (buffer) {
-
-                  newSoundSource.setBuffer(buffer);
-                  newSoundSource.setRefDistance(1);
-               //   newSoundSource.position.set(1220, 50, -1450);
-                  newSoundSource.position.set(0, 50, 5250);
-                  newSoundSource.setDistanceModel('linear');
-                  newSoundSource.setRolloffFactor(8);
-                  newSoundSource.setMaxDistance(850);
-                  newSoundSource.setVolume(1);
-                  newSoundSource.loop = true;
-                  newSoundSource.play();
-                  newSoundSource.getOutput().connect(positionalAudioAnalyser);
-                
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-                
-              });
-              
-              scene.add(newSoundSource);
-              
+// Function to create all iframes with proper lazy loading
+function setupLazyLoadedIframes() {
+    // Clear any existing iframe loaders
+    window.iframeLoaders = [];
     
-          const newSoundSource2 = new THREE.PositionalAudio(listener);
-              audioLoader.load('pulsar_1.mp3', function (buffer) {
+    // Create iframe loaders with appropriate settings
+    const iframeConfigs = [
+        // Format: [position, rotation, scale, url, dimensions]
+        [
+            { x: 1560, y: 0, z: -885 }, 
+            [0, -Math.PI/2, 0], 
+            [1.15, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: 1530, y: 0, z: -880 }, 
+            [0, -Math.PI/2, 0], 
+            [1, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -2750, y: 30, z: 7500 }, 
+            [0, Math.PI, 0], 
+            [1, 1, 1], 
+            'index.html',
+            { width: '1080px', height: '720px' },
+            { pointerEvents: 'auto' }  // Enable pointer events for this iframe
+        ],
+        [
+            { x: -73, y: 0, z: -1460 }, 
+            [0, 0, 0], 
+            [3.55, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1600, y: 0, z: -300 }, 
+            [0, Math.PI/2, 0], 
+            [3.2, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: 150, y: 0, z: -1380 }, 
+            [0, 0, 0], 
+            [3, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1350, y: 0, z: 0 }, 
+            [0, Math.PI/2, 0], 
+            [3, .33, 1], 
+            'hydrainwebpage2.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1850, y: 45, z: 1450 }, 
+            [0, 0, 0], 
+            [10, 2.4, 1], 
+            'hydrainwebpage2.html',
+            { width: '100px', height: '100px' }
+        ],
+        [
+            { x: -2100, y: 45, z: 1300 }, 
+            [0, 0, 0], 
+            [10, 2.4, 1], 
+            'hydrainwebpage2.html',
+            { width: '100px', height: '100px' }
+        ],
+        [
+            { x: -2600, y: 45, z: 3290 }, 
+            [0, Math.PI/2, 0], 
+            [8, .48, 1], 
+            'hydrainwebpage2.html',
+            { width: '500px', height: '500px' }
+        ],
+        [
+            { x: -2350, y: 45, z: 3400 }, 
+            [0, Math.PI/2, 0], 
+            [7.8, .48, 1], 
+            'hydrainwebpage2.html',
+            { width: '500px', height: '500px' }
+        ]
+    ];
+    
+    // Create and store all loaders
+    iframeConfigs.forEach(config => {
+        const loader = new IframeLazyLoader(
+            config[0],  // position
+            config[1],  // rotation
+            config[2],  // scale
+            config[3],  // source URL
+            config[4],  // dimensions
+            config[5] || { pointerEvents: 'none' }  // options (default to no pointer events)
+        );
+        window.iframeLoaders.push(loader);
+    });
+    
+    console.log(`Created ${window.iframeLoaders.length} lazy-loaded iframes`);
+}
 
-                  newSoundSource2.setBuffer(buffer);
-                  newSoundSource2.setRefDistance(1);
-              //    newSoundSource2.position.set(-1420, 50, -1400);
-                  newSoundSource2.position.set(-1450, 50, 1000);
-                  newSoundSource2.setDistanceModel('linear');
-                  newSoundSource2.setRolloffFactor(8);
-                  newSoundSource2.setMaxDistance(1650);
-                  newSoundSource2.setVolume(1);
-                  newSoundSource2.loop = true;
-                  newSoundSource2.play();
-                  newSoundSource2.getOutput().connect(positionalAudioAnalyser);
-                
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-                
-              });
-              
-              scene.add(newSoundSource2);
-          
-          
-           const newSoundSource3 = new THREE.PositionalAudio(listener);
-              audioLoader.load('sax_clicks_mono.mp3', function (buffer) {
 
-                  newSoundSource3.setBuffer(buffer);
-                  newSoundSource3.setRefDistance(1);
-                  newSoundSource3.position.set(-2420, 50, 3000);
-                  newSoundSource3.setDistanceModel('linear');
-                  newSoundSource3.setRolloffFactor(8);
-                  newSoundSource3.setMaxDistance(1650);
-                  newSoundSource3.setVolume(1);
-                  newSoundSource3.loop = true;
-                  newSoundSource3.play();
-                  newSoundSource3.getOutput().connect(positionalAudioAnalyser);
-                
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-                
-              });
-              
-              scene.add(newSoundSource3);
-          
-             const newSoundSource4 = new THREE.PositionalAudio(listener);
-              audioLoader.load('pulsar_1.mp3', function (buffer) {
+setupAudioInput();   
+/*
+const iframe6 = createHydraIframe(); 
+const iframe5 = createHydraIframe2();
+const iframe7 = createHydraIframe3();
+const iframe3 = createHydraIframe4();
+const iframe2 = createHydraIframe5();
+const iframe4 = createHydraIframe6();
+const iframe = createHydraIframe7();
+const iframe11 = createHydraIframe8();
+const iframe12 = createHydraIframe9(); 
+const iframe13 = createHydraIframe10(); 
+const iframe14 = createHydraIframe11();
+*/
+setupLazyLoadedIframes();
+function createHydraIframe() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject6;
+  
+  // Create container div
+  const additionalIframeDiv6 = document.createElement('div');
+  additionalIframeDiv6.style.width = '1000px';
+  additionalIframeDiv6.style.height = '1000px';
+  additionalIframeDiv6.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv6.style.zIndex = '-1';
 
-                  newSoundSource4.setBuffer(buffer);
-                  newSoundSource4.setRefDistance(1);
-                  newSoundSource4.position.set(1590, 25, 500);
-                  newSoundSource4.setDistanceModel('linear');
-                  newSoundSource4.setRolloffFactor(3);
-                  newSoundSource4.setMaxDistance(1500);
-                  newSoundSource4.setVolume(1);
-                  newSoundSource4.setDirectionalCone(60, 120, .1);
-                  newSoundSource4.rotation.set(-Math.PI/4, -Math.PI/4, 0);
-                  newSoundSource4.loop = true;
-                  newSoundSource4.play();
-             //     newSoundSource4.getOutput().connect(positionalAudioAnalyser);
+  // Create iframe element
+  const additionalIframe6 = document.createElement('iframe');
+  additionalIframe6.src = 'hydrainwebpage2.html';
+  additionalIframe6.style.width = '100%';
+  additionalIframe6.style.height = '100%';
+  additionalIframe6.style.border = '0';
+  additionalIframe6.style.pointerEvents = 'none';
 
-                  const airNoiseHelper = new PositionalAudioHelper(newSoundSource4, 100);
-            //      newSoundSource4.add(airNoiseHelper);
-                
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-                
-              });
-              
-              scene.add(newSoundSource4);
+  // Set permissions
+  additionalIframe6.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe6.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv6.appendChild(additionalIframe6);
 
-          const newSoundSource5 = new THREE.PositionalAudio(listener);
-            audioLoader.load('pulsar_2.mp3', function (buffer) {
+  // Create 3D object and position it
+  const additionalIframeObject6 = new CSS3DObject(additionalIframeDiv6);
+  additionalIframeObject6.position.set(1560, 0, -885);
+  additionalIframeObject6.rotation.set(0, -Math.PI/2, 0);
+  additionalIframeObject6.scale.set(1.15, .33, 1);
+  additionalIframeObject6.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject6 = additionalIframeObject6;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject6);
+  
+  // Return the created object
+  return additionalIframeObject6;
+}
 
-                newSoundSource5.setBuffer(buffer);
-                newSoundSource5.setRefDistance(1);
-                newSoundSource5.position.set(1500, 50, 1000);
-                newSoundSource5.setDistanceModel('linear');
-                newSoundSource5.setRolloffFactor(3);
-                newSoundSource5.setMaxDistance(1500);
-                newSoundSource5.setVolume(1);
-                newSoundSource5.setDirectionalCone(60, 120, .1);
-                newSoundSource5.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
-                newSoundSource5.loop = true;
-                newSoundSource5.play();
-           //     newSoundSource5.getOutput().connect(positionalAudioAnalyser);
+function createHydraIframe2() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject5;
+  
+  // Create container div
+  const additionalIframeDiv5 = document.createElement('div');
+  additionalIframeDiv5.style.width = '1000px';
+  additionalIframeDiv5.style.height = '1000px';
+  additionalIframeDiv5.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv5.style.zIndex = '-1';
 
-                const quietClicksHelper = new PositionalAudioHelper(newSoundSource5, 100);
-          //      newSoundSource5.add(quietClicksHelper);
+  // Create iframe element
+  const additionalIframe5 = document.createElement('iframe');
+  additionalIframe5.src = 'hydrainwebpage2.html';
+  additionalIframe5.style.width = '100%';
+  additionalIframe5.style.height = '100%';
+  additionalIframe5.style.border = '0';
+  additionalIframe5.style.pointerEvents = 'none';
 
-              // Bring up the volume after short delay, giving all parameters time to load
-              setTimeout(() => {
-                  positionalAudio.setVolume(1);
-              },  100); // Wait 100ms
+  // Set permissions
+  additionalIframe5.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe5.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv5.appendChild(additionalIframe5);
 
-            });
+  // Create 3D object and position it
+  const additionalIframeObject5 = new CSS3DObject(additionalIframeDiv5);
+  additionalIframeObject5.position.set(1530, 0, -880);
+  additionalIframeObject5.rotation.set(0, -Math.PI/2, 0);
+  additionalIframeObject5.scale.set(1, .33, 1);
+  additionalIframeObject5.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject5 = additionalIframeObject5;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject5);
+  
+  // Return the created object
+  return additionalIframeObject5;
+}
 
-            scene.add(newSoundSource5);
+function createHydraIframe3() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject7;
+  
+  // Create container div
+  const additionalIframeDiv7 = document.createElement('div');
+  additionalIframeDiv7.style.width = '1080px';
+  additionalIframeDiv7.style.height = '720px';
+  additionalIframeDiv7.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv7.style.zIndex = '-1';
 
-            const newSoundSource6 = new THREE.PositionalAudio(listener);
-              audioLoader.load('pulsar_1.mp3', function (buffer) {
+  // Create iframe element
+  const additionalIframe7 = document.createElement('iframe');
+  additionalIframe7.src = 'index.html';
+  additionalIframe7.style.width = '100%';
+  additionalIframe7.style.height = '100%';
+  additionalIframe7.style.border = '0';
+ // additionalIframe7.style.pointerEvents = 'none';
 
-                  newSoundSource6.setBuffer(buffer);
-                  newSoundSource6.setRefDistance(1);
-                  newSoundSource6.position.set(1590, 50, 1500);
-                  newSoundSource6.setDistanceModel('linear');
-                  newSoundSource6.setRolloffFactor(3);
-                  newSoundSource6.setMaxDistance(1500);
-                  newSoundSource6.setVolume(1);
-                  newSoundSource6.setDirectionalCone(60, 120, .1);
-                  newSoundSource6.rotation.set(-Math.PI/4, -Math.PI/4, 0);
-                  newSoundSource6.loop = true;
-                  newSoundSource6.play();
-           //       newSoundSource6.getOutput().connect(positionalAudioAnalyser);
+  // Set permissions
+ // additionalIframe7.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe7.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv7.appendChild(additionalIframe7);
 
-                  const airNoiseHelper = new PositionalAudioHelper(newSoundSource6, 100);
-            //      newSoundSource4.add(airNoiseHelper);
-                
-                // Bring up the volume after short delay, giving all parameters time to load
-                setTimeout(() => {
-                    positionalAudio.setVolume(1);
-                },  100); // Wait 100ms
-                
-              });
-              
-              scene.add(newSoundSource6);
+  // Create 3D object and position it
+  const additionalIframeObject7 = new CSS3DObject(additionalIframeDiv7);
+  additionalIframeObject7.position.set(-2750, 30, 7500);
+  additionalIframeObject7.rotation.set(0, Math.PI, 0);
+  additionalIframeObject7.scale.set(1, 1, 1);
+  additionalIframeObject7.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject7 = additionalIframeObject7;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject7);
+  
+  // Return the created object
+  return additionalIframeObject7;
+}
 
-              const newSoundSource7 = new THREE.PositionalAudio(listener);
-            audioLoader.load('pulsar_2.mp3', function (buffer) {
+function createHydraIframe4() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject3;
+  
+  // Create container div
+  const additionalIframeDiv3 = document.createElement('div');
+  additionalIframeDiv3.style.width = '1000px';
+  additionalIframeDiv3.style.height = '1000px';
+  additionalIframeDiv3.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv3.style.zIndex = '-1';
 
-                newSoundSource7.setBuffer(buffer);
-                newSoundSource7.setRefDistance(1);
-                newSoundSource7.position.set(1500, 50, 2000);
-                newSoundSource7.setDistanceModel('linear');
-                newSoundSource7.setRolloffFactor(3);
-                newSoundSource7.setMaxDistance(1500);
-                newSoundSource7.setVolume(1);
-                newSoundSource7.setDirectionalCone(60, 120, .1);
-                newSoundSource7.rotation.set(-Math.PI/4, 3*Math.PI/4, 0);
-                newSoundSource7.loop = true;
-                newSoundSource7.play();
-           //     newSoundSource7.getOutput().connect(positionalAudioAnalyser);
+  // Create iframe element
+  const additionalIframe3 = document.createElement('iframe');
+  additionalIframe3.src = 'hydrainwebpage2.html';
+  additionalIframe3.style.width = '100%';
+  additionalIframe3.style.height = '100%';
+  additionalIframe3.style.border = '0';
+  additionalIframe3.style.pointerEvents = 'none';
 
-                const quietClicksHelper = new PositionalAudioHelper(newSoundSource7, 100);
-          //      newSoundSource5.add(quietClicksHelper);
+  // Set permissions
+  additionalIframe3.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe3.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv3.appendChild(additionalIframe3);
 
-              // Bring up the volume after short delay, giving all parameters time to load
-              setTimeout(() => {
-                  positionalAudio.setVolume(1);
-              },  100); // Wait 100ms
+  // Create 3D object and position it
+  const additionalIframeObject3 = new CSS3DObject(additionalIframeDiv3);
+  additionalIframeObject3.position.set(-73, 0, -1460);
+  additionalIframeObject3.rotation.set(0, 0, 0);
+  additionalIframeObject3.scale.set(3.55, .33, 1);
+  additionalIframeObject3.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject3 = additionalIframeObject3;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject3);
+  
+  // Return the created object
+  return additionalIframeObject3;
+}
 
-            });
+function createHydraIframe5() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject2;
+  
+  // Create container div
+  const additionalIframeDiv2 = document.createElement('div');
+  additionalIframeDiv2.style.width = '1000px';
+  additionalIframeDiv2.style.height = '1000px';
+  additionalIframeDiv2.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv2.style.zIndex = '-1';
 
-            scene.add(newSoundSource7);
-          
+  // Create iframe element
+  const additionalIframe2 = document.createElement('iframe');
+  additionalIframe2.src = 'hydrainwebpage2.html';
+  additionalIframe2.style.width = '100%';
+  additionalIframe2.style.height = '100%';
+  additionalIframe2.style.border = '0';
+  additionalIframe2.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe2.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe2.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv2.appendChild(additionalIframe2);
+
+  // Create 3D object and position it
+  const additionalIframeObject2 = new CSS3DObject(additionalIframeDiv2);
+  additionalIframeObject2.position.set(-1600, 0, -300);
+  additionalIframeObject2.rotation.set(0, Math.PI/2, 0);
+  additionalIframeObject2.scale.set(3.2, .33, 1);
+  additionalIframeObject2.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject2 = additionalIframeObject2;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject2);
+  
+  // Return the created object
+  return additionalIframeObject2;
+}
+
+function createHydraIframe6() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject4;
+  
+  // Create container div
+  const additionalIframeDiv4 = document.createElement('div');
+  additionalIframeDiv4.style.width = '1000px';
+  additionalIframeDiv4.style.height = '1000px';
+  additionalIframeDiv4.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv4.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe4 = document.createElement('iframe');
+  additionalIframe4.src = 'hydrainwebpage2.html';
+  additionalIframe4.style.width = '100%';
+  additionalIframe4.style.height = '100%';
+  additionalIframe4.style.border = '0';
+  additionalIframe4.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe4.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe4.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv4.appendChild(additionalIframe4);
+
+  // Create 3D object and position it
+  const additionalIframeObject4 = new CSS3DObject(additionalIframeDiv4);
+  additionalIframeObject4.position.set(150, 0, -1380);
+  additionalIframeObject4.rotation.set(0, 0, 0);
+  additionalIframeObject4.scale.set(3, .33, 1);
+  additionalIframeObject4.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject4 = additionalIframeObject4;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject4);
+  
+  // Return the created object
+  return additionalIframeObject4;
+}
+
+function createHydraIframe7() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject;
+  
+  // Create container div
+  const additionalIframeDiv = document.createElement('div');
+  additionalIframeDiv.style.width = '1000px';
+  additionalIframeDiv.style.height = '1000px';
+  additionalIframeDiv.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe = document.createElement('iframe');
+  additionalIframe.src = 'hydrainwebpage2.html';
+  additionalIframe.style.width = '100%';
+  additionalIframe.style.height = '100%';
+  additionalIframe.style.border = '0';
+  additionalIframe.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv.appendChild(additionalIframe);
+
+  // Create 3D object and position it
+  const additionalIframeObject = new CSS3DObject(additionalIframeDiv);
+  additionalIframeObject.position.set(-1350, 0, 0);
+  additionalIframeObject.rotation.set(0, Math.PI/2, 0);
+  additionalIframeObject.scale.set(3, .33, 1);
+  additionalIframeObject.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject = additionalIframeObject;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject);
+  
+  // Return the created object
+  return additionalIframeObject;
+}
+
+function createHydraIframe8() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject11;
+  
+  // Create container div
+  const additionalIframeDiv11 = document.createElement('div');
+  additionalIframeDiv11.style.width = '100px';
+  additionalIframeDiv11.style.height = '100px';
+  additionalIframeDiv11.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv11.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe11 = document.createElement('iframe');
+  additionalIframe11.src = 'hydrainwebpage2.html';
+  additionalIframe11.style.width = '100%';
+  additionalIframe11.style.height = '100%';
+  additionalIframe11.style.border = '0';
+  additionalIframe11.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe11.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe11.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv11.appendChild(additionalIframe11);
+
+  // Create 3D object and position it
+  const additionalIframeObject11 = new CSS3DObject(additionalIframeDiv11);
+  additionalIframeObject11.position.set(-1850, 45, 1450);
+  additionalIframeObject11.rotation.set(0, 0, 0);
+  additionalIframeObject11.scale.set(10, 2.4, 1);
+  additionalIframeObject11.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject11 = additionalIframeObject11;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject11);
+  
+  // Return the created object
+  return additionalIframeObject11;
+}
+
+function createHydraIframe9() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject12;
+  
+  // Create container div
+  const additionalIframeDiv12 = document.createElement('div');
+  additionalIframeDiv12.style.width = '100px';
+  additionalIframeDiv12.style.height = '100px';
+  additionalIframeDiv12.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv12.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe12 = document.createElement('iframe');
+  additionalIframe12.src = 'hydrainwebpage2.html';
+  additionalIframe12.style.width = '100%';
+  additionalIframe12.style.height = '100%';
+  additionalIframe12.style.border = '0';
+  additionalIframe12.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe12.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe12.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv12.appendChild(additionalIframe12);
+
+  // Create 3D object and position it
+  const additionalIframeObject12 = new CSS3DObject(additionalIframeDiv12);
+  additionalIframeObject12.position.set(-2100, 45, 1300);
+  additionalIframeObject12.rotation.set(0, 0, 0);
+  additionalIframeObject12.scale.set(10, 2.4, 1);
+  additionalIframeObject12.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject12 = additionalIframeObject12;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject12);
+  
+  // Return the created object
+  return additionalIframeObject12;
+}
+
+function createHydraIframe10() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject13;
+  
+  // Create container div
+  const additionalIframeDiv13 = document.createElement('div');
+  additionalIframeDiv13.style.width = '500px';
+  additionalIframeDiv13.style.height = '500px';
+  additionalIframeDiv13.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv13.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe13 = document.createElement('iframe');
+  additionalIframe13.src = 'hydrainwebpage2.html';
+  additionalIframe13.style.width = '100%';
+  additionalIframe13.style.height = '100%';
+  additionalIframe13.style.border = '0';
+  additionalIframe13.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe13.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe13.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv13.appendChild(additionalIframe13);
+
+  // Create 3D object and position it
+  const additionalIframeObject13 = new CSS3DObject(additionalIframeDiv13);
+  additionalIframeObject13.position.set(-2600, 45, 3290);
+  additionalIframeObject13.rotation.set(0, Math.PI/2, 0);
+  additionalIframeObject13.scale.set(8, .48, 1);
+  additionalIframeObject13.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject13 = additionalIframeObject13;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject13);
+  
+  // Return the created object
+  return additionalIframeObject13;
+}
+
+function createHydraIframe11() {
+  // Declare the global variable for this iframe object
+  let hydraIframeObject14;
+  
+  // Create container div
+  const additionalIframeDiv14 = document.createElement('div');
+  additionalIframeDiv14.style.width = '500px';
+  additionalIframeDiv14.style.height = '500px';
+  additionalIframeDiv14.style.pointerEvents = 'none'; // Click-through
+  additionalIframeDiv14.style.zIndex = '-1';
+
+  // Create iframe element
+  const additionalIframe14 = document.createElement('iframe');
+  additionalIframe14.src = 'hydrainwebpage2.html';
+  additionalIframe14.style.width = '100%';
+  additionalIframe14.style.height = '100%';
+  additionalIframe14.style.border = '0';
+  additionalIframe14.style.pointerEvents = 'none';
+
+  // Set permissions
+  additionalIframe14.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  additionalIframe14.allowFullscreen = true;
+  
+  // Append iframe to container
+  additionalIframeDiv14.appendChild(additionalIframe14);
+
+  // Create 3D object and position it
+  const additionalIframeObject14 = new CSS3DObject(additionalIframeDiv14);
+  additionalIframeObject14.position.set(-2350, 45, 3400);
+  additionalIframeObject14.rotation.set(0, Math.PI/2, 0);
+  additionalIframeObject14.scale.set(7.8, .48, 1);
+  additionalIframeObject14.renderOrder = -1;
+  
+  // Assign to global variable
+  hydraIframeObject14 = additionalIframeObject14;
+  
+  // Add to CSS scene
+  cssScene.add(additionalIframeObject14);
+  
+  // Return the created object
+  return additionalIframeObject14;
+}
+
+// Function to calculate gains based on listener position - FIRST SOURCE
+function calculateChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 2500;
+    const baseGain = Math.max(0, 1 - distance / maxDistance);
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
+// Function to calculate gains for the second sound source
+function calculateSecondChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain - different falloff for second source
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 1200; // Different max distance for second source
+    const baseGain = Math.max(0, 1 - distance / maxDistance);
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
+// Define the fixed 3D position for the first sound source
+const soundSourcePosition = new THREE.Vector3(-200, 50, -1450);
+
+// Define the fixed 3D position for the second sound source
+const secondSoundSourcePosition = new THREE.Vector3(-1450, 50, 1000);
+
+// Create Channel Merger with the appropriate number of channels
+const mergerChannels = isQuadSupported ? 4 : 2;
+const merger = audioContext.createChannelMerger(mergerChannels);
+merger.connect(audioContext.destination);
+
+// Load and play sound at a fixed position
+const audioLoader = new THREE.AudioLoader();
+let sourceNode;
+let channelGains = [];
+
+audioLoader.load('4ch-test-mono.mp3', function(buffer) {
+    // Create a buffer source
+    sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = buffer;
+    sourceNode.loop = true;
+    
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Audio file has ${numChannels} channels`);
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Start with audible gain to test
+        channelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources (most common case), we need to send the same signal to all channels
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < channelGains.length; i++) {
+            sourceNode.connect(channelGains[i]);
         }
-      
-        // Create iframes and audio sources
-        for (let i = 0; i < iframePositions.length; i++) {
-            const pos = iframePositions[i];
-            const rot = i === 0 ? [0, -Math.PI/2, 0] : 
-                        i === 1 ? [0, 10*Math.PI/6, 0] : 
-                        i === 2 ? [0, Math.PI / 2, 0] : 
-                                  [0, -Math.PI / 2, 0];
-            createIframeWithAudio(pos, rot, soundList[i]);
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        sourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(channelGains[0], 0);
+            splitter.connect(channelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(channelGains[1], 1);
+            splitter.connect(channelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(channelGains[0], 0); // Left to left
+            splitter.connect(channelGains[1], 1); // Right to right
         }
+    }
 
-        function resizeRendererToDisplaySize(renderer) {
-            const canvas = renderer.domElement;
-            const pixelRatio = window.devicePixelRatio;
-            const width = canvas.clientWidth * pixelRatio | 0;
-            const height = canvas.clientHeight * pixelRatio | 0;
-            const needResize = canvas.width !== width || canvas.height !== height;
-            if (needResize) {
-                renderer.setSize(width, height, false);
-                cssRenderer.setSize(width, height);
+    // Start playback
+    sourceNode.start();
+    
+    // Set initial gain values and start update loop
+    updateAudioGains();
+});
+
+// Function to update audio gains dynamically
+function updateAudioGains() {
+    if (!sourceNode) return;
+    
+    // Calculate positional gains - still get 4 values
+    const posGains = calculateChannelGains(
+        camera.position, 
+        soundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        // Quad mode - apply gains directly to the 4 channels
+        for (let i = 0; i < channelGains.length; i++) {
+            if (channelGains[i]) {
+                channelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
             }
-            return needResize;
         }
+    } else {
+        // Stereo mode - downmix front/back to left/right
+        // Mix front-left + back-left to left channel
+        // Mix front-right + back-right to right channel
+        if (channelGains[0]) {
+            channelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2], // mix front-left and back-left
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (channelGains[1]) {
+            channelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3], // mix front-right and back-right
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+    
+    // Continue updating
+    requestAnimationFrame(updateAudioGains);
+}
+
+// Create a second set of channel gains for the new sound source
+let secondSourceNode;
+let secondChannelGains = [];
+
+// Load and play second sound at its fixed position
+// Load and play second sound at its fixed position
+audioLoader.load('pulsar_1.mp3', function(buffer) {
+    // Create a buffer source for the second sound
+    secondSourceNode = audioContext.createBufferSource();
+    secondSourceNode.buffer = buffer;
+    secondSourceNode.loop = true;
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Start with audible gain to test
+        secondChannelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources, we need to send the same signal to all channels
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Second audio file has ${numChannels} channels`);
+    
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < secondChannelGains.length; i++) {
+            secondSourceNode.connect(secondChannelGains[i]);
+        }
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        secondSourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(secondChannelGains[0], 0);
+            splitter.connect(secondChannelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(secondChannelGains[1], 1);
+            splitter.connect(secondChannelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(secondChannelGains[0], 0); // Left to left
+            splitter.connect(secondChannelGains[1], 1); // Right to right
+        }
+    }
+
+    // Start playback
+    secondSourceNode.start();
+    
+    // Set initial gain values and start update loop
+    updateSecondAudioGains();
+});
+
+// Function to update second audio gains dynamically
+function updateSecondAudioGains() {
+    if (!secondSourceNode) return;
+    
+    // Calculate positional gains - still get 4 values
+    const posGains = calculateSecondChannelGains(
+        camera.position, 
+        secondSoundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        // Quad mode - apply gains directly
+        for (let i = 0; i < secondChannelGains.length; i++) {
+            if (secondChannelGains[i]) {
+                secondChannelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
+            }
+        }
+    } else {
+        // Stereo mode - downmix
+        if (secondChannelGains[0]) {
+            secondChannelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2], // mix front-left and back-left
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (secondChannelGains[1]) {
+            secondChannelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3], // mix front-right and back-right
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+    
+    // Continue updating
+    requestAnimationFrame(updateSecondAudioGains);
+}
+
+    function resizeRendererToDisplaySize(renderer) {
+        const canvas = renderer.domElement;
+        // Use the renderer's pixel ratio instead of window.devicePixelRatio
+        const pixelRatio = renderer.getPixelRatio();
+        const width = canvas.clientWidth * pixelRatio | 0;
+        const height = canvas.clientHeight * pixelRatio | 0;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            // Don't override our custom pixel ratio setting
+            renderer.setSize(width / pixelRatio, height / pixelRatio, false);
+            cssRenderer.setSize(width / pixelRatio, height / pixelRatio);
+        }
+        return needResize;
+    }
    
     const timerDiv = document.createElement('div');
       timerDiv.style.position = 'fixed';
@@ -1568,7 +1724,7 @@ updateTimer(); // Call once immediately to show 00:00
   
       
   //Gamepad setup
-   function handleGamepadInput() {
+  function handleGamepadInput() {
     const gamepads = navigator.getGamepads();
     const gp = gamepads[0]; // Assuming a single gamepad
 
@@ -1578,8 +1734,8 @@ updateTimer(); // Call once immediately to show 00:00
         const rightStickX = gp.axes[2]; // Right stick horizontal
         const rightStickY = gp.axes[3]; // Right stick vertical
 
-        const moveSpeed = 0; // Adjust for smoother motion control 
-        const lookSpeed = 0.09; // Lower for slower camera rotation
+        const moveSpeed = 0; // Adjust for movement control
+        const lookSpeed = 20; // Sensitivity for mouse movement
 
         // Move camera forward/backward
         if (Math.abs(leftStickY) > 0.1) {
@@ -1590,35 +1746,14 @@ updateTimer(); // Call once immediately to show 00:00
             controls.moveRight(leftStickX * moveSpeed);
         }
 
-        // Smooth rotation using rotateOnAxis
-        const yaw = new THREE.Vector3(0, 1, 0); // Yaw axis (up)
-        const pitch = new THREE.Vector3(1, 0, 0); // Pitch axis (right)
-
-        // Rotate around the Y-axis (yaw)
-        if (Math.abs(rightStickX) > 0.1) {
-            camera.rotateOnWorldAxis(yaw, -rightStickX * lookSpeed);
+        // Simulate mouse movement using right stick
+        if (Math.abs(rightStickX) > 0.1 || Math.abs(rightStickY) > 0.1) {
+            const mouseMoveEvent = new MouseEvent("mousemove", {
+                movementX: rightStickX * lookSpeed,
+                movementY: rightStickY * lookSpeed
+            });
+            document.dispatchEvent(mouseMoveEvent);
         }
-
-        // Rotate around the X-axis (pitch), with clamping
-        if (Math.abs(rightStickY) > 0.1) {
-            camera.rotateOnAxis(pitch, -rightStickY * lookSpeed);
-           
-
-             // Apply pitch clamping to prevent gimbal lock (roll and excessive pitch)
-            const maxPitch = Math.PI / 2 - 0.01; // Slightly less than 90 degrees
-            const minPitch = -Math.PI / 2 + 0.01;
-            const pitchQuaternion = new THREE.Quaternion().setFromEuler(camera.rotation);
-            pitchQuaternion.x = Math.max(minPitch, Math.min(maxPitch, pitchQuaternion.x));
-            camera.rotation.setFromQuaternion(pitchQuaternion);
-        }
-
-        // Apply yaw clamping (optional, depending on your game design)
-        const maxYaw = Math.PI - 0.05;  // +180 degrees
-        const minYaw = -Math.PI + 0.05; // -180 degrees
-        const yawQuaternion = new THREE.Quaternion().setFromEuler(camera.rotation);
-        yawQuaternion.y = Math.max(minYaw, Math.min(maxYaw, yawQuaternion.y));
-        camera.rotation.setFromQuaternion(yawQuaternion);          
-        
     }
 }
 
@@ -1628,28 +1763,80 @@ let speed = 0; // Movement speed
 let rms = 0;
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-//Start microphone input capture and analysis
-
+// Microphone Input and Analysis Code
 async function setupAudioInput() {
     try {
-        // Get user media permission
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-const source = threeJsAudioContext.createMediaStreamSource(stream);
-source.connect(positionalAudioAnalyser);
-positionalAudioAnalyser.fftSize = 2048;
-const bufferLength = positionalAudioAnalyser.frequencyBinCount;
-const dataArray = new Float32Array(bufferLength);
-const frequencies = new Float32Array(bufferLength);
-let targetSpeed = 0;
-const speedFactor = .3;
-const AMPLITUDE_THRESHOLD = 0.005;
-let previousFrequencies = new Float32Array(bufferLength);
+        console.log("Setting up enhanced microphone analysis...");
+        
+        // Create a separate audio context for microphone analysis to avoid interfering with the 4-channel output
+        const micAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Request microphone access with high-quality settings
+        const micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+                sampleRate: { ideal: 48000 }
+            }
+        });
+        
+        console.log("Microphone access granted");
+        
+        // Create microphone source
+        const micSource = micAudioContext.createMediaStreamSource(micStream);
+        
+        // Create analyzer for frequency and time-domain analysis
+        const analyzer = micAudioContext.createAnalyser();
+        analyzer.fftSize = 2048; // Higher value for more detailed frequency analysis
+        const bufferLength = analyzer.frequencyBinCount;
+        
+        // Create data arrays for different types of analysis
+        const timeDataArray = new Float32Array(analyzer.fftSize);
+        const frequencyDataArray = new Float32Array(bufferLength);
+        const previousFrequencies = new Float32Array(bufferLength);
+        
+        // Connect microphone to analyzer
+        micSource.connect(analyzer);
+        
+        // Analysis parameters
+        const speedFactor = .95;
+        const AMPLITUDE_THRESHOLD = 0.0005;
+        let targetSpeed = 0;
+        
+        // Store references in the global scope
+        window.microphoneInput = {
+            context: micAudioContext,
+            stream: micStream,
+            source: micSource,
+            analyzer: analyzer,
+            timeDataArray: timeDataArray,
+            frequencyDataArray: frequencyDataArray,
+            previousFrequencies: previousFrequencies,
+            bufferLength: bufferLength,
+            isAnalyzing: true,
+            speedFactor: speedFactor,
+            amplitudeThreshold: AMPLITUDE_THRESHOLD,
+            targetSpeed: targetSpeed
+        };
+        
+        // Start analysis loop
+        analyzeAudio();
+        
+        console.log("Enhanced microphone analysis started");
+        return true;
+    } catch (error) {
+        console.error("Error setting up microphone:", error.message);
+        return false;
+    }
+}
 
-function calculateSpectralCentroid(frequencyData) {
+// Spectral analysis functions
+function calculateSpectralCentroid(frequencyData, sampleRate, bufferLength) {
     let numerator = 0;
     let denominator = 0;
     for (let i = 0; i < frequencyData.length; i++) {
-        const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
+        const frequency = i * sampleRate / (2 * bufferLength);
         const magnitude = Math.abs(frequencyData[i]);
         numerator += frequency * magnitude;
         denominator += magnitude;
@@ -1657,11 +1844,11 @@ function calculateSpectralCentroid(frequencyData) {
     return denominator !== 0 ? numerator / denominator : 0;
 }
 
-function calculateSpectralSpread(frequencyData, centroid) {
+function calculateSpectralSpread(frequencyData, centroid, sampleRate, bufferLength) {
     let numerator = 0;
     let denominator = 0;
     for (let i = 0; i < frequencyData.length; i++) {
-        const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
+        const frequency = i * sampleRate / (2 * bufferLength);
         const magnitude = Math.abs(frequencyData[i]);
         numerator += magnitude * Math.pow(frequency - centroid, 2);
         denominator += magnitude;
@@ -1669,84 +1856,134 @@ function calculateSpectralSpread(frequencyData, centroid) {
     return denominator !== 0 ? Math.sqrt(numerator / denominator) : 0;
 }
 
-function calculateSpectralKurtosis(frequencyData, centroid, spread) {
-            let numerator = 0, denominator = 0;
-            for (let i = 0; i < frequencyData.length; i++) {
-                const frequency = i * audioContext.sampleRate / (2 * frequencyData.length);
-                const magnitude = Math.abs(frequencyData[i]);
-                numerator += magnitude * Math.pow((frequency - centroid) / spread, 4);
-                denominator += magnitude;
-            }
-            return denominator !== 0 ? (numerator / denominator) - 3 : 0; // Subtract 3 to center at zero
+function calculateSpectralKurtosis(frequencyData, centroid, spread, sampleRate, bufferLength) {
+    let numerator = 0, denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * sampleRate / (2 * bufferLength);
+        const magnitude = Math.abs(frequencyData[i]);
+        // Check for valid spread to avoid division by zero
+        if (spread > 0) {
+            numerator += magnitude * Math.pow((frequency - centroid) / spread, 4);
+            denominator += magnitude;
         }
-
-        function calculateSpectralFlux(currentFrequencies, previousFrequencies) {
-            let sum = 0;
-            for (let i = 0; i < currentFrequencies.length; i++) {
-                const diff = currentFrequencies[i] - previousFrequencies[i];
-                sum += diff * diff;
-            }
-            return Math.sqrt(sum) / currentFrequencies.length;
-        }
-
-function analyzeAudio() {
-    positionalAudioAnalyser.getFloatTimeDomainData(dataArray);
-    let sumSquares = 0;
-    for (let i = 0; i < dataArray.length; i++) {
-        sumSquares += dataArray[i] * dataArray[i];
     }
-    rms = Math.sqrt(sumSquares / dataArray.length);
-//    console.log("Amplitude (RMS):", rms);
+    return denominator !== 0 && spread > 0 ? (numerator / denominator) - 3 : 0; // Subtract 3 to center at zero
+}
 
-    if (rms >= AMPLITUDE_THRESHOLD) {
-        positionalAudioAnalyser.getFloatFrequencyData(frequencies);
-        const linearFrequencies = frequencies.map(db => Math.pow(10, db / 20));
-        const centroid = calculateSpectralCentroid(linearFrequencies);
-        const spread = calculateSpectralSpread(linearFrequencies, centroid);
-        const flux = calculateSpectralFlux(linearFrequencies, previousFrequencies);
-        const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread);
+function calculateSpectralFlux(currentFrequencies, previousFrequencies) {
+    let sum = 0;
+    for (let i = 0; i < currentFrequencies.length; i++) {
+        const diff = currentFrequencies[i] - previousFrequencies[i];
+        sum += diff * diff;
+    }
+    return Math.sqrt(sum) / currentFrequencies.length;
+}
+
+// Main audio analysis function
+function analyzeAudio() {
+    if (!window.microphoneInput || !window.microphoneInput.isAnalyzing) return;
+    
+    const { 
+        analyzer, timeDataArray, frequencyDataArray, previousFrequencies, 
+        bufferLength, context, amplitudeThreshold, speedFactor
+    } = window.microphoneInput;
+    
+    // Get time domain data for RMS calculation
+    analyzer.getFloatTimeDomainData(timeDataArray);
+    
+    // Calculate RMS (audio volume)
+    let sumSquares = 0;
+    for (let i = 0; i < timeDataArray.length; i++) {
+        sumSquares += timeDataArray[i] * timeDataArray[i];
+    }
+    const rms = Math.sqrt(sumSquares / timeDataArray.length);
+    
+    // Only perform detailed analysis if sound is above threshold
+    if (rms >= amplitudeThreshold) {
+        // Get frequency data
+        analyzer.getFloatFrequencyData(frequencyDataArray);
         
+        // Convert from dB to linear scale
+        const linearFrequencies = frequencyDataArray.map(db => Math.pow(10, db / 20));
+        
+        // Perform spectral analysis
+        const centroid = calculateSpectralCentroid(linearFrequencies, context.sampleRate, bufferLength);
+        const spread = calculateSpectralSpread(linearFrequencies, centroid, context.sampleRate, bufferLength);
+        const flux = calculateSpectralFlux(linearFrequencies, previousFrequencies);
+        const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread, context.sampleRate, bufferLength);
+        
+        // Log detailed analysis to console
+        console.log(`Audio Analysis: RMS=${rms.toFixed(5)}, Centroid=${centroid.toFixed(2)}Hz, Spread=${spread.toFixed(2)}, Flux=${flux.toFixed(7)}, Kurtosis=${kurtosis.toFixed(2)}`);
+        
+        // Set movement speed based on audio characteristics
         if (centroid > 0) {
-       //   targetSpeed = ((((centroid + spread)/2) - 1500) / 2) + ((kurtosis - 0.5) * 100);
-        //    targetSpeed = ((0.99 - kurtosis) * 70000) + ((Math.sqrt(spread) - 50) * 7) + ((flux - 0.01) * 700);
-        //    targetSpeed = (Math.sqrt(spread) - 55) * 7;
-      //  targetSpeed = (((centroid / 5000) * 600 - 300) + ((spread / 5000) * 400 - 200) - ((1-kurtosis) * 4000) + (flux * 10000 - 50));
-       //     targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) * 5 + 300;
-         //   targetSpeed = (((spread - 2500)/100) - (kurtosis)) * 3;
-         // targetSpeed = (centroid - 1000) * 0.5;
-         targetSpeed = (((spread - 2500)/50) + (flux*10000000) - (kurtosis*2)) + 100;
+            // Calculate target speed using the formula
+            window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)); // good for breath & air noise & key clicks
+          //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
 
-       //     console.log('Spectral Centroid:', centroid/100);
-            console.log('Spectral Spread:', ((spread - 2500)/50));
-            console.log('Spectral Flux:', flux*10000000);
-            console.log('Spectral Kurtosis:', -kurtosis*2);
-            console.log('Target Speed:', targetSpeed);
+            // Log target speed
+            console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
         }
+        
+        // Save current frequencies for next flux calculation
         previousFrequencies.set(linearFrequencies);
     } else {
-        targetSpeed = 0;
+        // Reset target speed when audio is below threshold
+        window.microphoneInput.targetSpeed = 0;
     }
     
-    speed += (targetSpeed - speed) * speedFactor;
+    // Gradually adjust speed for smoother movement
+    if (typeof speed !== 'undefined') {
+        speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
+    } else {
+        // If speed variable doesn't exist in global scope, create it
+        window.speed = 0;
+        speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
+    }
+    
+    // Continue analysis loop
     requestAnimationFrame(analyzeAudio);
 }
 
-analyzeAudio();
-
-        // Wait for 10 seconds before starting audio analysis
-     //   console.log('Waiting for 10 seconds before processing audio...');
-        await delay(10000);
-     //   console.log('Starting audio analysis...');
+// Function to stop microphone input and analysis
+function stopMicrophoneInput() {
+    if (window.microphoneInput) {
+        console.log("Stopping microphone input...");
         
-        // Start the audio analysis
-        analyzeAudio();
-
-    } catch (err) {
-        console.error('Error accessing microphone:', err);
-    } 
+        // Stop analysis
+        window.microphoneInput.isAnalyzing = false;
+        
+        // Stop audio tracks
+        if (window.microphoneInput.stream) {
+            window.microphoneInput.stream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Close audio context
+        if (window.microphoneInput.context && window.microphoneInput.context.state !== 'closed') {
+            window.microphoneInput.context.close();
+        }
+        
+        // Clear references
+        window.microphoneInput = null;
+        
+        console.log("Microphone input stopped");
+        return true;
+    }
+    return false;
 }
-    
+
+// Add a function to toggle microphone input
+function toggleMicrophoneInput() {
+    if (window.microphoneInput) {
+        return stopMicrophoneInput();
+    } else {
+        return setupAudioInput();
+    }
+}
+   
 function animate() {
+    updateAudioGains();
+    updateSecondAudioGains(); // Update second sound source
     const delta = clock.getDelta();
     handleGamepadInput();
   
@@ -1757,7 +1994,7 @@ function animate() {
         });
     }
   
-    move.forward = true;
+    move.forward = true; //comment out for DEVELOPMENT
     
     if (mixer) {
         mixer.update(delta);
@@ -1782,15 +2019,13 @@ function animate() {
     if (mixer5) {
         mixer5.update(delta);
     }
-    
- //   const speed = 150 * delta;
   
-    const baseMoveSpeed = .6; // Base speed multiplier
+    const baseMoveSpeed = 1; // Base speed multiplier
     const maxSpeed = 800
     const minSpeed = -800;
- //   const minSpeed = 100
     const clampedSpeed = Math.max(minSpeed, Math.min(speed, maxSpeed));
-    const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed;
+    const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
+  //  const adjustedSpeed = 200 * delta; // for DEVELOPMENT
   
     // Store initial position
     const initialPosition = camera.position.clone();
@@ -1829,17 +2064,12 @@ function animate() {
         const hitX5 = cameraBoundingBox.intersectsBox(boundingBox5);
         const hitX6 = cameraBoundingBox.intersectsBox(boundingBox6);
         const hitX7 = cameraBoundingBox.intersectsBox(boundingBox7);
+        const hitX8 = cameraBoundingBox.intersectsBox(boundingBox8);
         const hitX9 = cameraBoundingBox.intersectsBox(boundingBox9);
         const hitX10 = cameraBoundingBox.intersectsBox(boundingBox10);
         const hitX11 = cameraBoundingBox.intersectsBox(boundingBox11);
-        const hitX12 = cameraBoundingBox.intersectsBox(boundingBox12);
-        const hitX13 = cameraBoundingBox.intersectsBox(boundingBox13);
-        const hitX14 = cameraBoundingBox.intersectsBox(boundingBox14);
-        const hitX15 = cameraBoundingBox.intersectsBox(boundingBox15);
-        const hitX16 = cameraBoundingBox.intersectsBox(boundingBox16);
-
         
-        if (hitXRed || hitXGreen || hitX3 || hitX4 || hitX5 || hitX6 || hitX7 || hitX9 || hitX10 || hitX11 || hitX12 || hitX13 || hitX14 || hitX15 || hitX16 ) {
+        if (hitXRed || hitXGreen || hitX3 || hitX4 || hitX5 || hitX6 || hitX7 || hitX8 || hitX9 || hitX10 || hitX11 ) {
             // Revert X movement if there's a collision
             camera.position.sub(xMovement);
         } else {
@@ -1859,16 +2089,12 @@ function animate() {
         const hitZ5 = cameraBoundingBox.intersectsBox(boundingBox5);
         const hitZ6 = cameraBoundingBox.intersectsBox(boundingBox6);
         const hitZ7 = cameraBoundingBox.intersectsBox(boundingBox7);
+        const hitZ8 = cameraBoundingBox.intersectsBox(boundingBox8);
         const hitZ9 = cameraBoundingBox.intersectsBox(boundingBox9);
         const hitZ10 = cameraBoundingBox.intersectsBox(boundingBox10);
         const hitZ11 = cameraBoundingBox.intersectsBox(boundingBox11);
-        const hitZ12 = cameraBoundingBox.intersectsBox(boundingBox12);
-        const hitZ13 = cameraBoundingBox.intersectsBox(boundingBox13);
-        const hitZ14 = cameraBoundingBox.intersectsBox(boundingBox14);
-        const hitZ15 = cameraBoundingBox.intersectsBox(boundingBox15);
-        const hitZ16 = cameraBoundingBox.intersectsBox(boundingBox16);
       
-        if (hitZRed || hitZGreen || hitZ3 || hitZ4 || hitZ5 || hitZ6 || hitZ7 || hitZ9 || hitZ10 || hitZ11 || hitZ12 || hitZ13 || hitZ14 || hitZ15 || hitZ16) {
+        if (hitZRed || hitZGreen || hitZ3 || hitZ4 || hitZ5 || hitZ6 || hitZ7 || hitZ8 || hitZ9 || hitZ10 || hitZ11 ) {
             // Revert Z movement if there's a collision
             camera.position.sub(zMovement);
         } else {
