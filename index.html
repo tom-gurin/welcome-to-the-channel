@@ -29,7 +29,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 255);
+            background: rgba(255, 255, 255, 0);
             color: #808080;
             font-size: 60px;
             font-family: "Courier New", monospace;
@@ -336,38 +336,9 @@ if (isQuadSupported) {
         const geometry12 = new THREE.BoxGeometry( 840, 230, 100 ); 
         const material12 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube12 = new THREE.Mesh( geometry12, material12 ); 
-        cube12.position.set(-2325, 70, 5370);
+        cube12.position.set(-2475, 70, 5250);
         cube12.userData.collidable = true;
-     //   scene.add( cube12 );
-      
-        const geometry13 = new THREE.BoxGeometry( 440, 230, 100 ); 
-        const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
-        const cube13 = new THREE.Mesh( geometry13, material13 ); 
-        cube13.position.set(-2800, 70, 5150);
-        cube13.userData.collidable = true;
-     //   scene.add( cube13 );
-      
-        const geometry14 = new THREE.BoxGeometry( 300, 230, 840 ); 
-        const material14 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
-        const cube14 = new THREE.Mesh( geometry14, material14 ); 
-        cube14.position.set(-3000, 70, 5300);
-        cube14.userData.collidable = true;
-     //   scene.add( cube14 );
-      
-        const geometry15 = new THREE.BoxGeometry( 3490, 230, 100 ); 
-        const material15 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
-        const cube15 = new THREE.Mesh( geometry15, material15 ); 
-        cube15.position.set(-225, 70, 5370);
-        cube15.userData.collidable = true;
-     //   scene.add( cube15 );
-      
-        const geometry16 = new THREE.BoxGeometry( 5200, 230, 100 ); 
-        const material16 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
-        const cube16 = new THREE.Mesh( geometry16, material16 ); 
-        cube16.position.set(-225, 70, 5600);
-        cube16.userData.collidable = true;
-     //   scene.add( cube16 );
-      
+        scene.add( cube12 );      
       
       // Add bounding box 1
       const greenBoxBoundingBox = new THREE.Box3().setFromObject(cube);
@@ -430,26 +401,6 @@ if (isQuadSupported) {
       const boundingBox12 = new THREE.Box3().setFromObject(cube12);
       const boundingBox12Helper = new THREE.BoxHelper(cube12, 0xff0000);
   //   scene.add(boundingBox12Helper);
-      
-       // Add bounding box 13
-      const boundingBox13 = new THREE.Box3().setFromObject(cube13);
-      const boundingBox13Helper = new THREE.BoxHelper(cube13, 0xff0000);
- //    scene.add(boundingBox13Helper);
-      
-        // Add bounding box 14
-      const boundingBox14 = new THREE.Box3().setFromObject(cube14);
-      const boundingBox14Helper = new THREE.BoxHelper(cube14, 0xff0000);
- //   scene.add(boundingBox14Helper);
-      
-       // Add bounding box 15
-      const boundingBox15 = new THREE.Box3().setFromObject(cube15);
-      const boundingBox15Helper = new THREE.BoxHelper(cube15, 0xff0000);
-  //  scene.add(boundingBox15Helper);
-      
-      // Add bounding box 16
-      const boundingBox16 = new THREE.Box3().setFromObject(cube16);
-      const boundingBox16Helper = new THREE.BoxHelper(cube16, 0xff0000);
- //    scene.add(boundingBox16Helper);
     
       // Add bounding box for the camera
       const cameraBoundingBox = new THREE.Box3();
@@ -599,109 +550,7 @@ if (isQuadSupported) {
         action.play();
           });
         });
-      
-     //load 3d model of colorful speaker
-        const loaderWoodenSpeaker = new GLTFLoader();
-        loaderWoodenSpeaker.setPath('');  
-        loaderWoodenSpeaker.load('colorful-speaker.glb', function (gltf) {
-            gltf.scene.position.set(-2800, 44, 6000);
-            gltf.scene.scale.set(100, 100, 100);
-            gltf.scene.rotation.set(0, 0, 0);
-            scene.add(gltf.scene);
-        });
-
-    //load 3d model of colorful speaker
-    const loaderSpeakerWall = new GLTFLoader();
-        loaderSpeakerWall.setPath('');  
-        loaderSpeakerWall.load('colorful-speaker.glb', function (gltf) {
-            gltf.scene.position.set(-2050, 50, 6600);
-            gltf.scene.scale.set(100, 100, 100);
-            gltf.scene.rotation.set(-Math.PI/8, -3*Math.PI/4, 0);
-            scene.add(gltf.scene);
-        });
-
-    //load 3d model of horn speaker
-    const loaderHornSpeaker = new GLTFLoader();
-    loaderHornSpeaker.setPath('');  
-    loaderHornSpeaker.load('hornspeaker.glb', function (gltf) {
-   //     gltf.scene.position.set(1520, 50, 1000);
-        gltf.scene.position.set(-3200, 150, 6800);
-        gltf.scene.scale.set(80, 80, 80);
-        gltf.scene.rotation.set(-Math.PI/4, 7*Math.PI/8, 0);
-        scene.add(gltf.scene);
-    });
-
-    //load 3d model of wooden speaker
-    const loaderWoodenSpeaker2 = new GLTFLoader();
-        loaderWoodenSpeaker2.setPath('');  
-        loaderWoodenSpeaker2.load('woodspeaker.glb', function (gltf) {
-            gltf.scene.position.set(-2250, 90, 6610);
-            gltf.scene.scale.set(30, 30, 30);
-            gltf.scene.rotation.set(0, Math.PI, -Math.PI/2);
-            scene.add(gltf.scene);
-        });
-
-     //load 3d model of wooden speaker
-     const loaderWoodenSpeaker3 = new GLTFLoader();
-        loaderWoodenSpeaker3.setPath('');  
-        loaderWoodenSpeaker3.load('woodspeaker.glb', function (gltf) {
-            gltf.scene.position.set(-2780, -60, 5970);
-            gltf.scene.scale.set(30, 30, 30);
-            gltf.scene.rotation.set(0, Math.PI/4, 0);
-            scene.add(gltf.scene);
-        });
-    
-        //load 3d model of horn speaker
-    const loaderHornSpeaker2 = new GLTFLoader();
-    loaderHornSpeaker2.setPath('');  
-    loaderHornSpeaker2.load('hornspeaker.glb', function (gltf) {
-        gltf.scene.position.set(-2350, 100, 6050);
-        gltf.scene.scale.set(80, 80, 80);
-        gltf.scene.rotation.set(Math.PI/4, -Math.PI/4, 0);
-        scene.add(gltf.scene);
-    });
-
-         //load 3d model of black speaker
-         const loaderBlackSpeaker = new GLTFLoader();
-    loaderBlackSpeaker.setPath('');  
-    loaderBlackSpeaker.load('dusty_speaker.glb', function (gltf) {
-        gltf.scene.position.set(-2300, -50, 6000);
-        gltf.scene.scale.set(20, 20, 20);
-        gltf.scene.rotation.set(0, 0, 0);
-        scene.add(gltf.scene);
-    });
-      
-      //load 3d model of black speaker
-      const loaderBlackSpeaker2 = new GLTFLoader();
-    loaderBlackSpeaker2.setPath('');  
-    loaderBlackSpeaker2.load('dusty_speaker.glb', function (gltf) {
-        gltf.scene.position.set(-2900, -20, 6600);
-        gltf.scene.scale.set(20, 20, 20);
-        gltf.scene.rotation.set(0, -5*Math.PI/4, 0);
-        scene.add(gltf.scene);
-    });
-
-    //load 3d model of black speaker
-    const loaderBlackSpeaker3 = new GLTFLoader();
-    loaderBlackSpeaker3.setPath('');  
-    loaderBlackSpeaker3.load('dusty_passive_stage_speaker.glb', function (gltf) {
-        gltf.scene.position.set(-2950, -50, 6600);
-        gltf.scene.scale.set(100, 100, 100);
-        gltf.scene.rotation.set(Math.PI/2, 0, -Math.PI/2);
-        scene.add(gltf.scene);
-    });
-
-    //load 3d model of black speaker
-    const loaderBlackSpeaker4 = new GLTFLoader();
-    loaderBlackSpeaker4.setPath('');  
-    loaderBlackSpeaker4.load('dusty_passive_stage_speaker.glb', function (gltf) {
-        gltf.scene.position.set(-2300, -50, 6600);
-        gltf.scene.scale.set(100, 100, 100);
-        gltf.scene.rotation.set(0, Math.PI/2, 0);
-        scene.add(gltf.scene);
-    });
- 
-   
+  
         const light = new THREE.HemisphereLight(0xffffff, 0x444444, 6);
         scene.add(light);
 
@@ -771,8 +620,6 @@ class IframeLazyLoader {
             
             // Special handling for interactive iframes
             if (this.options.pointerEvents === 'auto') {
-                // For interactive iframes (like index.html), we need to handle loading differently
-                // to ensure they capture user input correctly
                 this.iframe.src = this.srcUrl;
                 
                 // Make sure the iframe is visible and active
@@ -830,7 +677,7 @@ function setupLazyLoadedIframes() {
             { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2750, y: 30, z: 7500 }, 
+            { x: -2475, y: 30, z: 5750 }, 
             [0, Math.PI, 0], 
             [1, 1, 1], 
             'index.html',
@@ -882,7 +729,7 @@ function setupLazyLoadedIframes() {
         [
             { x: -2600, y: 45, z: 3290 }, 
             [0, Math.PI/2, 0], 
-            [8, .48, 1], 
+            [8.2, .48, 1], 
             'hydrainwebpage2.html',
             { width: '500px', height: '500px' }
         ],
@@ -2096,8 +1943,9 @@ function animate() {
         const hitX9 = cameraBoundingBox.intersectsBox(boundingBox9);
         const hitX10 = cameraBoundingBox.intersectsBox(boundingBox10);
         const hitX11 = cameraBoundingBox.intersectsBox(boundingBox11);
+        const hitX12 = cameraBoundingBox.intersectsBox(boundingBox12);
         
-        if (hitXRed || hitXGreen || hitX3 || hitX4 || hitX5 || hitX6 || hitX7 || hitX8 || hitX9 || hitX10 || hitX11 ) {
+        if (hitXRed || hitXGreen || hitX3 || hitX4 || hitX5 || hitX6 || hitX7 || hitX8 || hitX9 || hitX10 || hitX11 || hitX12 ) {
             // Revert X movement if there's a collision
             camera.position.sub(xMovement);
         } else {
@@ -2121,8 +1969,9 @@ function animate() {
         const hitZ9 = cameraBoundingBox.intersectsBox(boundingBox9);
         const hitZ10 = cameraBoundingBox.intersectsBox(boundingBox10);
         const hitZ11 = cameraBoundingBox.intersectsBox(boundingBox11);
+        const hitZ12 = cameraBoundingBox.intersectsBox(boundingBox12);
       
-        if (hitZRed || hitZGreen || hitZ3 || hitZ4 || hitZ5 || hitZ6 || hitZ7 || hitZ8 || hitZ9 || hitZ10 || hitZ11 ) {
+        if (hitZRed || hitZGreen || hitZ3 || hitZ4 || hitZ5 || hitZ6 || hitZ7 || hitZ8 || hitZ9 || hitZ10 || hitZ11 || hitZ12 ) {
             // Revert Z movement if there's a collision
             camera.position.sub(zMovement);
         } else {
