@@ -187,6 +187,32 @@ if (isQuadSupported) {
         }
 
         const controls = new PointerLockControls(camera, renderer.domElement);
+        
+        // Track pointer lock state
+        let isPointerLocked = false;
+
+        // Add event listeners for pointer lock changes
+        document.addEventListener('pointerlockchange', onPointerLockChange);
+        document.addEventListener('mozpointerlockchange', onPointerLockChange);
+        document.addEventListener('webkitpointerlockchange', onPointerLockChange);
+
+        function onPointerLockChange() {
+            // Check if pointer is currently locked
+            isPointerLocked = (
+                document.pointerLockElement === renderer.domElement ||
+                document.mozPointerLockElement === renderer.domElement ||
+                document.webkitPointerLockElement === renderer.domElement
+            );
+            
+            console.log('Pointer lock state changed:', isPointerLocked ? 'locked' : 'unlocked');
+            
+            // Update movement state based on pointer lock
+            if (!isPointerLocked) {
+                // Stop forward movement when pointer lock is exited
+                move.forward = false;
+            }
+        }
+
         const listener = new THREE.AudioListener();
         const threeJsAudioContext = listener.context;
         camera.add(listener);
@@ -1994,7 +2020,9 @@ function animate() {
         });
     }
   
-    move.forward = true; //comment out for DEVELOPMENT
+    if (isPointerLocked) {
+        move.forward = true;
+    }
     
     if (mixer) {
         mixer.update(delta);
