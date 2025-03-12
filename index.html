@@ -30,7 +30,7 @@
             align-items: center;
             justify-content: center;
             background: rgba(255, 255, 255, 0);
-            color: #808080;
+            color: #acacac;
             font-size: 60px;
             font-family: "Courier New", monospace;
         }
@@ -54,7 +54,7 @@
 <body>
 <canvas id="c"></canvas>
 <div id="overlay"><button id="startButton">Play</button></div>
-<div id="loading-screen">10</div>
+<div id="loading-screen">3</div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
@@ -98,7 +98,7 @@ if (isQuadSupported) {
         loadingScreen.style.display = 'flex';
       
         // Start the loading countdown
-        let countdown = 10;
+        let countdown = 3;
         const countInterval = setInterval(() => {
             countdown--;
             loadingScreen.textContent = countdown;
@@ -174,7 +174,7 @@ if (isQuadSupported) {
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-     //   camera.position.set(-2550, 30, 4500);  //for DEVELOPMENT
+      //  camera.position.set(-2550, 30, 4500);  //for DEVELOPMENT
         camera.position.set(1550, 30, -700);  //for performance
 
         adjustForDisplayScaling();
@@ -336,9 +336,30 @@ if (isQuadSupported) {
         const geometry12 = new THREE.BoxGeometry( 840, 230, 100 ); 
         const material12 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube12 = new THREE.Mesh( geometry12, material12 ); 
-        cube12.position.set(-2475, 70, 5250);
+        cube12.position.set(-2475, 70, 5200);
         cube12.userData.collidable = true;
         scene.add( cube12 );      
+
+        const geometry13 = new THREE.BoxGeometry( 500, 200, 200 ); 
+        const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube13 = new THREE.Mesh( geometry13, material13 ); 
+        cube13.position.set(-200, 50, -1450);
+        cube13.userData.collidable = true;
+        scene.add( cube13 ); 
+
+        const geometry14 = new THREE.BoxGeometry( 1000, 1000, 1000 ); 
+        const material14 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube14 = new THREE.Mesh( geometry14, material14 ); 
+        cube14.position.set(-1500, 0, 1000);
+        cube14.userData.collidable = true;
+        scene.add( cube14 ); 
+
+        const geometry15 = new THREE.BoxGeometry( 500, 500, 500 ); 
+        const material15 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube15 = new THREE.Mesh( geometry15, material15 ); 
+        cube15.position.set(-2500, 0, 3200);
+        cube15.userData.collidable = true;
+        scene.add( cube15 ); 
       
       // Add bounding box 1
       const greenBoxBoundingBox = new THREE.Box3().setFromObject(cube);
@@ -401,7 +422,22 @@ if (isQuadSupported) {
       const boundingBox12 = new THREE.Box3().setFromObject(cube12);
       const boundingBox12Helper = new THREE.BoxHelper(cube12, 0xff0000);
   //   scene.add(boundingBox12Helper);
+
+         // Add bounding box 13
+      const boundingBox13 = new THREE.Box3().setFromObject(cube13);
+      const boundingBox13Helper = new THREE.BoxHelper(cube13, 0xff0000);
+  //   scene.add(boundingBox13Helper);
+
+          // Add bounding box 14
+          const boundingBox14 = new THREE.Box3().setFromObject(cube14);
+      const boundingBox14Helper = new THREE.BoxHelper(cube14, 0xff0000);
+     //  scene.add(boundingBox14Helper);
     
+          // Add bounding box 15
+         const boundingBox15 = new THREE.Box3().setFromObject(cube15);
+      const boundingBox15Helper = new THREE.BoxHelper(cube15, 0xff0000);
+   //    scene.add(boundingBox15Helper);
+
       // Add bounding box for the camera
       const cameraBoundingBox = new THREE.Box3();
       const cameraBoundingHelperGeometry = new THREE.BoxGeometry(5, 5, 5); 
@@ -422,7 +458,7 @@ if (isQuadSupported) {
         let mixer;
       
         loader.load('bell-ascii.glb', function (gltf) {
-            gltf.scene.position.set(-900, -125, 5450);
+            gltf.scene.position.set(-830, -125, 5450);
             gltf.scene.scale.set(1000, 75, 125);
             gltf.scene.rotation.set(0, 0, 0);
     //        scene.add(gltf.scene);
@@ -454,9 +490,72 @@ if (isQuadSupported) {
         action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
         action.play();
           });
+
+              // Initialize animation state as paused
+              window.bellAnimationState = {
+        isPlaying: false,   // Start in paused state
+        hasCollided: false,
+        canToggle: true,
+        actions: [],
+        soundsLoaded: false
+    };
+    
+    // For each animation clip
+    gltf.animations.forEach((clip) => {
+        // Create the action
+        const action = firstBellMixer.clipAction(clip);
+        
+        // Get the animation duration
+        const duration = clip.duration;
+        console.log(`Bell animation duration: ${duration} seconds`);
+        
+        // Set initial time to halfway through the animation
+        const quarterwayPoint = 3 * duration / 4;
+        
+        // Set effective time scale to normal (will be paused later)
+        action.setEffectiveTimeScale(1);
+        
+        // Start the action
+        action.play();
+        
+        // Advance the mixer to the halfway point
+        firstBellMixer.setTime(quarterwayPoint);
+        
+        // Now pause by setting timeScale to 0
+        action.timeScale = 0;
+        
+        // Store the action for future resume
+        window.bellAnimationState.actions.push({
+            action: action,
+            time: quarterwayPoint,
+            timeScale: 1
         });
+    });
+    
+    console.log("Bell animation initialized and paused");
+    
+});
+
+    //load 3d model of glitchy bell
+        const loaderGlitchyBell = new GLTFLoader();
+        loaderGlitchyBell.setPath('');
+        let mixer4;
       
-      
+        loaderGlitchyBell.load('glitchy-bell-with-Y.glb', function (gltf) {
+            gltf.scene.position.set(-200, 100, -1450);
+            gltf.scene.scale.set(70, 70, 70);
+            gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
+            scene.add(gltf.scene);
+       
+        mixer4 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer4.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
       //load 3d model of bell2 with animation
         const loaderBell2 = new GLTFLoader();
         loaderBell2.setPath('');
@@ -498,9 +597,54 @@ if (isQuadSupported) {
         const action = mixer3.clipAction(clip);
         action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
         action.play();
-          });
-        });
+    });
 
+// Initialize animation state as paused
+window.bell3AnimationState = {
+isPlaying: false,   // Start in paused state
+hasCollided: false,
+canToggle: true,
+actions: [],
+soundsLoaded: false
+};
+
+// For each animation clip
+gltf.animations.forEach((clip) => {
+// Create the action
+const action = mixer3.clipAction(clip);
+
+// Get the animation duration
+const duration = clip.duration;
+console.log(`Bell animation duration: ${duration} seconds`);
+
+// Set initial time to halfway through the animation
+const quarterwayPoint = 3 * duration / 4;
+
+// Set effective time scale to normal (will be paused later)
+action.setEffectiveTimeScale(1);
+
+// Start the action
+action.play();
+
+// Advance the mixer to the halfway point
+mixer3.setTime(quarterwayPoint);
+
+// Now pause by setting timeScale to 0
+action.timeScale = 0;
+
+// Store the action for future resume
+window.bell3AnimationState.actions.push({
+action: action,
+time: quarterwayPoint,
+timeScale: 1
+});
+});
+
+console.log("Bell animation initialized and paused");
+
+});
+
+   /*
             // Create a DRACOLoader instance
         const dracoLoader = new DRACOLoader();
         // Specify the path to the Draco decoder
@@ -527,7 +671,7 @@ if (isQuadSupported) {
                 action.play();
             });
         });
-
+*/
         // dispose of the decoder when done
         // dracoLoader.dispose();
 
@@ -677,9 +821,9 @@ function setupLazyLoadedIframes() {
             { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2475, y: 30, z: 5750 }, 
+            { x: -2475, y: 30, z: 5250 }, 
             [0, Math.PI, 0], 
-            [1, 1, 1], 
+            [.2, .2, .2], 
             'index.html',
             { width: '1080px', height: '720px' },
             { pointerEvents: 'auto' }  // Enable pointer events for this iframe
@@ -758,21 +902,7 @@ function setupLazyLoadedIframes() {
     console.log(`Created ${window.iframeLoaders.length} lazy-loaded iframes`);
 }
 
-
 setupAudioInput();   
-/*
-const iframe6 = createHydraIframe(); 
-const iframe5 = createHydraIframe2();
-const iframe7 = createHydraIframe3();
-const iframe3 = createHydraIframe4();
-const iframe2 = createHydraIframe5();
-const iframe4 = createHydraIframe6();
-const iframe = createHydraIframe7();
-const iframe11 = createHydraIframe8();
-const iframe12 = createHydraIframe9(); 
-const iframe13 = createHydraIframe10(); 
-const iframe14 = createHydraIframe11();
-*/
 setupLazyLoadedIframes();
 function createHydraIframe() {
   // Declare the global variable for this iframe object
@@ -1329,21 +1459,70 @@ function calculateSecondChannelGains(listenerPos, sourcePos, controls) {
     return normalizedWeights.map(weight => weight * baseGain);
 }
 
+// Function to calculate gains for the third sound source
+function calculateThirdChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain - different falloff for third source
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 2500; // Different max distance for second source
+    const baseGain = Math.max(0, .1 - (distance / maxDistance)/10);
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
 // Define the fixed 3D position for the first sound source
 const soundSourcePosition = new THREE.Vector3(-200, 50, -1450);
 
 // Define the fixed 3D position for the second sound source
 const secondSoundSourcePosition = new THREE.Vector3(-1450, 50, 1000);
 
-// Create Channel Merger with the appropriate number of channels
-const mergerChannels = isQuadSupported ? 4 : 2;
-const merger = audioContext.createChannelMerger(mergerChannels);
-merger.connect(audioContext.destination);
+// Define the fixed 3D position for the third sound source
+const thirdSoundSourcePosition = new THREE.Vector3(-200, 50, -1450);
 
 // Load and play sound at a fixed position
 const audioLoader = new THREE.AudioLoader();
 let sourceNode;
 let channelGains = [];
+
+// Create Channel Merger with the appropriate number of channels
+const mergerChannels = isQuadSupported ? 4 : 2;
+const merger = audioContext.createChannelMerger(mergerChannels);
+merger.connect(audioContext.destination);
+
+// Create a master gain for fading in/out
+const masterGain = audioContext.createGain();
+masterGain.gain.value = 0; // Start silent
+masterGain.connect(audioContext.destination);
 
 audioLoader.load('4ch-test-mono.mp3', function(buffer) {
     // Create a buffer source
@@ -1356,13 +1535,15 @@ audioLoader.load('4ch-test-mono.mp3', function(buffer) {
     
     // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
     const gainNodeCount = isQuadSupported ? 4 : 2;
+    channelGains = []; // Clear the array to avoid duplicates if reloaded
     
     for (let i = 0; i < gainNodeCount; i++) {
         const gainNode = audioContext.createGain();
-        gainNode.gain.value = 0.5; // Start with audible gain to test
+        gainNode.gain.value = 0.5; // Initial gain value
         channelGains.push(gainNode);
         
         // Connect each gain node to its corresponding merger input
+        // Note: We're using the merger directly as in the original code
         gainNode.connect(merger, 0, i);
     }
     
@@ -1393,8 +1574,16 @@ audioLoader.load('4ch-test-mono.mp3', function(buffer) {
         }
     }
 
-    // Start playback
-    sourceNode.start();
+    // Store the buffer but DON'T start playback immediately
+    // Initialize audio state tracker
+    window.audioState = {
+        isPlaying: false,
+        buffer: buffer,
+        currentSource: sourceNode,
+        lastStartTime: 0,
+        playbackOffset: 0,
+        duration: buffer.duration
+    };
     
     // Set initial gain values and start update loop
     updateAudioGains();
@@ -1502,7 +1691,7 @@ audioLoader.load('pulsar_1.mp3', function(buffer) {
     }
 
     // Start playback
-    secondSourceNode.start();
+ //   secondSourceNode.start();
     
     // Set initial gain values and start update loop
     updateSecondAudioGains();
@@ -1553,6 +1742,112 @@ function updateSecondAudioGains() {
     requestAnimationFrame(updateSecondAudioGains);
 }
 
+// Create a third set of channel gains
+let thirdSourceNode;
+let thirdChannelGains = [];
+
+// Load and play second sound at its fixed position
+// Load and play second sound at its fixed position
+audioLoader.load('pulsar_2.mp3', function(buffer) {
+    // Create a buffer source for the second sound
+    thirdSourceNode = audioContext.createBufferSource();
+    thirdSourceNode.buffer = buffer;
+    thirdSourceNode.loop = true;
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Start with audible gain to test
+        thirdChannelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources, we need to send the same signal to all channels
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Third audio file has ${numChannels} channels`);
+    
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < thirdChannelGains.length; i++) {
+            thirdSourceNode.connect(thirdChannelGains[i]);
+        }
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        thirdSourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(thirdChannelGains[0], 0);
+            splitter.connect(thirdChannelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(thirdChannelGains[1], 1);
+            splitter.connect(thirdChannelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(thirdChannelGains[0], 0); // Left to left
+            splitter.connect(thirdChannelGains[1], 1); // Right to right
+        }
+    }
+
+    // Start playback
+    thirdSourceNode.start();
+    
+    // Set initial gain values and start update loop
+    updateThirdAudioGains();
+});
+
+// Function to update third audio gains dynamically
+function updateThirdAudioGains() {
+    if (!thirdSourceNode) return;
+    
+    // Calculate positional gains - still get 4 values
+    const posGains = calculateThirdChannelGains(
+        camera.position, 
+        thirdSoundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        // Quad mode - apply gains directly
+        for (let i = 0; i < thirdChannelGains.length; i++) {
+            if (thirdChannelGains[i]) {
+                thirdChannelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
+            }
+        }
+    } else {
+        // Stereo mode - downmix
+        if (thirdChannelGains[0]) {
+            thirdChannelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2], // mix front-left and back-left
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (thirdChannelGains[1]) {
+            thirdChannelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3], // mix front-right and back-right
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+    
+    // Continue updating
+    requestAnimationFrame(updateThirdAudioGains);
+}
+
     function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement;
         // Use the renderer's pixel ratio instead of window.devicePixelRatio
@@ -1569,33 +1864,164 @@ function updateSecondAudioGains() {
     }
    
     const timerDiv = document.createElement('div');
-      timerDiv.style.position = 'fixed';
-      timerDiv.style.top = '1rem';
-      timerDiv.style.right = '1rem';
-      timerDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-      timerDiv.style.color = 'white';
-      timerDiv.style.padding = '0.5rem 1rem';
-      timerDiv.style.borderRadius = '0.5rem';
-      timerDiv.style.fontFamily = 'monospace';
-      timerDiv.style.fontSize = '1.25rem';
-      document.body.appendChild(timerDiv);
+timerDiv.style.position = 'fixed';
+timerDiv.style.top = '1rem';
+timerDiv.style.right = '1rem';
+timerDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+timerDiv.style.color = 'white';
+timerDiv.style.padding = '0.5rem 1rem';
+timerDiv.style.borderRadius = '0.5rem';
+timerDiv.style.fontFamily = 'monospace';
+timerDiv.style.fontSize = '1.25rem';
+document.body.appendChild(timerDiv);
 
-      // Timer logic
-      let seconds = -9;
-      const formatTime = (num) => num.toString().padStart(2, '0');
+// Timer logic
+let seconds = 300; // Starting with 6 minutes
+const formatTime = (num) => num.toString().padStart(2, '0');
 
-      function updateTimer() {
-          const minutes = Math.floor(seconds / 60);
-          const remainingSeconds = seconds % 60;
-          timerDiv.textContent = `${formatTime(minutes)}:${formatTime(remainingSeconds)}`;
-          seconds++;
-      }
+function updateTimer() {
+    if (seconds <= 0) {
+        timerDiv.textContent = `00:00`;
+        clearInterval(timerInterval);
+        // Optional: Add logic for when timer reaches zero
+        return;
+    }
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    timerDiv.textContent = `${formatTime(minutes)}:${formatTime(remainingSeconds)}`;
+    // Removed the decrement from here - now handled in the interval
+}
+
+// Update timer immediately and then every second
+updateTimer();
+const timerInterval = setInterval(() => {
+    seconds--; // Decrement seconds first
+    updateTimer(); // Then update display
+}, 1000);
+
+// Optional: Clear interval when no longer needed
+// clearInterval(timerInterval);
 
 // Start the timer
 const timer = setInterval(updateTimer, 1000);
 updateTimer(); // Call once immediately to show 00:00    
   
-      
+// Create points display element
+const pointsDisplayDiv = document.createElement('div');
+pointsDisplayDiv.style.position = 'fixed';
+pointsDisplayDiv.style.top = '50%';
+pointsDisplayDiv.style.left = '50%';
+pointsDisplayDiv.style.transform = 'translate(-50%, -50%)';
+pointsDisplayDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+pointsDisplayDiv.style.color = '#ffffff';
+pointsDisplayDiv.style.padding = '20px';
+pointsDisplayDiv.style.borderRadius = '10px';
+pointsDisplayDiv.style.fontFamily = '"Courier New", monospace';
+pointsDisplayDiv.style.fontSize = '48px';
+pointsDisplayDiv.style.fontWeight = 'normal';
+pointsDisplayDiv.style.textAlign = 'center';
+pointsDisplayDiv.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+pointsDisplayDiv.style.pointerEvents = 'none'; // Prevents interaction with the element
+pointsDisplayDiv.style.opacity = '0';
+pointsDisplayDiv.style.transition = 'opacity 0s'; // Removed transition for sudden appearance/disappearance
+pointsDisplayDiv.style.zIndex = '1000';
+document.body.appendChild(pointsDisplayDiv);
+
+// Function to show points animation with glitch effect
+function showPointsAnimation() {
+    // Generate a new random number each time
+    const randomPoints = Math.floor(Math.random() * 10000) + 1;
+    
+    // Regular and glitchy text variations (without "U rock")
+    const regularText = `+${randomPoints} noise!`;
+    const glitchyTexts = [
+        `+${randomPoints} n0ise!`,
+        `+${randomPoints} no1se!`,
+        `+${randomPoints} n01se!`,
+        `+${randomPoints}_N0iSe!`
+    ];
+    
+    // Set initial text
+    pointsDisplayDiv.textContent = regularText;
+    
+    // Reset position
+    pointsDisplayDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+    
+    // Start the animation sequence - sudden appearance
+    pointsDisplayDiv.style.opacity = '1';
+    
+    // Glitch effect timeline with sudden changes
+    setTimeout(() => {
+        // First glitch - text change 
+        pointsDisplayDiv.textContent = glitchyTexts[0];
+    }, 300);
+    
+    setTimeout(() => {
+        pointsDisplayDiv.textContent = regularText;
+    }, 400);
+    
+    setTimeout(() => {
+        // Second glitch - text change
+        pointsDisplayDiv.textContent = glitchyTexts[1];
+        pointsDisplayDiv.style.opacity = '1'; 
+    }, 800);
+    
+    setTimeout(() => {
+        pointsDisplayDiv.textContent = glitchyTexts[2];
+    }, 900);
+    
+    setTimeout(() => {
+        pointsDisplayDiv.textContent = regularText;
+    }, 1000);
+    
+    // Sudden disappearance
+    setTimeout(() => {
+        pointsDisplayDiv.style.opacity = '0';
+    }, 2000);
+}
+
+// Create stop message display element
+const stopMessageDiv = document.createElement('div');
+stopMessageDiv.style.position = 'fixed';
+stopMessageDiv.style.top = '40%';
+stopMessageDiv.style.left = '50%';
+stopMessageDiv.style.transform = 'translate(-50%, -50%)';
+stopMessageDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+stopMessageDiv.style.color = '#ff5555'; // Reddish color
+stopMessageDiv.style.padding = '20px';
+stopMessageDiv.style.borderRadius = '10px';
+stopMessageDiv.style.fontFamily = '"Courier New", monospace';
+stopMessageDiv.style.fontSize = '72px';
+stopMessageDiv.style.fontWeight = 'bold';
+stopMessageDiv.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+stopMessageDiv.style.pointerEvents = 'none';
+stopMessageDiv.style.opacity = '0';
+// Set transitions for ALL properties that will be animated
+stopMessageDiv.style.transition = 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out';
+stopMessageDiv.style.zIndex = '1000';
+stopMessageDiv.textContent = '😭';
+document.body.appendChild(stopMessageDiv);
+
+// Fixed animation function for stop message
+function showStopMessageAnimation() {
+    // Reset to initial state
+    stopMessageDiv.style.opacity = '0';
+    stopMessageDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+    
+    // Force browser to process the reset before starting animation
+    setTimeout(() => {
+        // Start fade in
+        stopMessageDiv.style.opacity = '1';
+        
+        // Wait then animate out - slide down and fade
+        setTimeout(() => {
+            stopMessageDiv.style.opacity = '0';
+            stopMessageDiv.style.transform = 'translate(-50%, -30%) scale(0.9)';
+        }, 1500);
+    }, 30); // Small delay to ensure reset is processed
+}
+
   //Gamepad setup
   function handleGamepadInput() {
     const gamepads = navigator.getGamepads();
@@ -1674,7 +2100,8 @@ async function setupAudioInput() {
         
         // Analysis parameters
         const speedFactor = .95;
-        const AMPLITUDE_THRESHOLD = 0.0005;
+      //  const AMPLITUDE_THRESHOLD = 0.001;
+      const AMPLITUDE_THRESHOLD = 0.001;
         let targetSpeed = 0;
         
         // Store references in the global scope
@@ -1791,7 +2218,7 @@ function analyzeAudio() {
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)); // good for breath & air noise & key clicks
+            window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
           //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
 
             // Log target speed
@@ -1856,7 +2283,8 @@ function toggleMicrophoneInput() {
    
 function animate() {
     updateAudioGains();
-    updateSecondAudioGains(); // Update second sound source
+    updateSecondAudioGains();
+    updateThirdAudioGains();
     const delta = clock.getDelta();
     handleGamepadInput();
   
@@ -1868,7 +2296,7 @@ function animate() {
     }
   
     if (isPointerLocked) {
-        move.forward = true;
+       move.forward = true; // Comment out for DEVELOPMENT
     }
     
     if (mixer) {
@@ -1900,7 +2328,7 @@ function animate() {
     const minSpeed = -800;
     const clampedSpeed = Math.max(minSpeed, Math.min(speed, maxSpeed));
     const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
-  //  const adjustedSpeed = 200 * delta; // for DEVELOPMENT
+ //   const adjustedSpeed = 200 * delta; // for DEVELOPMENT
   
     // Store initial position
     const initialPosition = camera.position.clone();
@@ -1931,6 +2359,381 @@ function animate() {
         const xMovement = new THREE.Vector3(moveVector.x, 0, 0);
         camera.position.add(xMovement);
         updateBoundingBoxes();
+
+    const hitBox13 = cameraBoundingBox.intersectsBox(boundingBox13);
+    const hitBox14 = cameraBoundingBox.intersectsBox(boundingBox14);
+    const hitBox15 = cameraBoundingBox.intersectsBox(boundingBox15);
+
+     // Track the bell animation state
+    if (!window.bellAnimationState) {
+    window.bellAnimationState = {
+        isPlaying: true,   // Track if animation is currently playing
+        hasCollided: false, // Track if user is currently colliding with bell
+        canToggle: true,    // Track if we can perform another toggle action
+        actions: null       // Store paused actions
+    };
+    }
+
+    // Handle bell interaction when collision happens
+    if (hitBox13) {
+  // Only toggle state when entering the collision zone
+  if (!window.bellAnimationState.hasCollided && window.bellAnimationState.canToggle) {
+    if (firstBellMixer) {
+      // Toggle between play/stop
+      if (window.bellAnimationState.isPlaying) {
+        // Pause the bell animation
+        console.log("Camera collided with bell - pausing animation and audio");
+        
+        // Always recreate the actions array to fix the issue after first pause/resume
+        window.bellAnimationState.actions = [];
+        
+        // Save the state of all active actions
+        firstBellMixer._actions.forEach(action => {
+          if (action.isRunning() || action.timeScale !== 0) {
+            window.bellAnimationState.actions.push({
+              action: action,
+              time: action.time,
+              timeScale: action.getEffectiveTimeScale()
+            });
+            
+            // Pause by setting timeScale to 0 
+            action.timeScale = 0;
+          }
+        });
+        
+        // Pause the spatial audio with fade out
+        if (window.audioState && window.audioState.isPlaying) {
+          const fadeTime = 0.2; // 200ms fade out
+          
+          // Calculate the current playback position accurately
+          const elapsedTime = audioContext.currentTime - window.audioState.lastStartTime;
+          window.audioState.playbackOffset = (window.audioState.playbackOffset + elapsedTime) % window.audioState.duration;
+          
+          // Reduce all channel gains smoothly
+          const currentTime = audioContext.currentTime;
+          channelGains.forEach(gainNode => {
+            const currentGain = gainNode.gain.value;
+            gainNode.gain.setValueAtTime(currentGain, currentTime);
+            gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+          });
+          
+          // Schedule stopping the source after fade completes
+          setTimeout(() => {
+            if (window.audioState.currentSource) {
+              try {
+                window.audioState.currentSource.stop();
+              } catch (e) {
+                console.log("Error stopping audio source:", e);
+              }
+            }
+            window.audioState.isPlaying = false;
+          }, fadeTime * 1000);
+          
+          console.log("Audio paused at offset:", window.audioState.playbackOffset.toFixed(3), "seconds");
+        }
+        
+        window.bellAnimationState.isPlaying = false;
+        showStopMessageAnimation();
+      } else {
+        // Resume the animation from its current position
+        console.log("Camera collided with bell - resuming animation and audio");
+        
+        // If we have stored actions, restore them
+        if (window.bellAnimationState.actions && window.bellAnimationState.actions.length > 0) {
+          window.bellAnimationState.actions.forEach(savedAction => {
+            // Restore the original timeScale to resume animation
+            savedAction.action.timeScale = savedAction.timeScale || 1;
+          });
+        } else {
+          // Fallback in case there are no saved actions
+          firstBellMixer._actions.forEach(action => {
+            action.timeScale = 1;
+            if (!action.isRunning()) {
+              action.play();
+            }
+          });
+        }
+        
+        // Resume the spatial audio with fade in
+        if (window.audioState) {
+          const fadeTime = 0.1; // 100ms fade in
+          
+          // Create a new buffer source with the same connections as original
+          const newSourceNode = audioContext.createBufferSource();
+          newSourceNode.buffer = window.audioState.buffer;
+          newSourceNode.loop = true;
+          
+          // Get number of channels in the buffer
+          const numChannels = window.audioState.buffer.numberOfChannels;
+          
+          // Connect to channel gains based on channel count
+          if (numChannels === 1) {
+            // Mono source - connect to all gain nodes
+            for (let i = 0; i < channelGains.length; i++) {
+              newSourceNode.connect(channelGains[i]);
+            }
+          } else if (numChannels === 2) {
+            // Stereo source - use splitter
+            const splitter = audioContext.createChannelSplitter(2);
+            newSourceNode.connect(splitter);
+            
+            if (isQuadSupported) {
+              // Quad mode connections
+              splitter.connect(channelGains[0], 0); // Left to front-left
+              splitter.connect(channelGains[2], 0); // Left to back-left
+              splitter.connect(channelGains[1], 1); // Right to front-right
+              splitter.connect(channelGains[3], 1); // Right to back-right
+            } else {
+              // Stereo mode connections
+              splitter.connect(channelGains[0], 0); // Left to left
+              splitter.connect(channelGains[1], 1); // Right to right
+            }
+          }
+          
+          // Start from the stored offset position
+          newSourceNode.start(0, window.audioState.playbackOffset);
+          window.audioState.lastStartTime = audioContext.currentTime;
+          window.audioState.currentSource = newSourceNode;
+          window.audioState.isPlaying = true;
+          
+          // Calculate the position gains now
+          const posGains = calculateChannelGains(
+            camera.position,
+            soundSourcePosition,
+            controls
+          );
+          
+          // Fade in each channel gain with the appropriate spatial balance
+          const currentTime = audioContext.currentTime;
+          
+          if (isQuadSupported) {
+            // Quad mode - fade in each channel with proper spatial value
+            for (let i = 0; i < channelGains.length; i++) {
+              channelGains[i].gain.setValueAtTime(0, currentTime);
+              channelGains[i].gain.linearRampToValueAtTime(posGains[i], currentTime + fadeTime);
+            }
+          } else {
+            // Stereo mode - downmix and fade in
+            channelGains[0].gain.setValueAtTime(0, currentTime);
+            channelGains[0].gain.linearRampToValueAtTime(
+              posGains[0] + posGains[2], // mix front-left and back-left
+              currentTime + fadeTime
+            );
+            
+            channelGains[1].gain.setValueAtTime(0, currentTime);
+            channelGains[1].gain.linearRampToValueAtTime(
+              posGains[1] + posGains[3], // mix front-right and back-right
+              currentTime + fadeTime
+            );
+          }
+          
+          console.log("Audio resumed from offset:", window.audioState.playbackOffset.toFixed(3), "seconds");
+        }
+        
+        window.bellAnimationState.isPlaying = true;
+        showPointsAnimation();
+      }
+      
+      // Prevent multiple toggles while inside collision zone
+      window.bellAnimationState.canToggle = false;
+    }
+  }
+  window.bellAnimationState.hasCollided = true;
+} else {
+  // When player moves away from the bell, allow toggling again
+  if (window.bellAnimationState.hasCollided) {
+    window.bellAnimationState.hasCollided = false;
+    window.bellAnimationState.canToggle = true;
+    console.log("Player exited bell collision zone - ready for next interaction");
+  }
+}
+
+if (!window.bell3AnimationState) {
+    window.bell3AnimationState = {
+        isPlaying: false,
+        hasCollided: false,
+        canToggle: true,
+        actions: []
+    };
+}
+
+// Initialize second audio state tracker if it doesn't exist
+if (!window.bell3AnimationState) {
+    window.bell3AnimationState = {
+        isPlaying: false,
+        hasCollided: false,
+        canToggle: true,
+        actions: []
+    };
+}
+
+// Initialize second audio state tracker if it doesn't exist
+if (!window.secondAudioState) {
+    window.secondAudioState = {
+        isPlaying: false,
+        buffer: secondSourceNode ? secondSourceNode.buffer : null,
+        currentSource: null,
+        startTime: 0,
+        pauseTime: 0,
+        offset: 0
+    };
+}
+
+// Handle bell3 interaction when collision with hitBox14 happens
+if (hitBox14) {
+    // Only toggle state when entering the collision zone
+    if (!window.bell3AnimationState.hasCollided && window.bell3AnimationState.canToggle) {
+        if (mixer3) {
+            // Toggle between play/stop based on current state
+            if (!window.bell3AnimationState.isPlaying) {
+                // START THE ANIMATION
+                console.log("Camera collided with bell3 - starting animation and audio");
+                
+                // Handle animation
+                mixer3._actions.forEach(action => {
+                    action.timeScale = 1;
+                    if (!action.isRunning()) {
+                        action.play();
+                    }
+                });
+                
+                // Handle audio - create a new source node
+                if (window.secondAudioState.buffer) {
+                    // Create a new source node
+                    const newSource = audioContext.createBufferSource();
+                    newSource.buffer = window.secondAudioState.buffer;
+                    newSource.loop = true;
+                    
+                    // Store the new source
+                    window.secondAudioState.currentSource = newSource;
+                    window.secondAudioState.startTime = audioContext.currentTime;
+                    
+                    // Connect the source to all gain nodes
+                    const numChannels = newSource.buffer.numberOfChannels;
+                    if (numChannels === 1) {
+                        // Mono source - connect to all gain nodes
+                        for (let i = 0; i < secondChannelGains.length; i++) {
+                            newSource.connect(secondChannelGains[i]);
+                        }
+                    } else if (numChannels === 2) {
+                        // Stereo source - handle based on system capabilities
+                        const splitter = audioContext.createChannelSplitter(2);
+                        newSource.connect(splitter);
+                        
+                        if (isQuadSupported) {
+                            // Quad mode connections
+                            splitter.connect(secondChannelGains[0], 0); // Left to front-left
+                            splitter.connect(secondChannelGains[2], 0); // Left to back-left
+                            splitter.connect(secondChannelGains[1], 1); // Right to front-right
+                            splitter.connect(secondChannelGains[3], 1); // Right to back-right
+                        } else {
+                            // Stereo mode connections
+                            splitter.connect(secondChannelGains[0], 0); // Left to left
+                            splitter.connect(secondChannelGains[1], 1); // Right to right
+                        }
+                    }
+                    
+                    // Fade in the gain nodes
+                    const fadeTime = 0.5; // 500ms fade in
+                    const currentTime = audioContext.currentTime;
+                    const posGains = calculateSecondChannelGains(
+                        camera.position,
+                        secondSoundSourcePosition,
+                        controls
+                    );
+                    
+                    // Set initial gain to 0 and fade in
+                    if (isQuadSupported) {
+                        for (let i = 0; i < secondChannelGains.length; i++) {
+                            secondChannelGains[i].gain.setValueAtTime(0, currentTime);
+                            secondChannelGains[i].gain.linearRampToValueAtTime(posGains[i], currentTime + fadeTime);
+                        }
+                    } else {
+                        // Stereo mode - downmix
+                        secondChannelGains[0].gain.setValueAtTime(0, currentTime);
+                        secondChannelGains[0].gain.linearRampToValueAtTime(
+                            posGains[0] + posGains[2], // mix front-left and back-left
+                            currentTime + fadeTime
+                        );
+                        
+                        secondChannelGains[1].gain.setValueAtTime(0, currentTime);
+                        secondChannelGains[1].gain.linearRampToValueAtTime(
+                            posGains[1] + posGains[3], // mix front-right and back-right
+                            currentTime + fadeTime
+                        );
+                    }
+                    
+                    // Start playback from the stored offset
+                    console.log("Starting audio at offset:", window.secondAudioState.offset);
+                    newSource.start(0, window.secondAudioState.offset);
+                }
+                
+                // Update state
+                window.bell3AnimationState.isPlaying = true;
+                window.secondAudioState.isPlaying = true;
+                showPointsAnimation();
+            } else {
+                // STOP THE ANIMATION
+                console.log("Camera collided with bell3 - stopping animation and audio");
+                
+                // Pause animation by setting timeScale to 0
+                mixer3._actions.forEach(action => {
+                    action.timeScale = 0;
+                });
+                
+                // Calculate and store the current playback position
+                if (window.secondAudioState.currentSource && window.secondAudioState.buffer) {
+                    const playbackDuration = audioContext.currentTime - window.secondAudioState.startTime;
+                    const bufferDuration = window.secondAudioState.buffer.duration;
+                    
+                    // Calculate the current position in the loop, considering the initial offset
+                    window.secondAudioState.offset = (window.secondAudioState.offset + playbackDuration) % bufferDuration;
+                    console.log("Pausing audio at offset:", window.secondAudioState.offset);
+                    
+                    // Fade out audio
+                    const fadeTime = 0.5; // 500ms fade out
+                    const currentTime = audioContext.currentTime;
+                    
+                    // Fade out all gain nodes
+                    secondChannelGains.forEach(gainNode => {
+                        const currentGain = gainNode.gain.value;
+                        gainNode.gain.setValueAtTime(currentGain, currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+                    });
+                    
+                    // Schedule source stop after fade completes
+                    setTimeout(() => {
+                        try {
+                            if (window.secondAudioState.currentSource) {
+                                window.secondAudioState.currentSource.stop();
+                                window.secondAudioState.currentSource = null;
+                            }
+                        } catch (e) {
+                            console.log("Error stopping audio source:", e);
+                        }
+                    }, fadeTime * 1000);
+                }
+                
+                // Update state
+                window.bell3AnimationState.isPlaying = false;
+                window.secondAudioState.isPlaying = false;
+                showStopMessageAnimation();
+            }
+            
+            // Prevent multiple toggles while inside collision zone
+            window.bell3AnimationState.canToggle = false;
+        }
+    }
+    // Mark that we're inside the collision zone
+    window.bell3AnimationState.hasCollided = true;
+} else {
+    // When player moves away from bell3, allow toggling again
+    if (window.bell3AnimationState && window.bell3AnimationState.hasCollided) {
+        window.bell3AnimationState.hasCollided = false;
+        window.bell3AnimationState.canToggle = true;
+        console.log("Player exited bell3 collision zone - ready for next interaction");
+    }
+}
         
         const hitXRed = cameraBoundingBox.intersectsBox(redBoxBoundingBox);
         const hitXGreen = cameraBoundingBox.intersectsBox(greenBoxBoundingBox);
