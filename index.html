@@ -810,14 +810,14 @@ function setupLazyLoadedIframes() {
             { x: 1560, y: 0, z: -885 }, 
             [0, -Math.PI/2, 0], 
             [1.15, .33, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage3.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: 1530, y: 0, z: -880 }, 
             [0, -Math.PI/2, 0], 
             [1, .33, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage3.html',
             { width: '1000px', height: '1000px' }
         ],
         [
@@ -1863,50 +1863,60 @@ function updateThirdAudioGains() {
         return needResize;
     }
    
-    const timerDiv = document.createElement('div');
-timerDiv.style.position = 'fixed';
-timerDiv.style.top = '1rem';
-timerDiv.style.right = '1rem';
-timerDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-timerDiv.style.color = 'white';
-timerDiv.style.padding = '0.5rem 1rem';
-timerDiv.style.borderRadius = '0.5rem';
-timerDiv.style.fontFamily = 'monospace';
-timerDiv.style.fontSize = '1.25rem';
-document.body.appendChild(timerDiv);
+  
+// Create the ABC text in top left corner
+const abcDiv = document.createElement('div');
+abcDiv.style.position = 'fixed';
+abcDiv.style.top = '1rem';
+abcDiv.style.left = '1rem';
+abcDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+abcDiv.style.color = 'white';
+abcDiv.style.padding = '0.5rem 1rem';
+abcDiv.style.borderRadius = '0.5rem';
+abcDiv.style.fontFamily = 'monospace';
+abcDiv.style.fontSize = '1.25rem';
+abcDiv.innerHTML = 'CAM04 CHANNEL01';
+document.body.appendChild(abcDiv);
 
-// Timer logic
-let seconds = 300; // Starting with 6 minutes
+// Create the clock div element
+const clockDiv = document.createElement('div');
+clockDiv.style.position = 'fixed';
+clockDiv.style.top = '1rem';
+clockDiv.style.right = '1rem';
+clockDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+clockDiv.style.color = 'white';
+clockDiv.style.padding = '0.5rem 1rem';
+clockDiv.style.whiteSpace = 'nowrap';
+clockDiv.style.borderRadius = '0.5rem';
+clockDiv.style.fontFamily = 'monospace';
+clockDiv.style.fontSize = '1.25rem';
+document.body.appendChild(clockDiv);
+
+// Format function to ensure numbers are always two digits
 const formatTime = (num) => num.toString().padStart(2, '0');
 
-function updateTimer() {
-    if (seconds <= 0) {
-        timerDiv.textContent = `00:00`;
-        clearInterval(timerInterval);
-        // Optional: Add logic for when timer reaches zero
-        return;
-    }
+// Function to update the clock with current time and date
+function updateClock() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
     
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    timerDiv.textContent = `${formatTime(minutes)}:${formatTime(remainingSeconds)}`;
-    // Removed the decrement from here - now handled in the interval
+    // Get date components
+    const day = now.getDate();
+    const month = now.getMonth() + 1; // getMonth() returns 0-11
+    const year = now.getFullYear();
+    
+    // Display time and date
+    clockDiv.textContent = `${formatTime(day)}-${formatTime(month)}-${year} ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
 }
 
-// Update timer immediately and then every second
-updateTimer();
-const timerInterval = setInterval(() => {
-    seconds--; // Decrement seconds first
-    updateTimer(); // Then update display
-}, 1000);
+// Update clock immediately and then every second
+updateClock();
+const clockInterval = setInterval(updateClock, 1000);
 
 // Optional: Clear interval when no longer needed
-// clearInterval(timerInterval);
-
-// Start the timer
-const timer = setInterval(updateTimer, 1000);
-updateTimer(); // Call once immediately to show 00:00    
-  
+// clearInterval(clockInterval);
 // Create points display element
 const pointsDisplayDiv = document.createElement('div');
 pointsDisplayDiv.style.position = 'fixed';
