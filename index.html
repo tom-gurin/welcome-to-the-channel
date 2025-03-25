@@ -55,6 +55,18 @@
 <canvas id="c"></canvas>
 <div id="overlay"><button id="startButton">Play</button></div>
 <div id="loading-screen">3</div>
+<div id="speed-meter" style="position: fixed; bottom: 1rem; left: 1rem; background-color: rgba(0, 0, 0, 0.6); 
+     color: #ffffff; padding: 0.5rem 1rem; border-radius: 0.5rem; font-family: monospace; 
+     font-size: .75rem; display: none; align-items: center; z-index: 1000;">
+  <span>NOISE: </span>
+  <div style="margin-left: 0.5rem; width: 200px; height: 20px; background-color: rgba(50, 50, 50, 0.7); 
+       border-radius: 10px; overflow: hidden; position: relative;">
+    <div id="speed-fill" style="height: 100%; width: 0%; background-color: #00ff00; 
+         transition: width 0.1s, background-color 0.3s;"></div>
+    <span id="speed-text" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
+          color: white; font-size: 0.75rem; text-shadow: 0 0 2px black;">0</span>
+  </div>
+</div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
@@ -96,6 +108,7 @@ if (isQuadSupported) {
   async function init() {
         document.getElementById("overlay").remove();
         loadingScreen.style.display = 'flex';
+        document.getElementById('speed-meter').style.display = 'flex';
       
         // Start the loading countdown
         let countdown = 3;
@@ -174,7 +187,7 @@ if (isQuadSupported) {
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-      //  camera.position.set(-2550, 30, 4500);  //for DEVELOPMENT
+      //  camera.position.set(-2530, 30, 3000);  //for DEVELOPMENT
         camera.position.set(1550, 30, -700);  //for performance
 
         adjustForDisplayScaling();
@@ -244,8 +257,8 @@ if (isQuadSupported) {
             const color = Math.floor(Math.random() * 0xffffff);
             return color;
         }
-        const gridHelper = new THREE.GridHelper(12000, 60, 0x151515, 0x151515);
-       // scene.add(gridHelper);
+        const gridHelper = new THREE.GridHelper(12000, 40, 0xff43cd, 0xff43cd);
+      //  scene.add(gridHelper);
 
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -340,10 +353,10 @@ if (isQuadSupported) {
         cube12.userData.collidable = true;
         scene.add( cube12 );      
 
-        const geometry13 = new THREE.BoxGeometry( 500, 200, 200 ); 
+        const geometry13 = new THREE.BoxGeometry( 200, 200, 600 ); 
         const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube13 = new THREE.Mesh( geometry13, material13 ); 
-        cube13.position.set(-200, 50, -1450);
+        cube13.position.set(-2480, 50, 3200);
         cube13.userData.collidable = true;
         scene.add( cube13 ); 
 
@@ -477,9 +490,10 @@ if (isQuadSupported) {
         firstBellLoader.setPath('');
         let firstBellMixer;
       
-        firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
-            gltf.scene.position.set(-200, 50, -1450);
-            gltf.scene.scale.set(70, 70, 70);
+ //       firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
+            firstBellLoader.load('bell4-compressed-inverted-blender.glb', function (gltf) {
+            gltf.scene.position.set(-2500, -50, 3200);
+            gltf.scene.scale.set(20, 20, 100);
             gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
        
@@ -541,11 +555,11 @@ if (isQuadSupported) {
         loaderGlitchyBell.setPath('');
         let mixer4;
       
-        loaderGlitchyBell.load('glitchy-bell-with-Y.glb', function (gltf) {
+        loaderGlitchyBell.load('glitchybellpink.glb', function (gltf) {
             gltf.scene.position.set(-200, 100, -1450);
             gltf.scene.scale.set(70, 70, 70);
             gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
-            scene.add(gltf.scene);
+         //   scene.add(gltf.scene);
        
         mixer4 = new THREE.AnimationMixer(gltf.scene);
         
@@ -556,16 +570,19 @@ if (isQuadSupported) {
           });
         });
 
-      //load 3d model of bell2 with animation
+        let bell2Model;
+        //load 3d model of bell2 with animation
         const loaderBell2 = new GLTFLoader();
         loaderBell2.setPath('');
         let mixer2;
       
-        loaderBell2.load('bell-ascii.glb', function (gltf) {
+        loaderBell2.load('bell-ascii-inverted.glb', function (gltf) {
             gltf.scene.position.set(-2430, 400, 3200);
             gltf.scene.scale.set(135, 150, 1000);
             gltf.scene.rotation.set(0, -1/41 * Math.PI, -Math.PI);
-            scene.add(gltf.scene);
+         //   scene.add(gltf.scene);
+       //  bell2Model = gltf.scene; // don't add to scene at first
+
        
         mixer2 = new THREE.AnimationMixer(gltf.scene);
         
@@ -585,7 +602,7 @@ if (isQuadSupported) {
         loaderBell3.setPath('');
         let mixer3;
       
-        loaderBell3.load('bell4-compressed.glb', function (gltf) {
+        loaderBell3.load('bell4-compressed-inverted.glb', function (gltf) {
             gltf.scene.position.set(-1500, -200, 800);
             gltf.scene.scale.set(100, 100, 100);
             gltf.scene.rotation.set(Math.PI/4, Math.PI/4, 0);
@@ -839,7 +856,7 @@ function setupLazyLoadedIframes() {
             { x: -1600, y: 0, z: -300 }, 
             [0, Math.PI/2, 0], 
             [3.2, .33, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '1000px', height: '1000px' }
         ],
         [
@@ -853,35 +870,35 @@ function setupLazyLoadedIframes() {
             { x: -1350, y: 0, z: 0 }, 
             [0, Math.PI/2, 0], 
             [3, .33, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1850, y: 45, z: 1450 }, 
             [0, 0, 0], 
             [10, 2.4, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '100px', height: '100px' }
         ],
         [
             { x: -2100, y: 45, z: 1300 }, 
             [0, 0, 0], 
             [10, 2.4, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '100px', height: '100px' }
         ],
         [
             { x: -2600, y: 45, z: 3290 }, 
             [0, Math.PI/2, 0], 
             [8.2, .48, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '500px', height: '500px' }
         ],
         [
             { x: -2350, y: 45, z: 3400 }, 
             [0, Math.PI/2, 0], 
             [7.8, .48, 1], 
-            'hydrainwebpage2.html',
+            'hydrainwebpage6.html',
             { width: '500px', height: '500px' }
         ]
     ];
@@ -1501,7 +1518,7 @@ function calculateThirdChannelGains(listenerPos, sourcePos, controls) {
 }
 
 // Define the fixed 3D position for the first sound source
-const soundSourcePosition = new THREE.Vector3(-200, 50, -1450);
+const soundSourcePosition = new THREE.Vector3(-2430, 50, 3300);
 
 // Define the fixed 3D position for the second sound source
 const secondSoundSourcePosition = new THREE.Vector3(-1450, 50, 1000);
@@ -1524,7 +1541,7 @@ const masterGain = audioContext.createGain();
 masterGain.gain.value = 0; // Start silent
 masterGain.connect(audioContext.destination);
 
-audioLoader.load('4ch-test-mono.mp3', function(buffer) {
+audioLoader.load('pulsar_2.mp3', function(buffer) {
     // Create a buffer source
     sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = buffer;
@@ -1748,7 +1765,7 @@ let thirdChannelGains = [];
 
 // Load and play second sound at its fixed position
 // Load and play second sound at its fixed position
-audioLoader.load('pulsar_2.mp3', function(buffer) {
+audioLoader.load('sax-air-noise.mp3', function(buffer) {
     // Create a buffer source for the second sound
     thirdSourceNode = audioContext.createBufferSource();
     thirdSourceNode.buffer = buffer;
@@ -1917,120 +1934,536 @@ const clockInterval = setInterval(updateClock, 1000);
 
 // Optional: Clear interval when no longer needed
 // clearInterval(clockInterval);
-// Create points display element
-const pointsDisplayDiv = document.createElement('div');
-pointsDisplayDiv.style.position = 'fixed';
-pointsDisplayDiv.style.top = '50%';
-pointsDisplayDiv.style.left = '50%';
-pointsDisplayDiv.style.transform = 'translate(-50%, -50%)';
-pointsDisplayDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-pointsDisplayDiv.style.color = '#ffffff';
-pointsDisplayDiv.style.padding = '20px';
-pointsDisplayDiv.style.borderRadius = '10px';
-pointsDisplayDiv.style.fontFamily = '"Courier New", monospace';
-pointsDisplayDiv.style.fontSize = '48px';
-pointsDisplayDiv.style.fontWeight = 'normal';
-pointsDisplayDiv.style.textAlign = 'center';
-pointsDisplayDiv.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
-pointsDisplayDiv.style.pointerEvents = 'none'; // Prevents interaction with the element
-pointsDisplayDiv.style.opacity = '0';
-pointsDisplayDiv.style.transition = 'opacity 0s'; // Removed transition for sudden appearance/disappearance
-pointsDisplayDiv.style.zIndex = '1000';
-document.body.appendChild(pointsDisplayDiv);
 
-// Function to show points animation with glitch effect
-function showPointsAnimation() {
-    // Generate a new random number each time
-    const randomPoints = Math.floor(Math.random() * 10000) + 1;
-    
-    // Regular and glitchy text variations (without "U rock")
-    const regularText = `+${randomPoints} noise!`;
-    const glitchyTexts = [
-        `+${randomPoints} n0ise!`,
-        `+${randomPoints} no1se!`,
-        `+${randomPoints} n01se!`,
-        `+${randomPoints}_N0iSe!`
-    ];
-    
-    // Set initial text
-    pointsDisplayDiv.textContent = regularText;
-    
-    // Reset position
-    pointsDisplayDiv.style.transform = 'translate(-50%, -50%) scale(1)';
-    
-    // Start the animation sequence - sudden appearance
-    pointsDisplayDiv.style.opacity = '1';
-    
-    // Glitch effect timeline with sudden changes
-    setTimeout(() => {
-        // First glitch - text change 
-        pointsDisplayDiv.textContent = glitchyTexts[0];
-    }, 300);
-    
-    setTimeout(() => {
-        pointsDisplayDiv.textContent = regularText;
-    }, 400);
-    
-    setTimeout(() => {
-        // Second glitch - text change
-        pointsDisplayDiv.textContent = glitchyTexts[1];
-        pointsDisplayDiv.style.opacity = '1'; 
-    }, 800);
-    
-    setTimeout(() => {
-        pointsDisplayDiv.textContent = glitchyTexts[2];
-    }, 900);
-    
-    setTimeout(() => {
-        pointsDisplayDiv.textContent = regularText;
-    }, 1000);
-    
-    // Sudden disappearance
-    setTimeout(() => {
-        pointsDisplayDiv.style.opacity = '0';
-    }, 2000);
-}
+// Create a chat container
+const chatContainer = document.createElement('div');
+chatContainer.style.position = 'fixed';
+chatContainer.style.bottom = '20px';
+chatContainer.style.right = '20px';
+chatContainer.style.width = '300px';
+chatContainer.style.maxHeight = '400px';
+chatContainer.style.overflowY = 'auto';
+chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+chatContainer.style.borderRadius = '10px';
+chatContainer.style.padding = '10px';
+chatContainer.style.fontFamily = '"Courier New", monospace';
+chatContainer.style.zIndex = '1000';
+document.body.appendChild(chatContainer);
 
-// Create stop message display element
-const stopMessageDiv = document.createElement('div');
-stopMessageDiv.style.position = 'fixed';
-stopMessageDiv.style.top = '40%';
-stopMessageDiv.style.left = '50%';
-stopMessageDiv.style.transform = 'translate(-50%, -50%)';
-stopMessageDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-stopMessageDiv.style.color = '#ff5555'; // Reddish color
-stopMessageDiv.style.padding = '20px';
-stopMessageDiv.style.borderRadius = '10px';
-stopMessageDiv.style.fontFamily = '"Courier New", monospace';
-stopMessageDiv.style.fontSize = '72px';
-stopMessageDiv.style.fontWeight = 'bold';
-stopMessageDiv.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
-stopMessageDiv.style.pointerEvents = 'none';
-stopMessageDiv.style.opacity = '0';
-// Set transitions for ALL properties that will be animated
-stopMessageDiv.style.transition = 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out';
-stopMessageDiv.style.zIndex = '1000';
-stopMessageDiv.textContent = '😭';
-document.body.appendChild(stopMessageDiv);
+// Arrays of possible noise messages
+const initialNoiseMessages = [
+    "Did u hear that?",
+    "Do you know which way is out??????",
+    "Where r we lol",
+    "um how do i move",
+    "why is it so dark rn"
+];
 
-// Fixed animation function for stop message
-function showStopMessageAnimation() {
-    // Reset to initial state
-    stopMessageDiv.style.opacity = '0';
-    stopMessageDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+const laterNoiseMessages = [
+    "Signal breach imminent",
+    "Interference detected",
+    "Data corruption warning",
+    "Noise levels increasing",
+    "Unusual patterns detected",
+    "Decrypting signal...",
+    "U all still there?",
+    "Anybody?",
+    "Did u hear it that time?",
+    "Connection unstable"
+];
+
+// Track when the page was loaded
+const pageLoadTime = Date.now();
+const initialPeriodDuration = 180000; // 180 seconds in milliseconds
+
+// Keep track of which initial message to show next
+let initialMessageIndex = 0;
+
+// Array of interaction-specific messages
+const interactionMessages = [
+    "Noise power increased",
+    "Impedence value maximized",
+    "Spatial audio activated",
+    "User interaction successful",
+    "Sonic mapping confirmed",
+    "Audio pathway opened",
+    "Sound source identified",
+    "Distortion amplified",
+    "Audio sequence initiated"
+];
+
+function showRandomChatMessage() {
+    // Determine which message set to use based on elapsed time
+    const currentTime = Date.now();
+    const useInitialMessages = (currentTime - pageLoadTime < initialPeriodDuration);
     
-    // Force browser to process the reset before starting animation
-    setTimeout(() => {
-        // Start fade in
-        stopMessageDiv.style.opacity = '1';
+    // Get the message text - sequential for initial period, random for later
+    let messageText;
+    if (useInitialMessages) {
+        // Get the next message in sequence
+        messageText = initialNoiseMessages[initialMessageIndex];
         
-        // Wait then animate out - slide down and fade
+        // Increment the index for next time, loop back to beginning if needed
+        initialMessageIndex = (initialMessageIndex + 1) % initialNoiseMessages.length;
+    } else {
+        // Randomly select from later messages
+        const messageIndex = Math.floor(Math.random() * laterNoiseMessages.length);
+        messageText = laterNoiseMessages[messageIndex];
+    }
+    
+    // Create a new message element
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(40, 40, 40, 0.8)';
+    messageElement.style.color = '#ffffff';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '85%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+    messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #555555'; // Neutral border for random messages
+    
+    // Add a typing indicator that will be shown before the message
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(40, 40, 40, 0.8)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #555555'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message
+    const randomPoints = Math.floor(Math.random() * 100) + 1;
+    
+    // Message text is already selected based on the sequential/random logic above
+    
+    // Add points to the end of the message
+    const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
+    
+    // Add the typing indicator first
+    chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add a small label for random messages
+        const label = document.createElement('div');
+        label.style.position = 'absolute';
+        label.style.top = '-8px';
+        label.style.right = '10px';
+        label.style.fontSize = '10px';
+        label.style.color = '#888888';
+        label.style.backgroundColor = 'rgba(20, 20, 20, 0.8)';
+        label.style.padding = '2px 6px';
+        label.style.borderRadius = '4px';
+        label.textContent = 'BACKGROUND';
+    //    messageElement.appendChild(label);
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Trigger animation
         setTimeout(() => {
-            stopMessageDiv.style.opacity = '0';
-            stopMessageDiv.style.transform = 'translate(-50%, -30%) scale(0.9)';
-        }, 1500);
-    }, 30); // Small delay to ensure reset is processed
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom again
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a timestamp after a short delay
+        setTimeout(() => {
+            const timestamp = document.createElement('div');
+            timestamp.style.fontSize = '10px';
+            timestamp.style.color = '#aaaaaa';
+            timestamp.style.textAlign = 'right';
+            timestamp.style.marginTop = '5px';
+            
+            // Get current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            timestamp.textContent = `${hours}:${minutes}`;
+            
+            messageElement.appendChild(timestamp);
+        }, 300);
+        
+        // Sometimes add a glitch effect to the message
+        if (Math.random() > 0.5) {
+            setTimeout(() => {
+                // Create a glitch effect by briefly changing the text
+                const originalHTML = messageElement.innerHTML;
+                
+                // Generate glitched version of the text
+                const glitched = originalHTML.replace(/[a-zA-Z]/g, (char) => {
+                    return Math.random() > 0.7 ? String.fromCharCode(Math.random() > 0.5 ? 48 + Math.floor(Math.random() * 10) : 33 + Math.floor(Math.random() * 14)) : char;
+                });
+                
+                // Apply glitch briefly
+                messageElement.innerHTML = glitched;
+                
+                // Restore original after short delay
+                setTimeout(() => {
+                    messageElement.innerHTML = originalHTML;
+                }, 200);
+            }, 800);
+        }
+    }, 1500); // Show typing for 1.5 seconds
 }
+
+// Function to show interaction-triggered chat message
+function showInteractionChatMessage() {
+    // Create a new message element with distinct styling
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(20, 60, 80, 0.9)'; // Different background color
+    messageElement.style.color = '#ffffff';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '85%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+    messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #00aaff'; // Blue border for interaction messages
+    
+    // Add a typing indicator with a different style
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(20, 60, 80, 0.9)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #00aaff'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 0.6s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message - higher for interactions
+    const interactionPoints = Math.floor(Math.random() * 500) + 100;
+    
+    // Select a random message from the interaction array
+    const messageIndex = Math.floor(Math.random() * interactionMessages.length);
+    const messageText = interactionMessages[messageIndex];
+    
+    // Add points to the end of the message with enhanced styling
+    const fullMessage = `${messageText} <span style="color: #00ffaa; font-weight: bold">+${interactionPoints} noise!</span>`;
+    
+    // Add the typing indicator first
+    chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add a distinct label for interaction messages
+        const label = document.createElement('div');
+        label.style.position = 'absolute';
+        label.style.top = '-8px';
+        label.style.right = '10px';
+        label.style.fontSize = '10px';
+        label.style.color = '#ffffff';
+        label.style.backgroundColor = 'rgba(0, 100, 200, 0.9)';
+        label.style.padding = '2px 6px';
+        label.style.borderRadius = '4px';
+        label.textContent = 'SYSTEM';
+        messageElement.appendChild(label);
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Add a pulsing glow effect to the message
+        messageElement.style.animation = 'pulse 2s ease-in-out';
+        messageElement.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.5)';
+        
+        // Create style for pulse animation if it doesn't exist
+        if (!document.querySelector('#pulse-animation')) {
+            const style = document.createElement('style');
+            style.id = 'pulse-animation';
+            style.textContent = `
+                @keyframes pulse {
+                    0% { box-shadow: 0 0 5px rgba(0, 170, 255, 0.5); }
+                    50% { box-shadow: 0 0 15px rgba(0, 170, 255, 0.8); }
+                    100% { box-shadow: 0 0 5px rgba(0, 170, 255, 0.5); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Trigger animation
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom again
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a timestamp after a short delay
+        setTimeout(() => {
+            const timestamp = document.createElement('div');
+            timestamp.style.fontSize = '10px';
+            timestamp.style.color = '#00ccff';
+            timestamp.style.textAlign = 'right';
+            timestamp.style.marginTop = '5px';
+            
+            // Get current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            timestamp.textContent = `${hours}:${minutes}:${seconds}`;
+            
+            messageElement.appendChild(timestamp);
+        }, 300);
+        
+        // Add a more pronounced glitch effect
+        setTimeout(() => {
+            // Create a series of glitches for a more dramatic effect
+            const originalHTML = messageElement.innerHTML;
+            const glitchCount = 3;
+            
+            for (let i = 0; i < glitchCount; i++) {
+                setTimeout(() => {
+                    // Generate heavily glitched version
+                    const glitched = originalHTML.replace(/[a-zA-Z0-9]/g, (char) => {
+                        return Math.random() > 0.3 ? String.fromCharCode(33 + Math.floor(Math.random() * 93)) : char;
+                    });
+                    
+                    // Apply glitch
+                    messageElement.innerHTML = glitched;
+                    
+                    // Restore after brief interval
+                    setTimeout(() => {
+                        messageElement.innerHTML = originalHTML;
+                    }, 100);
+                }, i * 300); // Stagger the glitches
+            }
+        }, 800);
+    }, 1000); // Show typing for 1 second
+}
+
+// Function to show the stop message
+function showStopMessageAnimation() {
+    // Create a special error message
+    const errorMessage = document.createElement('div');
+    errorMessage.style.backgroundColor = 'rgba(80, 0, 0, 0.8)';
+    errorMessage.style.color = '#ff5555';
+    errorMessage.style.borderRadius = '8px';
+    errorMessage.style.padding = '10px';
+    errorMessage.style.marginBottom = '10px';
+    errorMessage.style.width = '85%';
+    errorMessage.style.marginLeft = 'auto';
+    errorMessage.style.wordWrap = 'break-word';
+    errorMessage.style.fontWeight = 'bold';
+    errorMessage.style.opacity = '0';
+    errorMessage.style.transform = 'translateY(20px)';
+    errorMessage.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    errorMessage.innerHTML = 'CONNECTION TERMINATED 😭';
+    
+    // Add the message to the container
+    chatContainer.appendChild(errorMessage);
+    
+    // Trigger animation
+    setTimeout(() => {
+        errorMessage.style.opacity = '1';
+        errorMessage.style.transform = 'translateY(0)';
+        
+        // Add shake effect
+        errorMessage.style.animation = 'shake 0.5s ease-in-out';
+        
+        // Create style for shake animation if it doesn't exist
+        if (!document.querySelector('#shake-animation')) {
+            const style = document.createElement('style');
+            style.id = 'shake-animation';
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }, 10);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Start showing messages automatically
+function startRandomChatMessages() {
+    // Show first message after 8 seconds
+    setTimeout(() => {
+        showRandomChatMessage();
+        
+        // Then start showing messages periodically
+        setInterval(() => {
+            // 70% chance to show a message each time
+            if (Math.random() < 0.7) {
+                showRandomChatMessage();
+            }
+        }, 10000 + Math.random() * 15000); // Random interval between 10-25 seconds
+    }, 8000);
+}
+
+function scheduleRandomMessages() {
+    setInterval(() => {
+        if (Math.random() < 0.5) { // 50% chance to show message
+            showRandomChatMessage();
+        }
+    }, 15000); // Every 15 seconds
+}
+scheduleRandomMessages();
+
+// Create or use existing speed meter
+const speedMeter = document.getElementById('speed-meter') || document.createElement('div');
+speedMeter.id = 'speed-meter';
+speedMeter.style.position = 'fixed';
+speedMeter.style.bottom = '1rem';
+speedMeter.style.left = '1rem';
+speedMeter.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+speedMeter.style.color = '#ffffff';
+speedMeter.style.padding = '0.5rem 1rem';
+speedMeter.style.borderRadius = '0.5rem';
+speedMeter.style.fontFamily = 'monospace';
+speedMeter.style.fontSize = '.75rem';
+speedMeter.style.display = 'flex';
+speedMeter.style.alignItems = 'center';
+speedMeter.style.zIndex = '1000';
+speedMeter.innerHTML = `
+  <span>NOISE: </span>
+  <div style="margin-left: 0.5rem; width: 200px; height: 20px; background-color: rgba(50, 50, 50, 0.7); 
+       border-radius: 10px; overflow: hidden; position: relative;">
+    <div id="speed-marker" style="position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background-color: #ffffff; z-index: 2;"></div>
+    <div id="speed-fill-negative" style="position: absolute; right: 50%; top: 0; height: 100%; width: 0%; background-color: #ff6633; 
+         transition: width 0.15s ease, background-color 0.2s ease;"></div>
+    <div id="speed-fill-positive" style="position: absolute; left: 50%; top: 0; height: 100%; width: 0%; background-color: #00aaff; 
+         transition: width 0.15s ease, background-color 0.2s ease;"></div>
+    <!-- Removed numerical display -->
+  </div>
+`;
+
+// Make sure it's in the DOM
+if (!document.getElementById('speed-meter')) {
+  document.body.appendChild(speedMeter);
+}
+
+// Function to update the speed meter with light smoothing
+function updateSpeedMeter(speed) {
+  // Get the DOM elements
+  const speedFillNegative = document.getElementById('speed-fill-negative');
+  const speedFillPositive = document.getElementById('speed-fill-positive');
+  
+  if (!speedFillNegative || !speedFillPositive) return; // Ensure elements exist
+  
+  // Maximum speed for scaling the meter (can be adjusted)
+  const maxSpeed = 300;
+  
+  // We'll use the raw speed value to ensure it's responsive
+  const smoothedSpeed = speed;
+  
+  // Calculate percentage for display (0-50%)
+  const percentage = Math.min(50, Math.abs(smoothedSpeed) / maxSpeed * 50);
+  
+  // Update the appropriate fill based on direction
+  if (smoothedSpeed < 0) {
+    // Negative speed - fill left side
+    speedFillNegative.style.width = percentage + '%';
+    speedFillPositive.style.width = '0%';
+    
+    // Color based on magnitude (red spectrum)
+    const absSpeed = Math.abs(smoothedSpeed);
+    if (absSpeed > 200) {
+      speedFillNegative.style.backgroundColor = '#ff3333'; // Deep red for high backward speed
+    } else if (absSpeed > 100) {
+      speedFillNegative.style.backgroundColor = '#ff6633'; // Orange-red for medium backward speed
+    } else {
+      speedFillNegative.style.backgroundColor = '#ff9933'; // Orange for slow backward speed
+    }
+  } else if (smoothedSpeed > 0) {
+    // Positive speed - fill right side
+    speedFillPositive.style.width = percentage + '%';
+    speedFillNegative.style.width = '0%';
+    
+    // Color based on magnitude (blue spectrum)
+    if (smoothedSpeed > 200) {
+      speedFillPositive.style.backgroundColor = '#0066ff'; // Deep blue for high forward speed
+    } else if (smoothedSpeed > 100) {
+      speedFillPositive.style.backgroundColor = '#00aaff'; // Medium blue for medium forward speed
+    } else {
+      speedFillPositive.style.backgroundColor = '#00ddff'; // Light blue for slow forward speed
+    }
+  } else {
+    // Speed is exactly zero
+    speedFillNegative.style.width = '0%';
+    speedFillPositive.style.width = '0%';
+  }
+  
+}
+
+// Function to show/hide the speed meter
+function toggleSpeedMeter(visible = true) {
+  const meter = document.getElementById('speed-meter');
+  if (meter) {
+    meter.style.display = visible ? 'flex' : 'none';
+  }
+}
+
 
   //Gamepad setup
   function handleGamepadInput() {
@@ -2228,7 +2661,9 @@ function analyzeAudio() {
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
+            window.microphoneInput.targetSpeed = 5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
+
+            // window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
           //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
 
             // Log target speed
@@ -2338,7 +2773,10 @@ function animate() {
     const minSpeed = -800;
     const clampedSpeed = Math.max(minSpeed, Math.min(speed, maxSpeed));
     const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
- //   const adjustedSpeed = 200 * delta; // for DEVELOPMENT
+  //  const adjustedSpeed = 200 * delta; // for DEVELOPMENT
+
+    updateSpeedMeter(adjustedSpeed / delta, 800); // Display raw speed value
+
   
     // Store initial position
     const initialPosition = camera.position.clone();
@@ -2541,7 +2979,8 @@ function animate() {
         }
         
         window.bellAnimationState.isPlaying = true;
-        showPointsAnimation();
+        showInteractionChatMessage();
+
       }
       
       // Prevent multiple toggles while inside collision zone
@@ -2681,7 +3120,7 @@ if (hitBox14) {
                 // Update state
                 window.bell3AnimationState.isPlaying = true;
                 window.secondAudioState.isPlaying = true;
-                showPointsAnimation();
+                showInteractionChatMessage();
             } else {
                 // STOP THE ANIMATION
                 console.log("Camera collided with bell3 - stopping animation and audio");
@@ -2744,6 +3183,27 @@ if (hitBox14) {
         console.log("Player exited bell3 collision zone - ready for next interaction");
     }
 }
+
+if (bell2Model) {
+        if (cameraBoundingBox.intersectsBox(boundingBox14)) {
+            // Add to scene if not already added
+            if (!bell2Model.parent) {
+                console.log("Adding bell2 to scene - camera entered trigger zone");
+                scene.add(bell2Model);
+                
+                // Optionally show an interaction message
+                if (typeof showInteractionChatMessage === 'function') {
+                    showInteractionChatMessage();
+                }
+            }
+        } else {
+            // Remove from scene if added
+            if (bell2Model.parent) {
+            //    console.log("Removing bell2 from scene - camera left trigger zone");
+           //     scene.remove(bell2Model);
+            }
+        }
+    }
         
         const hitXRed = cameraBoundingBox.intersectsBox(redBoxBoundingBox);
         const hitXGreen = cameraBoundingBox.intersectsBox(greenBoxBoundingBox);
