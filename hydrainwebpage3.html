@@ -108,7 +108,8 @@
             s0.initCam();
 
             src(s0)
-            .thresh(.125)
+          //  .thresh(.125)
+            .thresh(.525)
             .luma(() => a.fft[0]/4+.1)
                 .blend(o0, 0.01)
                 .modulate(o0, () => a.fft[2] * .5)
