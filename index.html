@@ -187,7 +187,7 @@ if (isQuadSupported) {
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-      //  camera.position.set(-2530, 30, 3000);  //for DEVELOPMENT
+      //  camera.position.set(-2400, 30, 2500);  //for DEVELOPMENT
         camera.position.set(1550, 30, -700);  //for performance
 
         adjustForDisplayScaling();
@@ -335,7 +335,7 @@ if (isQuadSupported) {
         const geometry10 = new THREE.BoxGeometry( 40, 230, 4100 ); 
         const material10 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube10 = new THREE.Mesh( geometry10, material10 ); 
-        cube10.position.set(-2600, 70, 3200);
+        cube10.position.set(-2425, 70, 3200);
         cube10.userData.collidable = true;
         scene.add( cube10 );
       
@@ -349,7 +349,7 @@ if (isQuadSupported) {
         const geometry12 = new THREE.BoxGeometry( 840, 230, 100 ); 
         const material12 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube12 = new THREE.Mesh( geometry12, material12 ); 
-        cube12.position.set(-2475, 70, 5200);
+        cube12.position.set(-2475, 70, 5275);
         cube12.userData.collidable = true;
         scene.add( cube12 );      
 
@@ -423,7 +423,7 @@ if (isQuadSupported) {
        // Add bounding box 10
       const boundingBox10 = new THREE.Box3().setFromObject(cube10);
       const boundingBox10Helper = new THREE.BoxHelper(cube10, 0xff0000);
- //    scene.add(boundingBox10Helper);
+  //   scene.add(boundingBox10Helper);
       
       // Add bounding box 11
       const boundingBox11 = new THREE.Box3().setFromObject(cube11);
@@ -492,7 +492,7 @@ if (isQuadSupported) {
       
  //       firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
             firstBellLoader.load('bell4-compressed-inverted-blender.glb', function (gltf) {
-            gltf.scene.position.set(-2500, -50, 3200);
+            gltf.scene.position.set(-2400, -50, 3200);
             gltf.scene.scale.set(20, 20, 100);
             gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
@@ -716,8 +716,8 @@ console.log("Bell animation initialized and paused");
         scene.add(light);
 
 // Define constants for iframe loading
-const LOAD_DISTANCE = 2500;    // Distance at which iframes are loaded
-const UNLOAD_DISTANCE = 2500;  // Distance at which iframes are unloaded
+const LOAD_DISTANCE = 3000;    // Distance at which iframes are loaded
+const UNLOAD_DISTANCE = 3000;  // Distance at which iframes are unloaded
 
 // Improved IframeLazyLoader class
 class IframeLazyLoader {
@@ -827,18 +827,18 @@ function setupLazyLoadedIframes() {
             { x: 1560, y: -165, z: -1506 }, 
             [0, Math.PI/2, 0], 
             [1.15, .33, 1], 
-            'hydrainwebpage3.html',
+            'hydrainwebpage13.html',
             { width: '2000px', height: '2000px' }
         ],
         [
             { x: 1530, y: -165, z: -380 }, 
             [0, -Math.PI/2, 0], 
             [1, .33, 1], 
-            'hydrainwebpage3.html',
+            'hydrainwebpage13.html',
             { width: '2000px', height: '2000px' }
         ],
         [
-            { x: -2475, y: 30, z: 5250 }, 
+            { x: -2380, y: 30, z: 5325 }, 
             [0, Math.PI, 0], 
             [.2, .2, .2], 
             'index.html',
@@ -849,57 +849,57 @@ function setupLazyLoadedIframes() {
             { x: -73, y: 0, z: -1460 }, 
             [0, 0, 0], 
             [3.55, .33, 1], 
-            'hydrainwebpage7.html',
+            'hydrainwebpage13.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1600, y: 0, z: -300 }, 
             [0, Math.PI/2, 0], 
             [3.2, .33, 1], 
-            'hydrainwebpage6.html',
+            'hydrainwebpage13.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: 30, y: 0, z: -1380 }, 
             [0, Math.PI, 0], 
             [3, .33, 1], 
-            'hydrainwebpage7.html',
+            'hydrainwebpage13.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1350, y: 0, z: 0 }, 
             [0, Math.PI/2, 0], 
             [3, .33, 1], 
-            'hydrainwebpage6.html',
+            'hydrainwebpage13.html',
             { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -1850, y: 45, z: 1450 }, 
+            { x: -1830, y: 0, z: 1450 }, 
             [0, 0, 0], 
-            [10, 2.4, 1], 
-            'hydrainwebpage6.html',
-            { width: '100px', height: '100px' }
+            [1.04, .33, 1], 
+            'hydrainwebpage13.html',
+            { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2100, y: 45, z: 1300 }, 
+            { x: -2014, y: 0, z: 1300 }, 
             [0, 0, 0], 
-            [10, 2.4, 1], 
-            'hydrainwebpage6.html',
-            { width: '100px', height: '100px' }
+            [.9, .33, 1], 
+            'hydrainwebpage13.html',
+            { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2600, y: 45, z: 3290 }, 
-            [0, Math.PI/2, 0], 
-            [8.2, .48, 1], 
-            'hydrainwebpage6.html',
-            { width: '500px', height: '500px' }
+            { x: -2410, y: 45, z: 3190 }, 
+            [0, Math.PI/2, Math.PI], 
+            [4.1, .24, 1], 
+            'hydrainwebpage13.html',
+            { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2350, y: 45, z: 3400 }, 
+            { x: -2350, y: 0, z: 3244 }, 
             [0, Math.PI/2, 0], 
-            [7.8, .48, 1], 
-            'hydrainwebpage6.html',
-            { width: '500px', height: '500px' }
+            [3.9, .24, 1], 
+            'hydrainwebpage13.html',
+            { width: '1000px', height: '1000px' }
         ]
     ];
     
@@ -1954,9 +1954,15 @@ document.body.appendChild(chatContainer);
 const initialNoiseMessages = [
     "Did u hear that?",
     "Do you know which way is out??????",
-    "Where r we lol",
-    "um how do i move",
-    "why is it so dark rn"
+    "Hiiii",
+    "Where is this lol",
+    "can u go forward:)",
+    "why is it so dark rn",
+    "😂",
+    "What is ur favorite game",
+    "well there goes 100k",
+    "Oooooo",
+    "THIS IS EPIC"
 ];
 
 const laterNoiseMessages = [
@@ -2477,7 +2483,7 @@ function toggleSpeedMeter(visible = true) {
         const rightStickY = gp.axes[3]; // Right stick vertical
 
         const moveSpeed = 0; // Adjust for movement control
-        const lookSpeed = 20; // Sensitivity for mouse movement
+        const lookSpeed = 10; // Sensitivity for mouse movement
 
         // Move camera forward/backward
         if (Math.abs(leftStickY) > 0.1) {
