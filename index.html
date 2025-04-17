@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>Play</title>
+    <title>Welcome to my channel ˙✧˖°📺⋆｡˚</title>
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: "Courier New", monospace; }
         #c { width: 100%; height: 100%; display: block; }
@@ -19,7 +19,7 @@
             color: #808080; padding: 16px 20px;
             text-transform: uppercase; cursor: pointer;
 			      font-family: "Courier New", monospace;
-			      font-size: 60px;
+			      font-size: 40px;
         }
         #loading-screen {
             position: absolute;
@@ -29,7 +29,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0);
+            background: rgb(255, 255, 255);
             color: #acacac;
             font-size: 60px;
             font-family: "Courier New", monospace;
@@ -49,11 +49,61 @@
             white-space: nowrap;
             overflow: visible;
         }
+        #minimap-container {
+            position: fixed;
+            bottom: 20px;
+            left: 100px;
+            bottom: 15px;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 2000;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            opacity: 0.8;
+            display: none;
+        }
+        
+        #minimap-container:hover {
+            opacity: 1;
+        }
+        
+        #minimap {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #player-marker {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2001;
+            box-shadow: 0 0 5px #ffffff;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        #player-marker {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
     </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="overlay"><button id="startButton">Play</button></div>
+<div id="overlay"><button id="startButton">Start Live Stream</button></div>
 <div id="loading-screen">3</div>
 <div id="speed-meter" style="position: fixed; bottom: 1rem; left: 1rem; background-color: rgba(0, 0, 0, 0.6); 
      color: #ffffff; padding: 0.5rem 1rem; border-radius: 0.5rem; font-family: monospace; 
@@ -67,6 +117,10 @@
           color: white; font-size: 0.75rem; text-shadow: 0 0 2px black;">0</span>
   </div>
 </div>
+<div id="minimap-container">
+    <canvas id="minimap"></canvas>
+    <div id="player-marker"></div>
+  </div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
@@ -108,6 +162,7 @@ if (isQuadSupported) {
   async function init() {
         document.getElementById("overlay").remove();
         loadingScreen.style.display = 'flex';
+        document.getElementById('minimap-container').style.display = 'flex';
         document.getElementById('speed-meter').style.display = 'flex';
       
         // Start the loading countdown
@@ -187,7 +242,7 @@ if (isQuadSupported) {
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-      //  camera.position.set(-2400, 30, 2500);  //for DEVELOPMENT
+     //   camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
         camera.position.set(1550, 30, -700);  //for performance
 
         adjustForDisplayScaling();
@@ -286,7 +341,7 @@ if (isQuadSupported) {
       const geometry3 = new THREE.BoxGeometry( 3420, 200, 300 ); 
         const material3 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube3 = new THREE.Mesh( geometry3, material3 ); 
-        cube3.position.set(0, 50, -1610);
+        cube3.position.set(0, 50, -1600);
         cube3.userData.collidable = true;
         scene.add( cube3 );
       
@@ -304,17 +359,17 @@ if (isQuadSupported) {
         cube5.userData.collidable = true;
         scene.add( cube5 );
       
-     const geometry6 = new THREE.BoxGeometry( 100, 200, 6670 ); 
+     const geometry6 = new THREE.BoxGeometry( 100, 200, 1400 ); 
         const material6 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube6 = new THREE.Mesh( geometry6, material6 ); 
-        cube6.position.set(1490, 50, 1960);
+        cube6.position.set(1490, 50, -650);
         cube6.userData.collidable = true;
         scene.add( cube6 );
     
-        const geometry7 = new THREE.BoxGeometry( 100, 200, 9370 ); 
+        const geometry7 = new THREE.BoxGeometry( 100, 200, 1500 ); 
         const material7 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube7 = new THREE.Mesh( geometry7, material7 ); 
-        cube7.position.set(1610, 50, 2000);
+        cube7.position.set(1610, 50, -750);
         cube7.userData.collidable = true;
         scene.add( cube7 );
       
@@ -335,14 +390,14 @@ if (isQuadSupported) {
         const geometry10 = new THREE.BoxGeometry( 40, 230, 4100 ); 
         const material10 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube10 = new THREE.Mesh( geometry10, material10 ); 
-        cube10.position.set(-2425, 70, 3200);
+        cube10.position.set(-2414, 70, 3200);
         cube10.userData.collidable = true;
         scene.add( cube10 );
       
-        const geometry11 = new THREE.BoxGeometry( 40, 230, 3800 ); 
+        const geometry11 = new THREE.BoxGeometry( 40, 230, 4110 ); 
         const material11 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube11 = new THREE.Mesh( geometry11, material11 ); 
-        cube11.position.set(-2340, 70, 3500);
+        cube11.position.set(-2351, 70, 3500);
         cube11.userData.collidable = true;
         scene.add( cube11 );
       
@@ -387,7 +442,7 @@ if (isQuadSupported) {
         // Add bounding box 3
       const boundingBox3 = new THREE.Box3().setFromObject(cube3);
       const boundingBox3Helper = new THREE.BoxHelper(cube3, 0xff0000);
-  //    scene.add(boundingBox3Helper);
+ //     scene.add(boundingBox3Helper);
       
         // Add bounding box 4
       const boundingBox4 = new THREE.Box3().setFromObject(cube4);
@@ -402,7 +457,7 @@ if (isQuadSupported) {
        // Add bounding box 6
       const boundingBox6 = new THREE.Box3().setFromObject(cube6);
       const boundingBox6Helper = new THREE.BoxHelper(cube6, 0xff0000);
-  //    scene.add(boundingBox6Helper);
+ //     scene.add(boundingBox6Helper);
       
       
       // Add bounding box 7
@@ -423,12 +478,12 @@ if (isQuadSupported) {
        // Add bounding box 10
       const boundingBox10 = new THREE.Box3().setFromObject(cube10);
       const boundingBox10Helper = new THREE.BoxHelper(cube10, 0xff0000);
-  //   scene.add(boundingBox10Helper);
+   //  scene.add(boundingBox10Helper);
       
       // Add bounding box 11
       const boundingBox11 = new THREE.Box3().setFromObject(cube11);
       const boundingBox11Helper = new THREE.BoxHelper(cube11, 0xff0000);
-  //   scene.add(boundingBox11Helper);
+   //  scene.add(boundingBox11Helper);
       
       
         // Add bounding box 12
@@ -492,8 +547,8 @@ if (isQuadSupported) {
       
  //       firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
             firstBellLoader.load('bell4-compressed-inverted-blender.glb', function (gltf) {
-            gltf.scene.position.set(-2400, -50, 3200);
-            gltf.scene.scale.set(20, 20, 100);
+            gltf.scene.position.set(-2400, 0, 3200);
+            gltf.scene.scale.set(10, 10, 50);
             gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
        
@@ -603,8 +658,8 @@ if (isQuadSupported) {
         let mixer3;
       
         loaderBell3.load('bell4-compressed-inverted.glb', function (gltf) {
-            gltf.scene.position.set(-1500, -200, 800);
-            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.position.set(-1500, -50, 800);
+            gltf.scene.scale.set(25, 25, 25);
             gltf.scene.rotation.set(Math.PI/4, Math.PI/4, 0);
             scene.add(gltf.scene);
        
@@ -827,21 +882,21 @@ function setupLazyLoadedIframes() {
             { x: 1560, y: -165, z: -1506 }, 
             [0, Math.PI/2, 0], 
             [1.15, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage16.html',
             { width: '2000px', height: '2000px' }
         ],
         [
             { x: 1530, y: -165, z: -380 }, 
             [0, -Math.PI/2, 0], 
             [1, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage16.html',
             { width: '2000px', height: '2000px' }
         ],
         [
-            { x: -2380, y: 30, z: 5325 }, 
+            { x: -2380, y: 30, z: 5345 }, 
             [0, Math.PI, 0], 
             [.2, .2, .2], 
-            'index.html',
+            'level2.html',
             { width: '1080px', height: '720px' },
             { pointerEvents: 'auto' }  // Enable pointer events for this iframe
         ],
@@ -849,56 +904,56 @@ function setupLazyLoadedIframes() {
             { x: -73, y: 0, z: -1460 }, 
             [0, 0, 0], 
             [3.55, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage20.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1600, y: 0, z: -300 }, 
             [0, Math.PI/2, 0], 
             [3.2, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage18.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: 30, y: 0, z: -1380 }, 
             [0, Math.PI, 0], 
             [3, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage20.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1350, y: 0, z: 0 }, 
             [0, Math.PI/2, 0], 
             [3, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage14.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1830, y: 0, z: 1450 }, 
             [0, 0, 0], 
             [1.04, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage14.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -2014, y: 0, z: 1300 }, 
             [0, 0, 0], 
             [.9, .33, 1], 
-            'hydrainwebpage13.html',
+            'hydrainwebpage14.html',
             { width: '1000px', height: '1000px' }
         ],
         [
-            { x: -2410, y: 45, z: 3190 }, 
+            { x: -2410, y: 90, z: 3190 }, 
             [0, Math.PI/2, Math.PI], 
-            [4.1, .24, 1], 
-            'hydrainwebpage13.html',
+            [4.1, .33, 1], 
+            'hydrainwebpage15.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -2350, y: 0, z: 3244 }, 
             [0, Math.PI/2, 0], 
-            [3.9, .24, 1], 
-            'hydrainwebpage13.html',
+            [3.9, .33, 1], 
+            'hydrainwebpage15.html',
             { width: '1000px', height: '1000px' }
         ]
     ];
@@ -1892,7 +1947,7 @@ abcDiv.style.padding = '0.5rem 1rem';
 abcDiv.style.borderRadius = '0.5rem';
 abcDiv.style.fontFamily = 'monospace';
 abcDiv.style.fontSize = '1.25rem';
-abcDiv.innerHTML = 'CAM01 CHANNEL01';
+abcDiv.innerHTML = 'CHANNEL01';
 document.body.appendChild(abcDiv);
 
 // Create the clock div element
@@ -1941,7 +1996,7 @@ chatContainer.style.position = 'fixed';
 chatContainer.style.bottom = '20px';
 chatContainer.style.right = '20px';
 chatContainer.style.width = '300px';
-chatContainer.style.maxHeight = '400px';
+chatContainer.style.maxHeight = '300px';
 chatContainer.style.overflowY = 'auto';
 chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
 chatContainer.style.borderRadius = '10px';
@@ -1955,26 +2010,25 @@ const initialNoiseMessages = [
     "Did u hear that?",
     "Do you know which way is out??????",
     "Hiiii",
+    "Forward",
+    "Left",
     "Where is this lol",
-    "can u go forward:)",
+    "can u go forward & then turn:)",
     "why is it so dark rn",
     "😂",
-    "What is ur favorite game",
-    "well there goes 100k",
-    "Oooooo",
-    "THIS IS EPIC"
+    "THIS IS EPIC",
+    "Greetings from Glasgow"
 ];
 
 const laterNoiseMessages = [
-    "Signal breach imminent",
-    "Interference detected",
-    "Data corruption warning",
-    "Noise levels increasing",
-    "Unusual patterns detected",
-    "Decrypting signal...",
     "U all still there?",
+    "[message unavailable]",
     "Anybody?",
     "Did u hear it that time?",
+    "window.microphoneInput = null;",
+    "well there goes 100k",
+    "newSourceNode.start(0, window.audioState.playbackOffset);",
+    "OooOo",
     "Connection unstable"
 ];
 
@@ -1987,15 +2041,9 @@ let initialMessageIndex = 0;
 
 // Array of interaction-specific messages
 const interactionMessages = [
-    "Noise power increased",
-    "Impedence value maximized",
-    "Spatial audio activated",
-    "User interaction successful",
-    "Sonic mapping confirmed",
-    "Audio pathway opened",
-    "Sound source identified",
-    "Distortion amplified",
-    "Audio sequence initiated"
+    "console.log('Starting audio at offset:', window.secondAudioState.offset);",
+    "console.log('Audio resumed from offset:', window.audioState.playbackOffset.toFixed(3), 'seconds');",
+    "console.log('Noise increased')",
 ];
 
 function showRandomChatMessage() {
@@ -2065,8 +2113,10 @@ function showRandomChatMessage() {
     
     // Message text is already selected based on the sequential/random logic above
     
-    // Add points to the end of the message
+  /*  // Add points to the end of the message
     const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
+*/
+     const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
     
     // Add the typing indicator first
     chatContainer.appendChild(typingIndicator);
@@ -2410,7 +2460,52 @@ if (!document.getElementById('speed-meter')) {
 }
 
 // Function to update the speed meter with light smoothing
-function updateSpeedMeter(speed) {
+function setupVerticalSpeedMeter() {
+  // Find the existing speed meter element
+  const speedMeter = document.getElementById('speed-meter');
+  
+  if (speedMeter) {
+    // Update styles for vertical orientation - in bottom left corner
+    speedMeter.style.position = 'fixed';
+    speedMeter.style.top = 'auto'; // Remove top positioning
+    speedMeter.style.transform = 'none'; // Remove transform
+    speedMeter.style.bottom = '1rem';
+    speedMeter.style.left = '1rem';
+    speedMeter.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+    speedMeter.style.color = '#ffffff';
+    speedMeter.style.padding = '0.5rem 0.75rem'; // Smaller padding
+    speedMeter.style.borderRadius = '0.5rem';
+    speedMeter.style.fontFamily = 'monospace';
+    speedMeter.style.fontSize = '.65rem'; // Smaller font
+    speedMeter.style.display = 'flex';
+    speedMeter.style.flexDirection = 'column'; // Changed to column for vertical layout
+    speedMeter.style.alignItems = 'center';
+    speedMeter.style.zIndex = '1000';
+    
+    // Update inner HTML for vertical meter with labels at top and bottom
+    speedMeter.innerHTML = `
+      <span style="margin-bottom: 0.2rem;">NOISE</span>
+      <div style="position: relative; height: 120px; width: 15px;">
+        <div style="height: 120px; width: 15px; background-color: rgba(50, 50, 50, 0.7); 
+             border-radius: 10px; overflow: hidden; position: relative;">
+          <div id="speed-marker" style="position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background-color: #ffffff; z-index: 2;"></div>
+          <div id="speed-fill-negative" style="position: absolute; top: 50%; left: 0; width: 100%; height: 0%; background-color: #ff6633; 
+               transition: height 0.15s ease, background-color 0.2s ease;"></div>
+          <div id="speed-fill-positive" style="position: absolute; bottom: 50%; left: 0; width: 100%; height: 0%; background-color: #00aaff; 
+               transition: height 0.15s ease, background-color 0.2s ease;"></div>
+        </div>
+      </div>
+      <span style="margin-top: 0.2rem;">SIGNAL</span>
+    `;
+    
+    console.log("Vertical speed meter with labels setup complete");
+  } else {
+    console.error("Speed meter element not found");
+  }
+}
+
+// Function to update the vertical speed meter with swapped directions
+function updateVerticalSpeedMeter(speed) {
   // Get the DOM elements
   const speedFillNegative = document.getElementById('speed-fill-negative');
   const speedFillPositive = document.getElementById('speed-fill-positive');
@@ -2420,20 +2515,18 @@ function updateSpeedMeter(speed) {
   // Maximum speed for scaling the meter (can be adjusted)
   const maxSpeed = 300;
   
-  // We'll use the raw speed value to ensure it's responsive
-  const smoothedSpeed = speed;
-  
   // Calculate percentage for display (0-50%)
-  const percentage = Math.min(50, Math.abs(smoothedSpeed) / maxSpeed * 50);
+  const percentage = Math.min(50, Math.abs(speed) / maxSpeed * 50);
   
-  // Update the appropriate fill based on direction
-  if (smoothedSpeed < 0) {
-    // Negative speed - fill left side
-    speedFillNegative.style.width = percentage + '%';
-    speedFillPositive.style.width = '0%';
+  // Update the appropriate fill based on direction - DIRECTIONS SWAPPED:
+  // Negative values go UP, positive values go DOWN
+  if (speed < 0) {
+    // Negative speed - fill top half
+    speedFillNegative.style.height = percentage + '%';
+    speedFillPositive.style.height = '0%';
     
     // Color based on magnitude (red spectrum)
-    const absSpeed = Math.abs(smoothedSpeed);
+    const absSpeed = Math.abs(speed);
     if (absSpeed > 200) {
       speedFillNegative.style.backgroundColor = '#ff3333'; // Deep red for high backward speed
     } else if (absSpeed > 100) {
@@ -2441,34 +2534,40 @@ function updateSpeedMeter(speed) {
     } else {
       speedFillNegative.style.backgroundColor = '#ff9933'; // Orange for slow backward speed
     }
-  } else if (smoothedSpeed > 0) {
-    // Positive speed - fill right side
-    speedFillPositive.style.width = percentage + '%';
-    speedFillNegative.style.width = '0%';
+  } else if (speed > 0) {
+    // Positive speed - fill bottom half
+    speedFillPositive.style.height = percentage + '%';
+    speedFillNegative.style.height = '0%';
     
     // Color based on magnitude (blue spectrum)
-    if (smoothedSpeed > 200) {
+    if (speed > 200) {
       speedFillPositive.style.backgroundColor = '#0066ff'; // Deep blue for high forward speed
-    } else if (smoothedSpeed > 100) {
+    } else if (speed > 100) {
       speedFillPositive.style.backgroundColor = '#00aaff'; // Medium blue for medium forward speed
     } else {
       speedFillPositive.style.backgroundColor = '#00ddff'; // Light blue for slow forward speed
     }
   } else {
     // Speed is exactly zero
-    speedFillNegative.style.width = '0%';
-    speedFillPositive.style.width = '0%';
+    speedFillNegative.style.height = '0%';
+    speedFillPositive.style.height = '0%';
   }
-  
 }
 
-// Function to show/hide the speed meter
-function toggleSpeedMeter(visible = true) {
-  const meter = document.getElementById('speed-meter');
-  if (meter) {
-    meter.style.display = visible ? 'flex' : 'none';
-  }
+// Call this function to replace the existing updateSpeedMeter with vertical version
+function installVerticalSpeedMeter() {
+  // Set up the vertical meter UI
+  setupVerticalSpeedMeter();
+  
+  // Replace the old update function with the new vertical one
+  window.originalUpdateSpeedMeter = window.updateSpeedMeter;
+  window.updateSpeedMeter = updateVerticalSpeedMeter;
+  
+  console.log("Vertical speed meter installed successfully");
 }
+
+// Execute the installation
+installVerticalSpeedMeter();
 
 
   //Gamepad setup
@@ -2483,7 +2582,7 @@ function toggleSpeedMeter(visible = true) {
         const rightStickY = gp.axes[3]; // Right stick vertical
 
         const moveSpeed = 0; // Adjust for movement control
-        const lookSpeed = 10; // Sensitivity for mouse movement
+        const lookSpeed = 15; // Sensitivity for mouse movement
 
         // Move camera forward/backward
         if (Math.abs(leftStickY) > 0.1) {
@@ -2495,10 +2594,10 @@ function toggleSpeedMeter(visible = true) {
         }
 
         // Simulate mouse movement using right stick
-        if (Math.abs(rightStickX) > 0.1 || Math.abs(rightStickY) > 0.1) {
+        if (Math.abs(leftStickY) > 0.1 || Math.abs(rightStickX) > 0.1) {
             const mouseMoveEvent = new MouseEvent("mousemove", {
                 movementX: rightStickX * lookSpeed,
-                movementY: rightStickY * lookSpeed
+                movementY: leftStickY * lookSpeed * .33
             });
             document.dispatchEvent(mouseMoveEvent);
         }
@@ -2667,7 +2766,7 @@ function analyzeAudio() {
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
+            window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
 
             // window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
           //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
@@ -2731,6 +2830,165 @@ function toggleMicrophoneInput() {
         return setupAudioInput();
     }
 }
+
+// Minimap implementation
+let minimap;
+
+function initMinimap() {
+  console.log("Initializing minimap...");
+  const minimapCanvas = document.getElementById('minimap');
+  const minimapCtx = minimapCanvas.getContext('2d');
+  const minimap = {
+    canvas: minimapCanvas,
+    ctx: minimapCtx,
+    width: 200,
+    height: 200,
+    scale: 0.02, // Adjust this scale factor to make the map fit properly
+    offsetX: 100, // Center position X
+    offsetY: 100, // Center position Y
+    rotation: 0,  // Current rotation to match camera view
+    walls: [],    // Will store all collision walls
+    initialized: false
+  };
+  
+  // Set canvas dimensions for proper rendering
+  minimapCanvas.width = minimap.width;
+  minimapCanvas.height = minimap.height;
+  
+  // Collect all collidable objects to draw on the minimap
+  const walls = [];
+  
+  // Add all the collision boxes to the walls array
+  scene.traverse((object) => {
+    if (object.userData && object.userData.collidable) {
+      // Get the bounding box from the mesh
+      const bbox = new THREE.Box3().setFromObject(object);
+      const size = new THREE.Vector3();
+      bbox.getSize(size);
+      
+      // Extract position and dimensions
+      walls.push({
+        x: object.position.x,
+        z: object.position.z,
+        width: size.x,
+        depth: size.z
+      });
+    }
+  });
+  
+  minimap.walls = walls;
+  minimap.initialized = true;
+  
+  // First render
+  renderMinimap(minimap, camera.position);
+  
+  // Return the minimap object so we can use it later
+  return minimap;
+}
+
+function renderMinimap(minimap, playerPosition) {
+  if (!minimap || !minimap.initialized) return;
+  
+  const ctx = minimap.ctx;
+  
+  // Clear the canvas
+  ctx.clearRect(0, 0, minimap.width, minimap.height);
+  
+  // Set background
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.fillRect(0, 0, minimap.width, minimap.height);
+  
+  // Get the camera's rotation around the Y axis
+  const cameraRotationY = Math.atan2(
+    camera.getWorldDirection(new THREE.Vector3()).x,
+    camera.getWorldDirection(new THREE.Vector3()).z
+  );
+  
+  // Save the current drawing state
+  ctx.save();
+  
+  // Move to center and rotate the map so north is always up
+  ctx.translate(minimap.offsetX, minimap.offsetY);
+  ctx.rotate(cameraRotationY + Math.PI);
+  
+  // Define colors for special boxes
+  const specialBoxColors = {
+    '-2480_3200': 'rgba(255, 0, 0, 0.7)',   // Box 13 (red)
+    '-1500_1000': 'rgba(0, 255, 0, 0.7)',   // Box 14 (green)
+    '-2500_3200': 'rgba(0, 100, 255, 0.7)'  // Box 15 (blue)
+  };
+  
+  // Draw all walls
+  minimap.walls.forEach(wall => {
+    // Convert from world coordinates to minimap coordinates
+    const x = (wall.x - playerPosition.x) * minimap.scale;
+    const z = (wall.z - playerPosition.z) * minimap.scale;
+    const width = wall.width * minimap.scale;
+    const depth = wall.depth * minimap.scale;
+    
+    // Create a unique key for this wall based on its position
+    const positionKey = `${Math.round(wall.x)}_${Math.round(wall.z)}`;
+    
+    // Set the color based on whether this is a special box or not
+    if (specialBoxColors[positionKey]) {
+      ctx.fillStyle = specialBoxColors[positionKey];
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';  // Brighter outline for special boxes
+      ctx.lineWidth = 1.5;  // Thicker outline
+    } else {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';  // Regular color for other boxes
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.lineWidth = 1;
+    }
+    
+    // Draw the wall
+    ctx.fillRect(x - width/2, z - depth/2, width, depth);
+    ctx.strokeRect(x - width/2, z - depth/2, width, depth);
+  });
+  
+  // Restore the drawing state
+  ctx.restore();
+  
+  // Draw a compass indicator at the edge of the minimap
+  drawCompass(minimap, cameraRotationY);
+}
+
+function drawCompass(minimap, rotation) {
+  const ctx = minimap.ctx;
+  const radius = minimap.width / 2 - 10;
+  const centerX = minimap.width / 2;
+  const centerY = minimap.height / 2;
+  
+  // Draw compass letters
+  ctx.font = '12px monospace';
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // North
+  const northX = centerX + Math.sin(-rotation) * radius;
+  const northY = centerY + Math.cos(-rotation) * radius;
+  
+  // South
+  const southX = centerX + Math.sin(-rotation + Math.PI) * radius;
+  const southY = centerY + Math.cos(-rotation + Math.PI) * radius;
+  
+  // East
+  const eastX = centerX + Math.sin(-rotation + Math.PI/2) * radius;
+  const eastY = centerY + Math.cos(-rotation + Math.PI/2) * radius;
+  
+  // West
+  const westX = centerX + Math.sin(-rotation - Math.PI/2) * radius;
+  const westY = centerY + Math.cos(-rotation - Math.PI/2) * radius;
+}
+
+function updateMinimap() {
+  if (minimap && minimap.initialized) {
+    renderMinimap(minimap, camera.position);
+  }
+}
+
+minimap = initMinimap();
+   
    
 function animate() {
     updateAudioGains();
@@ -2738,6 +2996,7 @@ function animate() {
     updateThirdAudioGains();
     const delta = clock.getDelta();
     handleGamepadInput();
+    updateMinimap();
   
     // Update iframe visibility
     if (window.iframeLoaders) {
@@ -2778,8 +3037,8 @@ function animate() {
     const maxSpeed = 800
     const minSpeed = -800;
     const clampedSpeed = Math.max(minSpeed, Math.min(speed, maxSpeed));
-    const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
-  //  const adjustedSpeed = 200 * delta; // for DEVELOPMENT
+   const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
+  //  const adjustedSpeed = 150 * delta; // for DEVELOPMENT
 
     updateSpeedMeter(adjustedSpeed / delta, 800); // Display raw speed value
 
