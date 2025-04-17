@@ -243,7 +243,7 @@ if (isQuadSupported) {
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
      //   camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
-        camera.position.set(1550, 30, -700);  //for performance
+        camera.position.set(1580, 30, -500);  //for performance
 
         adjustForDisplayScaling();
 
@@ -338,10 +338,10 @@ if (isQuadSupported) {
         cube2.userData.collidable = true;
         scene.add( cube2 );
       
-      const geometry3 = new THREE.BoxGeometry( 3420, 200, 300 ); 
+      const geometry3 = new THREE.BoxGeometry( 3420, 200, 100 ); 
         const material3 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube3 = new THREE.Mesh( geometry3, material3 ); 
-        cube3.position.set(0, 50, -1600);
+        cube3.position.set(0, 50, -1500);
         cube3.userData.collidable = true;
         scene.add( cube3 );
       
@@ -369,14 +369,14 @@ if (isQuadSupported) {
         const geometry7 = new THREE.BoxGeometry( 100, 200, 1500 ); 
         const material7 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube7 = new THREE.Mesh( geometry7, material7 ); 
-        cube7.position.set(1610, 50, -750);
+        cube7.position.set(1680, 50, -750);
         cube7.userData.collidable = true;
         scene.add( cube7 );
       
-        const geometry8 = new THREE.BoxGeometry( 100, 200, 200 ); 
+        const geometry8 = new THREE.BoxGeometry( 200, 200, 200 ); 
         const material8 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube8 = new THREE.Mesh( geometry8, material8 ); 
-        cube8.position.set(1540, 50, -350);
+        cube8.position.set(1560, 50, -380);
         cube8.userData.collidable = true;
         scene.add( cube8 );
       
@@ -408,14 +408,14 @@ if (isQuadSupported) {
         cube12.userData.collidable = true;
         scene.add( cube12 );      
 
-        const geometry13 = new THREE.BoxGeometry( 200, 200, 600 ); 
+        const geometry13 = new THREE.BoxGeometry( 300, 300, 300 ); 
         const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube13 = new THREE.Mesh( geometry13, material13 ); 
-        cube13.position.set(-2480, 50, 3200);
+        cube13.position.set(-2400, 50, 3200);
         cube13.userData.collidable = true;
         scene.add( cube13 ); 
 
-        const geometry14 = new THREE.BoxGeometry( 1000, 1000, 1000 ); 
+        const geometry14 = new THREE.BoxGeometry( 500, 500, 500 ); 
         const material14 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube14 = new THREE.Mesh( geometry14, material14 ); 
         cube14.position.set(-1500, 0, 1000);
@@ -425,7 +425,7 @@ if (isQuadSupported) {
         const geometry15 = new THREE.BoxGeometry( 500, 500, 500 ); 
         const material15 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube15 = new THREE.Mesh( geometry15, material15 ); 
-        cube15.position.set(-2500, 0, 3200);
+        cube15.position.set(-200, 50, -1450);
         cube15.userData.collidable = true;
         scene.add( cube15 ); 
       
@@ -879,7 +879,7 @@ function setupLazyLoadedIframes() {
     const iframeConfigs = [
         // Format: [position, rotation, scale, url, dimensions]
         [
-            { x: 1560, y: -165, z: -1506 }, 
+            { x: 1640, y: -165, z: -1506 }, 
             [0, Math.PI/2, 0], 
             [1.15, .33, 1], 
             'hydrainwebpage16.html',
@@ -901,7 +901,7 @@ function setupLazyLoadedIframes() {
             { pointerEvents: 'auto' }  // Enable pointer events for this iframe
         ],
         [
-            { x: -73, y: 0, z: -1460 }, 
+            { x: 7, y: 0, z: -1460 }, 
             [0, 0, 0], 
             [3.55, .33, 1], 
             'hydrainwebpage20.html',
@@ -1996,7 +1996,7 @@ chatContainer.style.position = 'fixed';
 chatContainer.style.bottom = '20px';
 chatContainer.style.right = '20px';
 chatContainer.style.width = '300px';
-chatContainer.style.maxHeight = '300px';
+chatContainer.style.maxHeight = '200px';
 chatContainer.style.overflowY = 'auto';
 chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
 chatContainer.style.borderRadius = '10px';
@@ -2843,7 +2843,7 @@ function initMinimap() {
     ctx: minimapCtx,
     width: 200,
     height: 200,
-    scale: 0.02, // Adjust this scale factor to make the map fit properly
+    scale: 0.05, // Adjust this scale factor to make the map fit properly
     offsetX: 100, // Center position X
     offsetY: 100, // Center position Y
     rotation: 0,  // Current rotation to match camera view
@@ -2913,9 +2913,9 @@ function renderMinimap(minimap, playerPosition) {
   
   // Define colors for special boxes
   const specialBoxColors = {
-    '-2480_3200': 'rgba(255, 0, 0, 0.7)',   // Box 13 (red)
+    '-2400_3200': 'rgba(255, 0, 0, 0.7)',   // Box 13 (red)
     '-1500_1000': 'rgba(0, 255, 0, 0.7)',   // Box 14 (green)
-    '-2500_3200': 'rgba(0, 100, 255, 0.7)'  // Box 15 (blue)
+    '-200_-1450': 'rgba(0, 100, 255, 0.7)'  // Box 15 (blue)
   };
   
   // Draw all walls
@@ -2957,12 +2957,6 @@ function drawCompass(minimap, rotation) {
   const radius = minimap.width / 2 - 10;
   const centerX = minimap.width / 2;
   const centerY = minimap.height / 2;
-  
-  // Draw compass letters
-  ctx.font = '12px monospace';
-  ctx.fillStyle = '#ffffff';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
   
   // North
   const northX = centerX + Math.sin(-rotation) * radius;
