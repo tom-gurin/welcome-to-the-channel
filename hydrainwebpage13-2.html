@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>hydra inside a webpage</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/main.css" />
+
+    <!-- import the latest version of hydra synth-->
+    <script src="https://unpkg.com/hydra-synth"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: "Courier New", monospace;
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 280px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 6px;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #555;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: #555;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+            background: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+   <!-- Buttons
+    <div id="controls">
+        <button onclick="feedback()">?</button>
+        <label for="modulate">Modulate:</label>
+        <input type="range" id="modulate" name="modulate" min="0" max="1" step="0.01" oninput="modulateValue=this.value">
+    </div>
+  -->
+
+    <canvas id="myCanvas" width="960px" height="720px"></canvas>
+
+    <script>
+        var modulateValue = 0.5;
+
+        function init() {
+            // create a new hydra-synth instance
+            var hydra = new Hydra({
+                canvas: document.getElementById("myCanvas"),
+                detectAudio: true,
+                enableStreamCapture: true,
+            });
+
+            // Starting Hydra code here        
+            
+            a.setBins(3);
+            a.setSmooth(0.95);
+     //       a.setSmooth(0.95);
+            a.setScale(4);
+            a.setCutoff(0.05);
+            a.hide();
+
+            
+            s0.initCam();
+            
+            src(s0)
+            .thresh(.405)
+          //  .thresh(.8)
+            .luma(() => a.fft[2]/4)
+            .blend(o0, 0.01)
+        //    .modulate(o0, () => a.fft[2] * 2.5)
+         //   .modulate(osc(2,0,1), .5)
+         //   .modulate(noise(6,0), .05)
+        //    .pixelate(() => a.fft[1]*a.fft[0]*80,() => a.fft[1]*40)
+            .pixelate(() => Math.cos((time-30)*.2)*500,() => Math.tan((time-30)*.001)*250)
+            .out(o0);
+            src(o0)
+         //   .blend(o1, 0.00)
+         //   .modulate(o0, () => a.fft[2] * .0)
+            .out(o1);
+            src(o1)
+            .blend(o2, 0.1)
+            .colorama(.1)
+        //    .modulate(o1, .0)
+            .out(o2);
+          //  solid(1,1,1,.5)
+          //  noise(8.5,0)
+            noise(1.5,0)
+            .modulateRotate(s0, 0.7)
+       //     .pixelate(() =>a.fft[0]*100,() =>a.fft[2]*50)
+            .pixelate(200, 100)
+            .color(.2, .2, .2, .5)
+            .layer(src(o2))
+         //   .colorama(.02)   
+            .saturate(0)
+         //  .color(0.537, 0.337, 0.984, .9)
+            .out(o3);
+            render(o3);
+        }
+        
+        /*
+            a.setBins(5) // amount of bins (bands) to separate the audio spectrum
+
+              noise(2)
+                .modulate(o0,()=>a.fft[1]*1.9) // listening to the 2nd band
+                .out()
+
+              a.setSmooth(.8) // audio reactivity smoothness from 0 to 1, uses linear interpolation
+              a.setScale(8)    // loudness upper limit (maps to 0)
+              a.setCutoff(0.1)   // loudness from which to start listening to (maps to 0)
+
+              a.show() // show what hydra's listening to
+              // a.hide()
+
+              render(o0)
+        }
+        */
+            
+        // Call init() immediately when the page loads
+        window.onload = init;
+
+        // Function for the feedback button
+        window.feedback = function () {
+            a.setBins(3);
+            a.setSmooth(0.8);
+            a.setScale(4);
+            a.setCutoff(0.2);
+            a.hide();
+
+            s0.initCam();
+            src(s0).color(() => a.fft[0] * modulateValue + 0.0001, 0.5, 0.5, () => a.fft[2])
+                .blend(o0, 0.9)
+                .modulate(o0, 0.01)
+                .out(o0);
+            src(o0).modulate(o0, () => modulateValue * 2).out(o1);
+            src(o1).modulate(o1, () => a.fft[1] * 4).out(o2);
+            s1.initScreen();
+            src(o2).modulate(s1, 0.5).colorama(0.2).out(o3);
+            render(o3);
+        };
+    </script>
+</body>
+</html>

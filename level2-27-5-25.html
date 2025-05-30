@@ -1,0 +1,5036 @@
+<html lang="en">
+<head>
+    <title>Welcome to the channel ˙✧˖°📺⋆｡˚</title>
+    <style>
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: "Courier New", monospace; }
+        #c { width: 100%; height: 100%; display: block; }
+        #overlay {
+            position: absolute;
+            z-index: 2;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none; /* Hide initially */
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 1);
+            flex-direction: column;
+        }
+
+        /* Main title styling */
+        #game-title {
+            color: #8956FB;
+            font-family: "Arial Black", sans-serif;
+            font-size: 82px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-title 2s infinite ease-in-out;
+        }
+
+        /* Button container for animation effects */
+        #button-container {
+            position: relative;
+            margin-top: 30px;
+        }
+
+        /* Styling for start button */
+        #startButton {
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #8956FB; 
+            color: #FFFFFF;
+            padding: 20px 40px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 28px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(137, 86, 251, 0.8);
+            animation: button-glow 1.5s infinite alternate;
+        }
+
+        #startButton:hover {
+            background: rgba(137, 86, 251, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(137, 86, 251, 1), 0 0 40px rgba(137, 86, 251, 0.5);
+        }
+
+        #startButton:active {
+            transform: scale(0.98);
+        }
+
+        /* Decorative elements */
+        .corner-decoration {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #8956FB;
+            opacity: 0.8;
+            display: none
+        }
+
+        .corner-decoration.top-left {
+            top: -15px;
+            left: -15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.top-right {
+            top: -15px;
+            right: -15px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: -15px;
+            left: -15px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: -15px;
+            right: -15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Subtitle text */
+        #subtitle {
+            color: #ffffff;
+            font-family: "Arial", sans-serif;
+            font-size: 24px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        /* Time limit display styling */
+        #time-limit-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 6px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        /*    border: 2px solid #8956FB; */
+         /*   box-shadow: 0 0 20px rgba(137, 86, 251, 0.6); */
+            z-index: 1500;
+            display: none;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        #time-limit-display.warning {
+            border-color: #ff3333;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
+            animation: time-warning 0.5s infinite alternate;
+        }
+
+        #time-limit-display.critical {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+            animation: time-critical 0.3s infinite alternate;
+        }
+
+        /* Game over overlay */
+        #game-over-overlay {
+            position: absolute;
+            z-index: 3;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.9);
+            flex-direction: column;
+        }
+
+        #game-over-title {
+            color: #ff3333;
+            font-family: "Arial Black", sans-serif;
+            font-size: 72px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-game-over 1.5s infinite ease-in-out;
+        }
+
+        #game-over-message {
+            color: #ffffff;
+            font-family: "Arial", sans-serif;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        #restart-button {
+            background: rgba(255, 51, 51, 0.2);
+            border: 3px solid #ff3333;
+            color: #ffffff;
+            padding: 15px 30px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 20px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.6);
+        }
+
+        #restart-button:hover {
+            background: rgba(255, 51, 51, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 51, 51, 1);
+        }
+
+        /* Animations */
+        @keyframes pulse-title {
+            0% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+            50% { text-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 50px rgba(137, 86, 251, 0.8); }
+            100% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+        }
+
+        @keyframes pulse-game-over {
+            0% { text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6); }
+            50% { text-shadow: 0 0 25px rgba(255, 51, 51, 1), 0 0 50px rgba(255, 51, 51, 0.8); }
+            100% { text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6); }
+        }
+
+        @keyframes button-glow {
+            from { box-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+            to { box-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 40px rgba(137, 86, 251, 0.7); }
+        }
+
+        @keyframes time-warning {
+            from { 
+                box-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
+                transform: translateX(-50%) scale(1);
+            }
+            to { 
+                box-shadow: 0 0 30px rgba(255, 51, 51, 1);
+                transform: translateX(-50%) scale(1.02);
+            }
+        }
+
+        @keyframes time-critical {
+            from { 
+                box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+                transform: translateX(-50%) scale(1);
+            }
+            to { 
+                box-shadow: 0 0 40px rgba(255, 0, 0, 1);
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* For button shine effect */
+        @keyframes shine {
+            0% { transform: translateX(-300%) skewX(30deg); }
+            100% { transform: translateX(300%) skewX(30deg); }
+        }
+
+        .shine-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(30deg);
+            animation: shine 4s infinite;
+        }
+
+        #countdown-overlay {
+            position: absolute;
+            z-index: 2;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        #countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #countdown-message {
+            color: #FFFFFF;
+            font-family: "Arial Black", sans-serif;
+            font-size: 60px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-title 2s infinite ease-in-out;
+        }
+
+        #countdown {
+            color: #8956FB;
+            font-family: "Arial Black", sans-serif;
+            font-size: 82px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            animation: pulse-countdown 1.5s infinite ease-in-out;
+            position: relative;
+            padding: 20px 40px;
+        }
+
+        .countdown-decoration {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #8956FB;
+            opacity: 0.8;
+            display: none;
+        }
+
+        .countdown-decoration.top-left {
+            top: -15px;
+            left: -15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .countdown-decoration.top-right {
+            top: -15px;
+            right: -15px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .countdown-decoration.bottom-left {
+            bottom: -15px;
+            left: -15px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .countdown-decoration.bottom-right {
+            bottom: -15px;
+            right: -15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Animation for countdown */
+        @keyframes pulse-countdown {
+            0% { transform: scale(1); text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+            50% { transform: scale(1.05); text-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 50px rgba(137, 86, 251, 0.8); }
+            100% { transform: scale(1); text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+        }
+
+        #countdown-background {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(25, 10, 38, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%);
+            z-index: -1;
+            animation: background-pulse 8s infinite ease-in-out;
+        }
+
+        @keyframes background-pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.7; }
+        }
+        /* Loading Screen CSS */
+        #loading-screen {
+            position: absolute;
+            z-index: 1501;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgb(0, 0, 0);
+            flex-direction: column;
+        }
+
+        #loading-progress {
+            width: 300px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #loading-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8956FB, #FF56FB);
+            box-shadow: 0 0 10px rgba(137, 86, 251, 0.8);
+            animation: progress-animation 1s infinite alternate;
+            transition: width 5s ease-in-out;
+        }
+
+        /* Loading Screen Animations */
+        @keyframes pulse-text {
+            0% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+            50% { text-shadow: 0 0 25px rgba(137, 86, 251, 1); }
+            100% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+        }
+
+        @keyframes progress-animation {
+            from { box-shadow: 0 0 10px rgba(137, 86, 251, 0.5); }
+            to { box-shadow: 0 0 20px rgba(137, 86, 251, 1); }
+        }
+
+        @keyframes glitch-animation {
+            0% { transform: translate(0); filter: none; }
+            10% { transform: translate(-5px, 5px); filter: hue-rotate(90deg) brightness(1.5); }
+            20% { transform: translate(5px, -8px); filter: contrast(1.5) brightness(0.8); }
+            30% { transform: translate(-8px, -12px); filter: hue-rotate(-90deg) brightness(1.3); }
+            40% { transform: translate(8px, 12px); filter: invert(0.3) brightness(1.2); }
+            50% { transform: translate(-10px, -5px); filter: contrast(1.7); }
+            60% { transform: translate(10px, 8px); filter: hue-rotate(180deg) brightness(0.7); }
+            70% { transform: translate(-12px, 10px); filter: invert(0.1) contrast(1.4); }
+            80% { transform: translate(12px, -10px); filter: hue-rotate(-120deg) brightness(1.4); }
+            90% { transform: translate(-8px, -8px); filter: contrast(1.3) brightness(0.8); }
+            100% { transform: translate(0); filter: none; }
+        }
+
+        #countdown.glitching {
+            animation: glitch-animation 0.3s ease;
+            position: relative;
+            overflow: visible;
+        }
+
+        #countdown.glitching::before, 
+        #countdown.glitching::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        #countdown.glitching::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-1 0.25s linear alternate-reverse;
+        }
+
+        #countdown.glitching::after {
+            left: -2px;
+            text-shadow: 2px 0 #00ffff;
+            clip: rect(24px, 450px, 36px, 0);
+            animation: glitch-anim-2 0.25s linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(30px, 450px, 36px, 0); }
+            20% { clip: rect(25px, 450px, 31px, 0); }
+            40% { clip: rect(63px, 450px, 71px, 0); }
+            60% { clip: rect(12px, 450px, 31px, 0); }
+            80% { clip: rect(51px, 450px, 81px, 0); }
+            100% { clip: rect(42px, 450px, 73px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(59px, 450px, 71px, 0); }
+            20% { clip: rect(26px, 450px, 51px, 0); }
+            40% { clip: rect(48px, 450px, 53px, 0); }
+            60% { clip: rect(80px, 450px, 86px, 0); }
+            80% { clip: rect(15px, 450px, 26px, 0); }
+            100% { clip: rect(32px, 450px, 49px, 0); }
+        }
+        
+        #countdown.glitching {
+            animation: glitch-animation 0.3s ease;
+        }
+        #info {
+            position: absolute; 
+            top: 0px; 
+            width: 100%;
+            padding: 10px; 
+            box-sizing: border-box;
+            text-align: center; 
+            user-select: none;
+            pointer-events: none; 
+            z-index: 1;
+            color: #ffffff;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: visible;
+        }
+        #minimap-container {
+            position: fixed;
+            bottom: 20px;
+            left: 100px;
+            bottom: 15px;
+            width: 170px;
+            height: 170px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 2000;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            opacity: 0.8;
+            display: none;
+        }
+        
+        #minimap-container:hover {
+            opacity: 1;
+        }
+        
+        #minimap {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #player-marker {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2001;
+            box-shadow: 0 0 5px #ffffff;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        #player-marker {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .stream-host-message {
+            background: linear-gradient(135deg, #8956FB 0%, #FF56FB 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-width: 90%;
+            margin-left: auto;
+            word-wrap: break-word;
+            position: relative;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 20px rgba(137, 86, 251, 0.6);
+            animation: host-message-glow 2s infinite alternate;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .stream-host-label {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: linear-gradient(135deg, #FF56FB 0%, #8956FB 100%);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ffffff;
+            box-shadow: 0 0 10px rgba(255, 86, 251, 0.8);
+        }
+
+        .typing-content {
+            font-size: 20px;
+            line-height: 1.4;
+            min-height: 20px;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #ffffff;
+            margin-left: 2px;
+            animation: cursor-blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes host-message-glow {
+            from { box-shadow: 0 0 20px rgba(137, 86, 251, 0.6); }
+            to { box-shadow: 0 0 30px rgba(255, 86, 251, 0.8); }
+        }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="countdown-overlay">
+    <div id="countdown-background"></div>
+    <div id="countdown-container">
+        <div id="countdown-message">Live Stream Starting Soon</div>
+        <div id="countdown" style="position: relative;">
+            <div class="countdown-decoration top-left"></div>
+            <div class="countdown-decoration top-right"></div>
+            <div class="countdown-decoration bottom-left"></div>
+            <div class="countdown-decoration bottom-right"></div>
+            10:00
+        </div>
+    </div>
+</div>
+<div id="overlay">
+    <h1 id="game-title">Welcome to the Channel</h1>
+    <div id="subtitle"></div>
+    <div id="button-container">
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        <button id="startButton">
+            Start Level 2
+            <div class="shine-effect"></div>
+        </button>
+    </div>
+</div>
+<div id="loading-screen">
+    <div id="loading-progress">
+        <div id="loading-progress-bar"></div>
+    </div>
+</div>
+<div id="speed-meter" style="position: fixed; bottom: 1rem; left: 1rem; background-color: rgba(0, 0, 0, 0.6); 
+     color: #ffffff; padding: 0.5rem 1rem; border-radius: 0.5rem; font-family: monospace; 
+     font-size: .75rem; display: none; align-items: center; z-index: 1000;">
+  <span>NOISE: </span>
+  <div style="margin-left: 0.5rem; width: 200px; height: 20px; background-color: rgba(50, 50, 50, 0.7); 
+       border-radius: 10px; overflow: hidden; position: relative;">
+    <div id="speed-fill" style="height: 100%; width: 0%; background-color: #00ff00; 
+         transition: width 0.1s, background-color 0.3s;"></div>
+    <span id="speed-text" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
+          color: white; font-size: 0.75rem; text-shadow: 0 0 2px black;">0</span>
+  </div>
+</div>
+<div id="minimap-container">
+    <canvas id="minimap"></canvas>
+    <div id="player-marker"></div>
+  </div>
+<!-- Time Limit Display -->
+<div id="time-limit-display">
+    <div id="time-remaining" style="font-size: 32px; margin-top: 5px;">60</div>
+</div>
+
+<!-- Game Over Overlay -->
+<div id="game-over-overlay">
+    <h1 id="game-over-title">TIME'S UP!</h1>
+    <div id="game-over-message">You died! 1 life remaining.<br></div>
+<!--    <button id="restart-button">Restart Now</button> -->
+</div>
+<script type="module">
+    import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
+    import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
+    import { CSS3DRenderer, CSS3DObject } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/renderers/CSS3DRenderer.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+    import { Box3 } from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js';
+    import { PositionalAudioHelper } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/helpers/PositionalAudioHelper.js';
+
+    const startButton = document.getElementById('startButton');
+    const loadingScreen = document.getElementById('loading-screen');
+    const countdownElement = document.getElementById('countdown');
+    const countdownOverlay = document.getElementById('countdown-overlay');
+    const regularOverlay = document.getElementById('overlay');
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function triggerGlitch() {
+    const countdownElement = document.getElementById('countdown');
+    countdownElement.setAttribute('data-text', countdownElement.textContent);
+    countdownElement.classList.add('glitching');
+    
+    // Remove the class after the animation duration to reset it
+    setTimeout(() => {
+        countdownElement.classList.remove('glitching');
+    }, 300); // Match to animation duration
+}
+
+// Schedule random glitches
+function scheduleRandomGlitches() {
+        // Random delay between 5-15 seconds
+        const randomDelay = 5000 + Math.random() * 10000;
+        
+        setTimeout(() => {
+            // Only trigger if countdown is still visible
+            if (document.getElementById('countdown-overlay').style.display !== 'none') {
+                triggerGlitch();
+                
+                // Chance for a double glitch effect
+                if (Math.random() > 0.7) {
+                    setTimeout(triggerGlitch, 150);
+                }
+            }
+            // Schedule next glitch
+            scheduleRandomGlitches();
+        }, randomDelay);
+    }
+
+    // Start scheduling random glitches on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        scheduleRandomGlitches();
+    });
+
+    // Game over sound setup
+    class SoundManager {
+        constructor(audioContext) {
+            this.audioContext = audioContext;
+            this.sounds = new Map();
+            this.masterGain = audioContext.createGain();
+            this.masterGain.connect(audioContext.destination);
+            this.masterGain.gain.value = 0.7; // Master volume
+        }
+
+        async loadSound(name, url) {
+            try {
+                console.log(`Loading sound: ${name} from ${url}`);
+                const response = await fetch(url);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.sounds.set(name, audioBuffer);
+                console.log(`Successfully loaded sound: ${name}`);
+                return true;
+            } catch (error) {
+                console.error(`Failed to load sound ${name}:`, error);
+                return false;
+            }
+        }
+
+        playSound(name, volume = 1.0, loop = false) {
+            const buffer = this.sounds.get(name);
+            if (!buffer) {
+                console.warn(`Sound ${name} not found`);
+                return null;
+            }
+
+            const source = this.audioContext.createBufferSource();
+            const gainNode = this.audioContext.createGain();
+            
+            source.buffer = buffer;
+            source.loop = loop;
+            gainNode.gain.value = volume;
+
+            source.connect(gainNode);
+            gainNode.connect(this.masterGain);
+
+            source.start();
+            console.log(`Playing sound: ${name} at volume ${volume}`);
+            
+            return {
+                source: source,
+                gainNode: gainNode,
+                stop: () => source.stop(),
+                fadeOut: (duration = 1.0) => {
+                    const currentTime = this.audioContext.currentTime;
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+                    setTimeout(() => source.stop(), duration * 1000);
+                }
+            };
+        }
+
+        async preloadAllSounds() {
+    console.log("Preloading game sounds...");
+    
+    return new Promise((resolve) => {
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load('lose.mp3', (buffer) => {
+            this.sounds.set('lose', buffer);
+            console.log('Lose sound loaded successfully');
+            resolve(true);
+        }, undefined, (error) => {
+            console.error('Failed to load lose sound:', error);
+            resolve(false);
+        });
+    });
+        }
+    }
+
+    // Initialize sound manager
+    const soundManager = new SoundManager(audioContext);
+
+// Countdown timer
+// let timeRemaining = 10 * 60; //10m for performance
+ let timeRemaining = 10 // 10s for development
+    
+    // Start the countdown immediately
+    const countdownInterval = setInterval(() => {
+        timeRemaining--;
+        
+        // Update the countdown display
+        countdownElement.textContent = formatTime(timeRemaining);
+        
+        // When countdown reaches zero
+        if (timeRemaining <= 0) {
+            clearInterval(countdownInterval);
+            
+            // Hide countdown overlay
+            countdownOverlay.style.display = 'none';
+            
+            // Show the regular overlay with the start button
+            regularOverlay.style.display = 'flex';
+
+            const hudElements = initializeHud(); //HUD before click
+            setupHudToggleControls();
+            triggerStreamHostMessages()
+        }
+    }, 1000);
+    
+    // Function to format time as MM:SS
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+// Create a chat container
+const chatContainer = document.createElement('div');
+chatContainer.style.position = 'fixed';
+chatContainer.style.bottom = '20px';
+chatContainer.style.right = '0px';
+chatContainer.style.width = '300px';
+chatContainer.style.maxHeight = '400px';
+chatContainer.style.overflowY = 'auto';
+chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+chatContainer.style.borderRadius = '10px';
+chatContainer.style.padding = '10px';
+chatContainer.style.fontFamily = '"Arial", monospace';
+chatContainer.style.zIndex = '1000';
+//document.body.appendChild(chatContainer); //hidden in this level
+
+// Arrays of possible noise messages
+const initialNoiseMessages = [
+    "AsunaLoveAhri: Hellloooo",
+    "AsunaLoveAhri: is anyon watching alredy?",
+    "xXGamer4LifeXx: is ths the right chanel??",
+    "Visitor498: Hiiii",
+    "ShadowPlay22: Im soo exited for this 1!",
+    "AsunaLoveAhri: Anybdy here new?",
+    "AsunaLoveAhri: Did u heer that?",
+    "🔔 AsunaLoveAhri tipped 1.50 - 'Luv ur chanell'",
+    "LostViewer55: Do u kno wich way is out??????",
+    "StreamFan99: Hiiiii",
+    "xXGamer4LifeXx: [message deleted by a moderator.]",
+    "👻👻👻: console.log('CONTROLLER LOSING POWER')",
+    "xXGamer4LifeXx: lol this SUCKS @AsunaLoveAhri let's goooo",
+    "ProGamer876: Forwrd",
+    "AsunaLoveAhri: wtf no this is amzing",
+    "NightOwl42: Who's controling the game? Go Leftt",
+    "👻👻👻: window.microphoneInput = null;",
+    "👻👻👻: console.log('STARTING MICROPHONE')",
+    "RandomChatter: Whre is this lol",
+    "TwitchQueen: can u go forwrd & then trn:)",
+    "DarkModeAlways: y is it soo dark rn",
+    "GamerBro44: 😂😂😂😂😂",
+    "HypeSquad101: thsi is epic",
+    "👻👻👻: console.log('CONTROLLER LOSING POWER')",
+    "🔔 AsunaLoveAhri tipped 25.00 - 'Luvvv'",
+    "HilariousGamer9: Gretings frm Glasgow"
+];
+
+const laterNoiseMessages = [
+    "U all still there?",
+    "👻👻👻:[message unavailable]",
+    "AsunaLoveAhri: Anybody?",
+    "AsunaLoveAhri: Did u hear it that time?",
+    "👻👻👻: window.microphoneInput = null;",
+    "xXGamer4LifeXx: well there goes 100k",
+    "👻👻👻:newSourceNode.start(0, window.audioState.playbackOffset);",
+    "OooOo",
+    "Connection unstable"
+];
+
+// Track when the page was loaded
+const pageLoadTime = Date.now();
+const initialPeriodDuration = 210000; // 210 seconds in milliseconds
+
+// Keep track of which initial message to show next
+let initialMessageIndex = 0;
+
+// Array of interaction-specific messages
+const interactionMessages = [
+    "console.log('NOISE INCREASED 👻)",
+];
+
+function showRandomChatMessage() {
+    // Determine which message set to use based on elapsed time
+    const currentTime = Date.now();
+    const useInitialMessages = (currentTime - pageLoadTime < initialPeriodDuration);
+    
+    // Get the message text - sequential for initial period, random for later
+    let messageText;
+    if (useInitialMessages) {
+        // Get the next message in sequence
+        messageText = initialNoiseMessages[initialMessageIndex];
+        
+        // Increment the index for next time, loop back to beginning if needed
+        initialMessageIndex = (initialMessageIndex + 1) % initialNoiseMessages.length;
+    } else {
+        // Randomly select from later messages
+        const messageIndex = Math.floor(Math.random() * laterNoiseMessages.length);
+        messageText = laterNoiseMessages[messageIndex];
+    }
+    
+    // Create a new message element
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    messageElement.style.color = '#ffffff';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '85%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+    messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #8956FB'; // Neutral border for random messages
+    
+    // Add a typing indicator that will be shown before the message
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #8956FB'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message
+    const randomPoints = Math.floor(Math.random() * 100) + 1;
+    
+    // Message text is already selected based on the sequential/random logic above
+    
+  /*  // Add points to the end of the message
+    const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
+*/
+     const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
+    
+    // Add the typing indicator first
+    chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Trigger animation
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom of the chat
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a timestamp after a short delay
+        setTimeout(() => {
+            const timestamp = document.createElement('div');
+            timestamp.style.fontSize = '10px';
+            timestamp.style.color = '#aaaaaa';
+            timestamp.style.textAlign = 'right';
+            timestamp.style.marginTop = '5px';
+            
+            // Get current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+       //     timestamp.textContent = `${hours}:${minutes}`;
+            
+            messageElement.appendChild(timestamp);
+        }, 300);
+        
+        // Sometimes add a glitch effect to the message
+        if (Math.random() > 0.5) {
+            setTimeout(() => {
+                // Create a glitch effect by briefly changing the text
+                const originalHTML = messageElement.innerHTML;
+                
+                // Generate glitched version of the text
+                const glitched = originalHTML.replace(/[a-zA-Z]/g, (char) => {
+                    return Math.random() > 0.7 ? String.fromCharCode(Math.random() > 0.5 ? 48 + Math.floor(Math.random() * 10) : 33 + Math.floor(Math.random() * 14)) : char;
+                });
+                
+                // Apply glitch briefly
+                messageElement.innerHTML = glitched;
+                
+                // Restore original after short delay
+                setTimeout(() => {
+                    messageElement.innerHTML = originalHTML;
+                }, 200);
+            }, 800);
+        }
+    }, 1500); // 1.5 second typing animation
+}
+
+// Add the styles to the document
+if (!document.querySelector('#stream-host-styles')) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'stream-host-styles';
+    //styleElement.textContent = streamHostStyles;
+    document.head.appendChild(styleElement);
+}
+
+// Function to show Stream Host message with real-time typing
+function showStreamHostMessage(messageText) {
+    // Create the message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'stream-host-message';
+    
+    // Create the Stream Host label
+    const labelElement = document.createElement('div');
+    labelElement.className = 'stream-host-label';
+    labelElement.textContent = 'Stream Host';
+    
+    // Create the typing content area
+    const contentElement = document.createElement('div');
+    contentElement.className = 'typing-content';
+    
+    // Create the typing cursor
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    
+    // Append elements
+    messageElement.appendChild(labelElement);
+    messageElement.appendChild(contentElement);
+    contentElement.appendChild(cursor);
+    
+    // Add to your existing chat container
+    chatContainer.appendChild(messageElement);
+    
+    // Animate entrance
+    setTimeout(() => {
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Scroll to bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // Start typing animation
+    let currentCharIndex = 0;
+    const typingSpeed = 80; // milliseconds per character
+    
+    function typeNextCharacter() {
+    if (currentCharIndex < messageText.length) {
+        const currentChar = messageText[currentCharIndex];
+        
+        // Add the next character before the cursor
+        const textBeforeCursor = messageText.substring(0, currentCharIndex + 1);
+        contentElement.innerHTML = textBeforeCursor + '<span class="typing-cursor"></span>';
+        
+        currentCharIndex++;
+        
+        // Variable typing speed based on character type
+        let delay = getTypingDelay(currentChar, currentCharIndex);
+        
+        // Continue typing
+        setTimeout(typeNextCharacter, delay);
+        
+        // Auto-scroll as text appears
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    } else {
+        // Typing complete - remove cursor after a brief pause
+        setTimeout(() => {
+            contentElement.innerHTML = messageText;
+        }, 1000);
+    }
+}
+
+function getTypingDelay(char, index) {
+    const baseSpeed = 80; // Base typing speed in ms
+    const variation = Math.random() * 40 - 20; // Random variation ±20ms
+    
+    let delay = baseSpeed + variation;
+    
+    // Adjust delays for different characters
+    switch (char) {
+        case ' ':
+            // Slight pause for spaces
+            delay += Math.random() * 50 + 25;
+            break;
+        case '.':
+        case '!':
+        case '?':
+            // Longer pause after sentence endings
+            delay += Math.random() * 200 + 150;
+            break;
+        case ',':
+        case ';':
+        case ':':
+            // Medium pause for punctuation
+            delay += Math.random() * 100 + 50;
+            break;
+        case '\n':
+            // Pause for line breaks
+            delay += Math.random() * 150 + 100;
+            break;
+        default:
+            // Occasionally add small hesitations on random letters
+            if (Math.random() < 0.1) { // 10% chance
+                delay += Math.random() * 80 + 40;
+            }
+            break;
+    }
+    
+    // Slightly slower at the beginning (like warming up)
+    if (index < 10) {
+        delay += (10 - index) * 5;
+    }
+    
+    // Ensure minimum delay
+    return Math.max(delay, 30);
+}
+
+// Start typing after a short delay with some randomness
+setTimeout(typeNextCharacter, 300 + Math.random() * 400);
+}
+
+// Function to trigger Stream Host messages after countdown reaches zero
+function triggerStreamHostMessages() {
+    // First message after a delay
+    setTimeout(() => {
+        showStreamHostMessage('Hey all, thanks for joining!! today we have some really exciting content for you.');
+    }, 5000); // 5 seconds after countdown ends
+    //typing sounds are done by saxophone key clicks in real time
+
+    setTimeout(() => {
+        showStreamHostMessage('We have some truly amazing content for you to enjoy today.');
+    }, 20000); // 20 seconds after countdown ends
+    
+    // Second message after another delay
+    setTimeout(() => {
+        showStreamHostMessage("Are you ready to make some noise???");
+    }, 30000); // 30 seconds after countdown ends
+
+    // Third message after another delay
+    setTimeout(() => {
+        showStreamHostMessage("Let's get this showwww on the road gang 🚀");
+    }, 40000); // 40 seconds after countdown ends    
+}
+
+// Function to show game interaction-triggered chat message
+function showInteractionChatMessage() {
+    // Create a new message element with distinct styling
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(20, 60, 80, 0.9)'; // Different background color
+    messageElement.style.color = '#ffffff';
+    messageElement.style.fontSize = '20px';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '100%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+ //   messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #00aaff'; // Blue border for interaction messages
+    
+    // Add a typing indicator with a different style
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(20, 60, 80, 0.9)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #00aaff'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 0.6s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message - higher for interactions
+    const interactionPoints = Math.floor(Math.random() * 500) + 100;
+    
+    // Select a random message from the interaction array
+    const messageIndex = Math.floor(Math.random() * interactionMessages.length);
+    const messageText = interactionMessages[messageIndex];
+    
+    // Add points to the end of the message with enhanced styling
+    const fullMessage = `${messageText} <span style="color: #00ffaa; font-weight: bold">+${interactionPoints} noise!</span>`;
+    
+    // Don't add the typing indicator
+ //   chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add a distinct label for interaction messages
+        const label = document.createElement('div');
+        label.style.position = 'absolute';
+        label.style.top = '-12px';
+        label.style.right = '15px';
+        label.style.padding = '4px 12px';
+        label.style.fontSize = '12px';
+        label.style.fontWeight = 'bold';
+        label.style.color = '#ffffff';
+        label.style.backgroundColor = 'rgba(0, 100, 200, 0.9)';
+        label.style.borderRadius = '8px';
+        label.textContent = 'GAME 👻';
+        label.style.letterSpacing = '1px';
+        messageElement.appendChild(label);
+ 
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Add a pulsing glow effect to the message
+      //  messageElement.style.animation = 'pulse 2s ease-in-out';
+        messageElement.style.animation = 'shakeY 0.5s ease-in-out';
+        messageElement.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.5)';
+        
+       // Create style for shake animation if it doesn't exist
+       if (!document.querySelector('#shakeY-animation')) {
+            const style = document.createElement('style');
+            style.id = 'shakeY-animation';
+            style.textContent = `
+                @keyframes shakeY {
+                    0%, 100% { transform: translateY(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateY(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateY(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Trigger animation
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom again
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a pronounced glitch effect
+        setTimeout(() => {
+            // Create a series of glitches
+            const originalHTML = messageElement.innerHTML;
+            const glitchCount = 3;
+            
+            for (let i = 0; i < glitchCount; i++) {
+                setTimeout(() => {
+                    // Generate heavily glitched version
+                    const glitched = originalHTML.replace(/[a-zA-Z0-9]/g, (char) => {
+                        return Math.random() > 0.3 ? String.fromCharCode(33 + Math.floor(Math.random() * 93)) : char;
+                    });
+                    
+                    // Apply glitch
+                    messageElement.innerHTML = glitched;
+                    
+                    // Restore after brief interval
+                    setTimeout(() => {
+                        messageElement.innerHTML = originalHTML;
+                    }, 100);
+                }, i * 300); // Stagger the glitches
+            }
+        }, 800);
+    }, 1000); // Show typing for 1 second
+}
+
+// Function to show the stop message
+function showStopMessageAnimation() {
+    // Create a special error message
+    const errorMessage = document.createElement('div');
+    errorMessage.style.backgroundColor = 'rgba(80, 0, 0, 0.8)';
+    errorMessage.style.color = '#ff5555';
+    errorMessage.style.borderRadius = '8px';
+    errorMessage.style.padding = '10px';
+    errorMessage.style.marginBottom = '10px';
+    errorMessage.style.width = '85%';
+    errorMessage.style.marginLeft = 'auto';
+    errorMessage.style.wordWrap = 'break-word';
+    errorMessage.style.fontWeight = 'bold';
+    errorMessage.style.opacity = '0';
+    errorMessage.style.transform = 'translateY(20px)';
+    errorMessage.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    errorMessage.innerHTML = 'CONNECTION TERMINATED 😭';
+    
+    // Add the message to the container
+    chatContainer.appendChild(errorMessage);
+    
+    // Trigger animation
+    setTimeout(() => {
+        errorMessage.style.opacity = '1';
+        errorMessage.style.transform = 'translateY(0)';
+        
+        // Add shake effect
+        errorMessage.style.animation = 'shake 0.5s ease-in-out';
+        
+        // Create style for shake animation if it doesn't exist
+        if (!document.querySelector('#shake-animation')) {
+            const style = document.createElement('style');
+            style.id = 'shake-animation';
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+            
+    }, 10);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Start showing messages automatically
+function startRandomChatMessages() {
+    // Show first message after 8 seconds
+    setTimeout(() => {
+        showRandomChatMessage();
+        
+        // Then start showing messages periodically
+        setInterval(() => {
+            // 70% chance to show a message each time
+            if (Math.random() < 0.7) {
+                showRandomChatMessage();
+            }
+        }, 3000 + Math.random() * 20000); // Random interval between 3-23 seconds
+    }, 8000);
+}
+startRandomChatMessages()
+
+    // Check the maximum number of audio channels supported
+console.log("Maximum channels supported:", audioContext.destination.maxChannelCount);
+
+// Create a variable to track if we're in stereo or quad mode
+let isQuadSupported = audioContext.destination.maxChannelCount >= 4;
+
+// Set up the appropriate number of channels
+if (isQuadSupported) {
+    // Original code path - use all available channels for quad
+    audioContext.destination.channelCount = audioContext.destination.maxChannelCount;
+    audioContext.destination.channelCountMode = "explicit";
+    audioContext.destination.channelInterpretation = "discrete";
+    console.log("Using quad audio output with", audioContext.destination.channelCount, "channels");
+} else {
+    // New code path - only 2 channels available, use stereo mode
+    audioContext.destination.channelCount = 2;
+    audioContext.destination.channelCountMode = "explicit";
+    audioContext.destination.channelInterpretation = "speakers";
+    console.log("Using stereo audio output with downmixing");
+}
+
+    let sceneReady = false;
+  
+    startButton.addEventListener('click', init);
+
+// Create a function to add the HUD iframe
+function createHudIframe() {
+  console.log("Setting up HUD iframe...");
+  
+  // Create container div for the HUD
+  const hudContainer = document.createElement('div');
+  hudContainer.style.position = 'fixed';
+  hudContainer.style.right = '0';
+  hudContainer.style.top = '20%';
+  hudContainer.style.transform = 'translateY(-50%)';
+  hudContainer.style.width = '250px';  // Adjust width as needed
+  hudContainer.style.height = '192px'; // Adjust height as needed
+  hudContainer.style.zIndex = '1000';  // Make sure it's above other elements
+  hudContainer.style.pointerEvents = 'none'; // Make it click-through by default
+  hudContainer.style.transition = 'opacity 0.3s ease, width 0.3s ease';
+  hudContainer.style.opacity = '1';
+  hudContainer.style.display = 'none';  // Start hidden
+ // hudContainer.style.borderLeft = '2px solid rgba(255, 255, 255, 0.3)';
+ // hudContainer.style.boxShadow = '-5px 0 15px rgba(0, 0, 0, 0.5)';
+  
+  // Create iframe element
+  const hudIframe = document.createElement('iframe');
+  hudIframe.src = 'hydrainwebpage24.html';
+  hudIframe.style.width = '100%';
+  hudIframe.style.height = '100%';
+  hudIframe.style.border = '0';
+  hudIframe.style.pointerEvents = 'none'; // Make it click-through
+  
+  // Set permissions
+  hudIframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  hudIframe.allowFullscreen = true;
+  
+  // Add hover effect
+  hudContainer.addEventListener('mouseenter', () => {
+    hudContainer.style.opacity = '1';
+    hudContainer.style.width = '300px'; // Expand width on hover
+  });
+  
+  hudContainer.addEventListener('mouseleave', () => {
+    hudContainer.style.opacity = '1';
+    hudContainer.style.width = '250px'; // Return to original width
+  });
+  
+  // Append iframe to container
+  hudContainer.appendChild(hudIframe);
+  
+  // Append the container to the document body
+  document.body.appendChild(hudContainer);
+  
+  console.log("HUD iframe created successfully");
+  
+  return {
+    container: hudContainer,
+    iframe: hudIframe
+  };
+}
+
+// Create a toggle function to show/hide the HUD
+function toggleHudVisibility(visible) {
+  const hudContainer = document.querySelector('.hud-container');
+  if (hudContainer) {
+    hudContainer.style.display = visible ? 'block' : 'none';
+  }
+}
+
+// Create a function to update the HUD position based on screen size
+function updateHudPosition() {
+  const hudContainer = document.querySelector('.hud-container');
+  if (hudContainer) {
+    // Keep it centered vertically and on the right side
+    hudContainer.style.top = '50%';
+    hudContainer.style.right = '0';
+    hudContainer.style.transform = 'translateY(-50%)';
+  }
+}
+
+// Call this function to add the HUD to your scene
+function initializeHud() {
+  const hudElements = createHudIframe();
+  
+  // Add a class for easier selection later
+  hudElements.container.classList.add('hud-container');
+  
+  // Set up a resize listener to adjust position if needed
+  window.addEventListener('resize', updateHudPosition);
+  
+  return hudElements;
+}
+
+// Create a keyboard shortcut to toggle HUD visibility
+function setupHudToggleControls() {
+  let hudVisible = false; //set to false for hidden start
+  
+  document.addEventListener('keydown', (event) => {
+    // Press 'H' key to toggle HUD
+    if (event.code === 'KeyH') {
+      hudVisible = !hudVisible;
+      toggleHudVisibility(hudVisible);
+      console.log(`HUD visibility set to: ${hudVisible}`);
+    }
+  });
+}
+
+function setupGamepadOverlay() {
+  console.log("Setting up canvas-based gamepad overlay...");
+  
+  // Create the container and canvas
+  const container = document.createElement('div');
+  container.id = 'gamepad-canvas-container';
+  container.style.position = 'fixed';
+  container.style.bottom = '200px';
+  container.style.left = '20px';
+  container.style.width = '300px';
+  container.style.height = '170px';
+  container.style.zIndex = '1000';
+  container.style.opacity = '0.8';
+  container.style.transition = 'opacity 0.3s ease';
+  container.style.display = 'none'; // Hidden until gamepad is connected
+  container.style.pointerEvents = 'none'; // Don't interfere with mouse events
+  
+  // Create canvas element
+  const canvas = document.createElement('canvas');
+  canvas.id = 'gamepad-canvas';
+  canvas.width = 300;
+  canvas.height = 170;
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  
+  // Add canvas to container
+  // container.appendChild(canvas); //Hidden on level 2
+  
+  // Add to document body
+  document.body.appendChild(container);
+  
+  // Hover effect
+  container.addEventListener('mouseenter', () => {
+    container.style.opacity = '1';
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    container.style.opacity = '0.8';
+  });
+  
+  // Track connected state
+  let isConnected = false;
+  
+  // Add connection listeners
+  window.addEventListener("gamepadconnected", (event) => {
+    console.log("Gamepad connected:", event.gamepad);
+    isConnected = true;
+    container.style.display = 'block';
+ //   showGamepadNotification('GAMEPAD CONNECTED', 'Press G to hide/show overlay');
+  });
+  
+  window.addEventListener("gamepaddisconnected", (event) => {
+    console.log("Gamepad disconnected:", event.gamepad);
+    isConnected = false;
+    container.style.display = 'none';
+    showGamepadNotification('GAMEPAD DISCONNECTED', 'Connect a controller to continue');
+  });
+  
+  // Toggle visibility with G key
+  let isVisible = true;
+  document.addEventListener('keydown', (event) => {
+    if (event.code === 'KeyG' && isConnected) {
+      isVisible = !isVisible;
+      container.style.display = isVisible ? 'block' : 'none';
+      console.log("Gamepad overlay visibility toggled:", isVisible);
+    }
+  });
+  
+  // Start the render loop
+  requestAnimationFrame(renderGamepad);
+  
+  // Function to render the gamepad overlay on the canvas
+  function renderGamepad() {
+    // Continue the animation loop
+    requestAnimationFrame(renderGamepad);
+    
+    // Skip if not connected or not visible
+    if (!isConnected || !isVisible) return;
+    
+    // Get gamepad state
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[0]; // Using first gamepad
+    
+    if (!gamepad) return;
+    
+    // Get canvas context
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Get gamepad state with deadzone
+    const deadzone = 0.1;
+    
+    // Get stick values (apply deadzone)
+    const leftX = Math.abs(gamepad.axes[0]) > deadzone ? gamepad.axes[0] : 0;
+    const leftY = Math.abs(gamepad.axes[1]) > deadzone ? gamepad.axes[1] : 0;
+    const rightX = Math.abs(gamepad.axes[2]) > deadzone ? gamepad.axes[2] : 0;
+    const rightY = Math.abs(gamepad.axes[3]) > deadzone ? gamepad.axes[3] : 0;
+    
+    // Draw controller body (path)
+    ctx.beginPath();
+    ctx.moveTo(75, 45);
+    ctx.bezierCurveTo(75, 45, 90, 30, 150, 30);
+    ctx.bezierCurveTo(210, 30, 225, 45, 225, 45);
+    ctx.lineTo(250, 80);
+    ctx.bezierCurveTo(260, 95, 260, 110, 250, 125);
+    ctx.bezierCurveTo(240, 140, 220, 140, 210, 125);
+    ctx.bezierCurveTo(200, 110, 180, 110, 150, 110);
+    ctx.bezierCurveTo(120, 110, 100, 110, 90, 125);
+    ctx.bezierCurveTo(80, 140, 60, 140, 50, 125);
+    ctx.bezierCurveTo(40, 110, 40, 95, 50, 80);
+    ctx.closePath();
+    
+    // Fill and stroke
+    ctx.fillStyle = 'rgba(40, 40, 40, 0.75)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Constants for stick positions and sizes
+    const leftStickX = 100;
+    const leftStickY = 80;
+    const rightStickX = 200;
+    const rightStickY = 80;
+    const stickRadius = 30;
+    const stickBallRadius = 10;
+    const maxTravel = 20;
+    
+    // Draw left stick boundary
+    ctx.beginPath();
+    ctx.arc(leftStickX, leftStickY, stickRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 30, 30, 0.6)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw left stick crosshairs
+    ctx.beginPath();
+    ctx.moveTo(leftStickX - stickRadius, leftStickY);
+    ctx.lineTo(leftStickX + stickRadius, leftStickY);
+    ctx.moveTo(leftStickX, leftStickY - stickRadius);
+    ctx.lineTo(leftStickX, leftStickY + stickRadius);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Draw right stick boundary
+    ctx.beginPath();
+    ctx.arc(rightStickX, rightStickY, stickRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 30, 30, 0.6)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw right stick crosshairs
+    ctx.beginPath();
+    ctx.moveTo(rightStickX - stickRadius, rightStickY);
+    ctx.lineTo(rightStickX + stickRadius, rightStickY);
+    ctx.moveTo(rightStickX, rightStickY - stickRadius);
+    ctx.lineTo(rightStickX, rightStickY + stickRadius);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Calculate stick ball positions
+    const leftBallX = leftStickX + leftX * maxTravel;
+    const leftBallY = leftStickY + leftY * maxTravel;
+    const rightBallX = rightStickX + rightX * maxTravel;
+    const rightBallY = rightStickY + rightY * maxTravel;
+    
+    // Calculate intensities for glow effects
+    const leftIntensity = Math.sqrt(leftX*leftX + leftY*leftY);
+    const rightIntensity = Math.sqrt(rightX*rightX + rightY*rightY);
+    
+    // Left stick glow (shadow)
+    ctx.beginPath();
+    ctx.arc(leftBallX, leftBallY, stickBallRadius + 3, 0, Math.PI * 2);
+    
+    // Glow color based on intensity
+    let leftGlowColor;
+    if (leftIntensity < 0.3) {
+      leftGlowColor = 'rgba(137, 86, 251, 0.4)';
+    } else if (leftIntensity < 0.7) {
+      leftGlowColor = 'rgba(154, 106, 251, 0.5)';
+    } else {
+      leftGlowColor = 'rgba(181, 126, 251, 0.6)';
+    }
+    
+    ctx.fillStyle = leftGlowColor;
+    ctx.fill();
+    
+    // Right stick glow (shadow)
+    ctx.beginPath();
+    ctx.arc(rightBallX, rightBallY, stickBallRadius + 3, 0, Math.PI * 2);
+    
+    // Glow color based on intensity
+    let rightGlowColor;
+    if (rightIntensity < 0.3) {
+      rightGlowColor = 'rgba(137, 86, 251, 0.4)';
+    } else if (rightIntensity < 0.7) {
+      rightGlowColor = 'rgba(154, 106, 251, 0.5)';
+    } else {
+      rightGlowColor = 'rgba(181, 126, 251, 0.6)';
+    }
+    
+    ctx.fillStyle = rightGlowColor;
+    ctx.fill();
+    
+    // Draw left stick ball
+    ctx.beginPath();
+    ctx.arc(leftBallX, leftBallY, stickBallRadius, 0, Math.PI * 2);
+    
+    // Ball color based on intensity
+    let leftBallColor;
+    if (leftIntensity < 0.3) {
+      leftBallColor = '#8956FB';
+    } else if (leftIntensity < 0.7) {
+      leftBallColor = '#9A6AFB';
+    } else {
+      leftBallColor = '#B57EFB';
+    }
+    
+    ctx.fillStyle = leftBallColor;
+    ctx.fill();
+    ctx.strokeStyle = leftBallColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Draw right stick ball
+    ctx.beginPath();
+    ctx.arc(rightBallX, rightBallY, stickBallRadius, 0, Math.PI * 2);
+    
+    // Ball color based on intensity
+    let rightBallColor;
+    if (rightIntensity < 0.3) {
+      rightBallColor = '#8956FB';
+    } else if (rightIntensity < 0.7) {
+      rightBallColor = '#9A6AFB';
+    } else {
+      rightBallColor = '#B57EFB';
+    }
+    
+    ctx.fillStyle = rightBallColor;
+    ctx.fill();
+    ctx.strokeStyle = rightBallColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  
+  return container;
+}
+
+// Helper function to show temporary notifications
+function showGamepadNotification(title, message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.position = 'fixed';
+  notification.style.top = '20px';
+  notification.style.left = '50%';
+  notification.style.transform = 'translateX(-50%)';
+  notification.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  notification.style.color = '#ffffff';
+  notification.style.padding = '15px 20px';
+  notification.style.borderRadius = '8px';
+  notification.style.zIndex = '2000';
+  notification.style.textAlign = 'center';
+  notification.style.boxShadow = '0 0 20px rgba(137, 86, 251, 0.7)';
+  notification.style.border = '1px solid #8956FB';
+  notification.style.fontFamily = 'Arial, sans-serif';
+  notification.style.opacity = '0';
+  notification.style.transition = 'opacity 0.3s ease';
+  
+  // Create title
+  const titleElement = document.createElement('div');
+  titleElement.textContent = title;
+  titleElement.style.fontSize = '16px';
+  titleElement.style.fontWeight = 'bold';
+  titleElement.style.marginBottom = '5px';
+  titleElement.style.color = '#8956FB';
+  
+  // Create message
+  const messageElement = document.createElement('div');
+  messageElement.textContent = message;
+  messageElement.style.fontSize = '14px';
+  
+  // Add elements to notification
+  notification.appendChild(titleElement);
+  notification.appendChild(messageElement);
+  
+  // Add to document
+  document.body.appendChild(notification);
+  
+  // Fade in
+  setTimeout(() => {
+    notification.style.opacity = '1';
+  }, 10);
+  
+  // Remove after 5 seconds
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 300);
+  }, 5000);
+}
+
+// Setup the canvas-based gamepad overlay when the page loads
+document.addEventListener('DOMContentLoaded', setupGamepadOverlay);
+
+// If we're running this after page load, call setup directly
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setupGamepadOverlay();
+}
+
+  async function init() {
+        document.getElementById("overlay").remove();
+        startLoadingAnimation();
+        loadingScreen.style.display = 'flex';
+     //   const hudElements = initializeHud(); //use for HUD after click
+     //   setupHudToggleControls();
+      
+     function startLoadingAnimation() {
+        // Show the loading screen
+        loadingScreen.style.display = 'flex';
+        
+        // Get progress bar element
+        const progressBar = document.getElementById('loading-progress-bar');
+        
+        // Set immediate progress to ensure animation starts properly
+        progressBar.style.width = '5%';
+        
+        // Start the progress animation - animate to full over 5 seconds
+        setTimeout(() => {
+            progressBar.style.width = '100%';
+            
+            // After 5 seconds (when progress bar is full), hide the loading screen
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+          //      document.getElementById('minimap-container').style.display = 'flex'; //hidden in this level
+           //     document.getElementById('speed-meter').style.display = 'flex'; //hidden in this level
+            }, 5000);
+        }, 100);
+    }
+      
+       // Add gamepad listener
+        window.addEventListener("gamepadconnected", (event) => {
+        console.log("Gamepad connected:", event.gamepad);
+      });
+
+        window.addEventListener("gamepaddisconnected", (event) => {
+        console.log("Gamepad disconnected:", event.gamepad);
+      });
+      
+      //
+
+        const canvas = document.getElementById("c");
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        const cssRenderer = new CSS3DRenderer();
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.domElement.style.position = 'absolute';
+        cssRenderer.domElement.style.top = 0;
+        document.body.appendChild(cssRenderer.domElement);
+
+        function adjustForDisplayScaling() {
+        // Get the current zoom level and device pixel ratio
+        const devicePixelRatio = window.devicePixelRatio;
+        
+        console.log("Current device pixel ratio:", devicePixelRatio);
+        
+        // For high-resolution displays, adjust the renderer pixel ratio
+        if (devicePixelRatio > 1.5) {
+            // For high-DPI displays, use a custom pixel ratio
+            renderer.setPixelRatio(1.0); // Force 1:1 pixel ratio
+            console.log("High-DPI display detected, adjusting pixel ratio");
+        } else {
+            // For standard displays, use the device's pixel ratio
+            renderer.setPixelRatio(devicePixelRatio);
+        }
+        
+        // Update sizes based on the adjusted pixel ratio
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Update camera
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        }
+
+        const clock = new THREE.Clock();
+        const scene = new THREE.Scene();
+        const cssScene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
+    //    camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
+   //  camera.position.set(-850, 30, -1440);  //for development 2
+       camera.position.set(1550, 30, -500);  //for performance 
+
+        adjustForDisplayScaling();
+
+        //Add the resize listener
+        window.addEventListener('resize', adjustForDisplayScaling);
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', adjustForDisplayScaling);
+        }
+
+        const controls = new PointerLockControls(camera, renderer.domElement);
+        
+        // Track pointer lock state
+        let isPointerLocked = false;
+
+        // Add event listeners for pointer lock changes
+        document.addEventListener('pointerlockchange', onPointerLockChange);
+        document.addEventListener('mozpointerlockchange', onPointerLockChange);
+        document.addEventListener('webkitpointerlockchange', onPointerLockChange);
+
+        function onPointerLockChange() {
+            // Check if pointer is currently locked
+            isPointerLocked = (
+                document.pointerLockElement === renderer.domElement ||
+                document.mozPointerLockElement === renderer.domElement ||
+                document.webkitPointerLockElement === renderer.domElement
+            );
+            
+            console.log('Pointer lock state changed:', isPointerLocked ? 'locked' : 'unlocked');
+            
+            // Update movement state based on pointer lock
+            if (!isPointerLocked) {
+                // Stop forward movement when pointer lock is exited
+                move.forward = false;
+            }
+        }
+
+        const listener = new THREE.AudioListener();
+        const threeJsAudioContext = listener.context;
+        camera.add(listener);
+
+        document.addEventListener('click', () => controls.lock());
+      
+        const move = { forward: false, backward: false, left: false, right: false };
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.code) {
+               case 'ArrowUp': case 'KeyW': move.forward = true; break; //for development
+           //    case 'ArrowDown': case 'KeyS': move.backward = true; break;
+           //     case 'ArrowLeft': case 'KeyA': move.left = true; break;
+           //     case 'ArrowRight': case 'KeyD': move.right = true; break; 
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            switch (event.code) {
+                case 'ArrowUp': case 'KeyW': move.forward = false; break; //for development
+             //   case 'ArrowDown': case 'KeyS': move.backward = false; break;
+             //   case 'ArrowLeft': case 'KeyA': move.left = false; break;
+             //   case 'ArrowRight': case 'KeyD': move.right = false; break;
+            }
+        });
+
+        // Generate random color for the GridHelper
+        function getRandomColor() {
+            const color = Math.floor(Math.random() * 0xffffff);
+            return color;
+        }
+        const gridHelper = new THREE.GridHelper(12000, 40, 0xff43cd, 0xff43cd);
+     //  scene.add(gridHelper);
+
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+        
+   // Time limit variables
+let levelTimeLimit = 366; 
+let levelStartTime = null;
+let levelTimerInterval = null;
+let hasReachedBell = false;
+const timeLimitDisplay = document.getElementById('time-limit-display');
+const timeRemainingElement = document.getElementById('time-remaining');
+const gameOverOverlay = document.getElementById('game-over-overlay');
+// const restartButton = document.getElementById('restart-button');
+
+let loseSound = null;
+
+// Load the lose sound directly like your other audio
+const loseAudioLoader = new THREE.AudioLoader();
+loseAudioLoader.load('lose.mp3', function(buffer) {
+    loseSound = buffer;
+    console.log("Lose sound loaded successfully");
+});
+
+// Function to format time as MM:SS
+function formatTimeDisplay(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Function to show level completed message
+function showLevelCompleted() {
+    // Create level completed overlay
+    const levelCompletedOverlay = document.createElement('div');
+    levelCompletedOverlay.id = 'level-completed-overlay';
+    levelCompletedOverlay.style.position = 'absolute';
+    levelCompletedOverlay.style.zIndex = '3';
+    levelCompletedOverlay.style.top = '0';
+    levelCompletedOverlay.style.left = '0';
+    levelCompletedOverlay.style.width = '100%';
+    levelCompletedOverlay.style.height = '100%';
+    levelCompletedOverlay.style.display = 'flex';
+    levelCompletedOverlay.style.alignItems = 'center';
+    levelCompletedOverlay.style.justifyContent = 'center';
+    levelCompletedOverlay.style.background = 'rgba(0, 0, 0, 0.2)';
+    levelCompletedOverlay.style.flexDirection = 'column';
+    levelCompletedOverlay.style.opacity = '0';
+    levelCompletedOverlay.style.transition = 'opacity 0.5s ease';
+
+    // Create success title
+    const successTitle = document.createElement('div');
+    successTitle.style.color = '#00ff88';
+    successTitle.style.fontFamily = '"Arial Black", sans-serif';
+    successTitle.style.fontSize = '72px';
+    successTitle.style.textTransform = 'uppercase';
+    successTitle.style.marginBottom = '30px';
+    successTitle.style.textShadow = '0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6)';
+    successTitle.style.letterSpacing = '3px';
+    successTitle.style.animation = 'pulse-success 1.5s infinite ease-in-out';
+    successTitle.textContent = 'LEVEL COMPLETED!';
+
+    // Calculate completion time
+    const completionTime = (Date.now() - levelStartTime) / 1000;
+    const timeText = formatTimeDisplay(levelTimeLimit - completionTime);
+    
+    // Create success message
+    const successMessage = document.createElement('div');
+    successMessage.style.color = '#ffffff';
+    successMessage.style.fontFamily = '"Arial", sans-serif';
+    successMessage.style.fontSize = '24px';
+    successMessage.style.marginBottom = '40px';
+    successMessage.style.textAlign = 'center';
+    successMessage.style.opacity = '0.9';
+    successMessage.innerHTML = `Congratulations! You survived!<br>Time remaining: ${timeText}`;
+
+    // Add CSS animation for success pulse
+    if (!document.querySelector('#success-animation')) {
+        const style = document.createElement('style');
+        style.id = 'success-animation';
+        style.textContent = `
+            @keyframes pulse-success {
+                0% { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6); }
+                50% { text-shadow: 0 0 25px rgba(0, 255, 136, 1), 0 0 50px rgba(0, 255, 136, 0.8); }
+                100% { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Append elements
+    levelCompletedOverlay.appendChild(successTitle);
+    levelCompletedOverlay.appendChild(successMessage);
+    document.body.appendChild(levelCompletedOverlay);
+
+    // Fade in the overlay
+    setTimeout(() => {
+        levelCompletedOverlay.style.opacity = '1';
+    }, 10);
+
+    // Remove overlay after 4 seconds
+    setTimeout(() => {
+        levelCompletedOverlay.style.opacity = '0';
+        setTimeout(() => {
+            if (levelCompletedOverlay.parentNode) {
+                levelCompletedOverlay.parentNode.removeChild(levelCompletedOverlay);
+            }
+        }, 500);
+    }, 4000);
+}
+
+// Function to start the level timer
+function startLevelTimer() {
+    console.log("Starting level timer");
+    levelStartTime = Date.now();
+    hasReachedBell = false;
+    
+    // Show the time limit display
+    timeLimitDisplay.style.display = 'block';
+    
+    // Clear any existing timer
+    if (levelTimerInterval) {
+        clearInterval(levelTimerInterval);
+    }
+    
+    // Start the countdown timer
+    levelTimerInterval = setInterval(() => {
+        if (hasReachedBell) {
+            // Player reached the bell, stop the timer
+            clearInterval(levelTimerInterval);
+            timeLimitDisplay.style.display = 'none';
+            console.log("Level completed! Player reached the bell in time.");
+            showLevelCompleted();
+            return;
+        }
+        
+        const elapsed = (Date.now() - levelStartTime) / 1000;
+        const remaining = Math.max(0, levelTimeLimit - elapsed);
+        
+        // Update the display with MM:SS format
+        timeRemainingElement.textContent = formatTimeDisplay(remaining);
+        
+        // Add visual warnings based on remaining time
+        if (remaining <= 10) {
+            timeLimitDisplay.className = 'critical';
+        } else if (remaining <= 20) {
+            timeLimitDisplay.className = 'warning';
+        } else {
+            timeLimitDisplay.className = '';
+        }
+        
+        // Check if time is up
+        if (remaining <= 0) {
+            clearInterval(levelTimerInterval);
+            handleGameOver();
+        }
+    }, 100); // Update every 100ms for smooth countdown
+}
+
+// Function to handle game over (time up)
+function handleGameOver() {
+    console.log("Time's up! Game over.");
+        // Play lose sound directly
+        if (loseSound) {
+        const source = audioContext.createBufferSource();
+        source.buffer = loseSound;
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.8;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        source.start();
+    } else {
+        console.warn("Lose sound not loaded yet");
+    }
+
+    
+    // Hide the time limit display
+    timeLimitDisplay.style.display = 'none';
+    
+    // Show game over overlay
+    gameOverOverlay.style.display = 'flex';
+    
+    // Auto-restart after 5 seconds
+    setTimeout(() => {
+        restartLevel();
+    }, 4000);
+}
+
+// Function to restart the level
+function restartLevel() {
+    console.log("Restarting level...");
+    
+    // Hide game over overlay
+    gameOverOverlay.style.display = 'none';
+    
+    // Reset player position to starting position
+    if (camera) {
+        camera.position.set(1550, 30, -500);
+        camera.lookAt(camera.position.x, camera.position.y, camera.position.z - 1);
+    }
+    
+    // Reset bell animation state
+    if (window.bellAnimationState) {
+        window.bellAnimationState.hasCollided = false;
+        window.bellAnimationState.canToggle = true;
+        
+        // If bell is playing, pause it
+        if (window.bellAnimationState.isPlaying && firstBellMixer) {
+            firstBellMixer._actions.forEach(action => {
+                action.timeScale = 0;
+            });
+            window.bellAnimationState.isPlaying = false;
+            
+            // Pause audio
+            if (window.audioState && window.audioState.isPlaying) {
+                channelGains.forEach(gainNode => {
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                });
+                if (window.audioState.currentSource) {
+                    try {
+                        window.audioState.currentSource.stop();
+                    } catch (e) {
+                        console.log("Error stopping audio source:", e);
+                    }
+                }
+                window.audioState.isPlaying = false;
+            }
+        }
+    }
+    
+    // Reset other animation states
+    if (window.bell3AnimationState) {
+        window.bell3AnimationState.hasCollided = false;
+        window.bell3AnimationState.canToggle = true;
+        
+        if (window.bell3AnimationState.isPlaying && mixer3) {
+            mixer3._actions.forEach(action => {
+                action.timeScale = 0;
+            });
+            window.bell3AnimationState.isPlaying = false;
+            
+            // Pause second audio
+            if (window.secondAudioState && window.secondAudioState.isPlaying) {
+                secondChannelGains.forEach(gainNode => {
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                });
+                if (window.secondAudioState.currentSource) {
+                    try {
+                        window.secondAudioState.currentSource.stop();
+                    } catch (e) {
+                        console.log("Error stopping second audio source:", e);
+                    }
+                }
+                window.secondAudioState.isPlaying = false;
+            }
+        }
+    }
+    
+    // Restart the level timer
+    startLevelTimer();
+}
+
+// Function to call when player reaches the bell
+function playerReachedBell() {
+    if (!hasReachedBell) {
+        hasReachedBell = true;
+        console.log("Player reached the bell!");
+        // The timer will automatically stop and show completion message
+        
+        // Optional: trigger any special effects or sounds here
+        showInteractionChatMessage(); // Show the interaction chat message
+    }
+}
+/*
+// Add restart button click handler
+restartButton.addEventListener('click', () => {
+    restartLevel();
+});
+*/
+    startLevelTimer()
+             
+      const geometry = new THREE.BoxGeometry( 40, 200, 2830 ); 
+        const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube = new THREE.Mesh( geometry, material ); 
+        cube.position.set(-1330, 50, 40);
+        cube.userData.collidable = true;
+        scene.add( cube );
+      
+      const geometry2 = new THREE.BoxGeometry( 40, 200, 2920 ); 
+        const material2 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube2 = new THREE.Mesh( geometry2, material2 ); 
+        cube2.position.set(-1620, 50, -170);
+        cube2.userData.collidable = true;
+        scene.add( cube2 );
+      
+      const geometry3 = new THREE.BoxGeometry( 3420, 200, 100 ); 
+        const material3 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube3 = new THREE.Mesh( geometry3, material3 ); 
+        cube3.position.set(0, 50, -1500);
+        cube3.userData.collidable = true;
+        scene.add( cube3 );
+      
+      const geometry4 = new THREE.BoxGeometry( 2880, 200, 40 ); 
+        const material4 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube4 = new THREE.Mesh( geometry4, material4 ); 
+        cube4.position.set(100, 50, -1360);
+        cube4.userData.collidable = true;
+        scene.add( cube4 );
+      
+      const geometry5 = new THREE.BoxGeometry( 1145, 230, 200 ); 
+        const material5 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube5 = new THREE.Mesh( geometry5, material5 ); 
+        cube5.position.set(-1780, 70, 1530);
+        cube5.userData.collidable = true;
+        scene.add( cube5 );
+      
+     const geometry6 = new THREE.BoxGeometry( 100, 200, 1400 ); 
+        const material6 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube6 = new THREE.Mesh( geometry6, material6 ); 
+        cube6.position.set(1490, 50, -650);
+        cube6.userData.collidable = true;
+        scene.add( cube6 );
+    
+        const geometry7 = new THREE.BoxGeometry( 100, 200, 1500 ); 
+        const material7 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube7 = new THREE.Mesh( geometry7, material7 ); 
+        cube7.position.set(1610, 50, -750);
+        cube7.userData.collidable = true;
+        scene.add( cube7 );
+      
+        const geometry8 = new THREE.BoxGeometry( 100, 200, 200 ); 
+        const material8 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube8 = new THREE.Mesh( geometry8, material8 ); 
+        cube8.position.set(1560, 50, -380);
+        cube8.userData.collidable = true;
+        scene.add( cube8 );
+      
+        const geometry9 = new THREE.BoxGeometry( 1145, 230, 40 ); 
+        const material9 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube9 = new THREE.Mesh( geometry9, material9 ); 
+        cube9.position.set(-2180, 70, 1280);
+        cube9.userData.collidable = true;
+        scene.add( cube9 );
+      
+        const geometry10 = new THREE.BoxGeometry( 40, 230, 4100 ); 
+        const material10 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube10 = new THREE.Mesh( geometry10, material10 ); 
+        cube10.position.set(-2414, 70, 3200);
+        cube10.userData.collidable = true;
+        scene.add( cube10 );
+      
+        const geometry11 = new THREE.BoxGeometry( 40, 230, 4110 ); 
+        const material11 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube11 = new THREE.Mesh( geometry11, material11 ); 
+        cube11.position.set(-2351, 70, 3500);
+        cube11.userData.collidable = true;
+        scene.add( cube11 );
+      
+        const geometry12 = new THREE.BoxGeometry( 150, 230, 100 ); 
+        const material12 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const cube12 = new THREE.Mesh( geometry12, material12 ); 
+        cube12.position.set(-2400, 70, 5275);
+        cube12.userData.collidable = true;
+        scene.add( cube12 );      
+
+        const geometry13 = new THREE.BoxGeometry( 500, 500, 500 ); 
+        const material13 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
+        const cube13 = new THREE.Mesh( geometry13, material13 ); 
+        cube13.position.set(-2400, 50, 3200);
+        cube13.userData.collidable = true;
+        scene.add( cube13 ); 
+
+        const geometry14 = new THREE.BoxGeometry( 500, 500, 500 ); 
+        const material14 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
+        const cube14 = new THREE.Mesh( geometry14, material14 ); 
+        cube14.position.set(-1500, 0, 1000);
+        cube14.userData.collidable = true;
+        scene.add( cube14 ); 
+
+        const geometry15 = new THREE.BoxGeometry( 500, 500, 500 ); 
+        const material15 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
+        const cube15 = new THREE.Mesh( geometry15, material15 ); 
+        cube15.position.set(-200, 50, -1450);
+        cube15.userData.collidable = true;
+      //  scene.add( cube15 ); 
+      
+      // Add bounding box 1
+      const greenBoxBoundingBox = new THREE.Box3().setFromObject(cube);
+      const greenBoxHelper = new THREE.BoxHelper(cube, 0xffff00);
+//     scene.add(greenBoxHelper);
+      
+       // Add bounding box 2
+      const redBoxBoundingBox = new THREE.Box3().setFromObject(cube2);
+      const redBoxHelper = new THREE.BoxHelper(cube2, 0xff0000);
+//      scene.add(redBoxHelper);
+      
+        // Add bounding box 3
+      const boundingBox3 = new THREE.Box3().setFromObject(cube3);
+      const boundingBox3Helper = new THREE.BoxHelper(cube3, 0xff0000);
+ //     scene.add(boundingBox3Helper);
+      
+        // Add bounding box 4
+      const boundingBox4 = new THREE.Box3().setFromObject(cube4);
+      const boundingBox4Helper = new THREE.BoxHelper(cube4, 0xff0000);
+//     scene.add(boundingBox4Helper);
+      
+        // Add bounding box 5
+      const boundingBox5 = new THREE.Box3().setFromObject(cube5);
+      const boundingBox5Helper = new THREE.BoxHelper(cube5, 0xff0000);
+ //    scene.add(boundingBox5Helper);
+      
+       // Add bounding box 6
+      const boundingBox6 = new THREE.Box3().setFromObject(cube6);
+      const boundingBox6Helper = new THREE.BoxHelper(cube6, 0xff0000);
+ //     scene.add(boundingBox6Helper);
+      
+      
+      // Add bounding box 7
+      const boundingBox7 = new THREE.Box3().setFromObject(cube7);
+      const boundingBox7Helper = new THREE.BoxHelper(cube7, 0xff0000);
+  //    scene.add(boundingBox7Helper);
+      
+       // Add bounding box 8
+      const boundingBox8 = new THREE.Box3().setFromObject(cube8);
+      const boundingBox8Helper = new THREE.BoxHelper(cube8, 0xff0000);
+  //   scene.add(boundingBox8Helper);
+      
+         // Add bounding box 9
+      const boundingBox9 = new THREE.Box3().setFromObject(cube9);
+      const boundingBox9Helper = new THREE.BoxHelper(cube9, 0xff0000);
+//     scene.add(boundingBox9Helper);
+      
+       // Add bounding box 10
+      const boundingBox10 = new THREE.Box3().setFromObject(cube10);
+      const boundingBox10Helper = new THREE.BoxHelper(cube10, 0xff0000);
+   //  scene.add(boundingBox10Helper);
+      
+      // Add bounding box 11
+      const boundingBox11 = new THREE.Box3().setFromObject(cube11);
+      const boundingBox11Helper = new THREE.BoxHelper(cube11, 0xff0000);
+   //  scene.add(boundingBox11Helper);
+      
+      
+        // Add bounding box 12
+      const boundingBox12 = new THREE.Box3().setFromObject(cube12);
+      const boundingBox12Helper = new THREE.BoxHelper(cube12, 0xff0000);
+  //   scene.add(boundingBox12Helper);
+
+         // Add bounding box 13
+      const boundingBox13 = new THREE.Box3().setFromObject(cube13);
+      const boundingBox13Helper = new THREE.BoxHelper(cube13, 0xff0000);
+  //   scene.add(boundingBox13Helper);
+
+          // Add bounding box 14
+          const boundingBox14 = new THREE.Box3().setFromObject(cube14);
+      const boundingBox14Helper = new THREE.BoxHelper(cube14, 0xff0000);
+     //  scene.add(boundingBox14Helper);
+    
+          // Add bounding box 15
+         const boundingBox15 = new THREE.Box3().setFromObject(cube15);
+      const boundingBox15Helper = new THREE.BoxHelper(cube15, 0xff0000);
+   //    scene.add(boundingBox15Helper);
+
+      // Add bounding box for the camera
+      const cameraBoundingBox = new THREE.Box3();
+      const cameraBoundingHelperGeometry = new THREE.BoxGeometry(5, 5, 5); 
+      const cameraBoundingHelperMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }); // Red wireframe
+      const cameraBoundingHelper = new THREE.Mesh(cameraBoundingHelperGeometry, cameraBoundingHelperMaterial);
+   //   scene.add(cameraBoundingHelper);
+
+      function updateBoundingBoxes() {
+          // Update camera bounding box position to match the camera
+          const cameraPosition = camera.position.clone();
+          cameraBoundingHelper.position.copy(cameraPosition);
+          cameraBoundingBox.setFromObject(cameraBoundingHelper);
+      }
+      
+      //load 3d model of bell with animation
+        const loader = new GLTFLoader();
+        loader.setPath('');
+        let mixer;
+      
+        loader.load('bell-ascii.glb', function (gltf) {
+            gltf.scene.position.set(-830, -125, 5450);
+            gltf.scene.scale.set(1000, 75, 125);
+            gltf.scene.rotation.set(0, 0, 0);
+    //        scene.add(gltf.scene);
+       
+        mixer = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer.clipAction(clip);
+        action.setEffectiveTimeScale(0); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+        //load 3d model of bell with animation
+        const firstBellLoader = new GLTFLoader();
+        firstBellLoader.setPath('');
+        let firstBellMixer;
+      
+ //       firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
+            firstBellLoader.load('bell4-compressed-inverted-blender.glb', function (gltf) {
+            gltf.scene.position.set(-2385, 0, 3200);
+            gltf.scene.scale.set(10, 10, 50);
+            gltf.scene.rotation.set(0, 0, 0);
+            scene.add(gltf.scene);
+       
+        firstBellMixer = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = firstBellMixer.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+
+              // Initialize animation state as paused
+              window.bellAnimationState = {
+        isPlaying: false,   // Start in paused state
+        hasCollided: false,
+        canToggle: true,
+        actions: [],
+        soundsLoaded: false
+    };
+    
+    // For each animation clip
+    gltf.animations.forEach((clip) => {
+        // Create the action
+        const action = firstBellMixer.clipAction(clip);
+        
+        // Get the animation duration
+        const duration = clip.duration;
+        console.log(`Bell animation duration: ${duration} seconds`);
+        
+        // Set initial time to halfway through the animation
+        const quarterwayPoint = 3 * duration / 4;
+        
+        // Set effective time scale to normal (will be paused later)
+        action.setEffectiveTimeScale(1);
+        
+        // Start the action
+        action.play();
+        
+        // Advance the mixer to the halfway point
+        firstBellMixer.setTime(quarterwayPoint);
+        
+        // Now pause by setting timeScale to 0
+        action.timeScale = 0;
+        
+        // Store the action for future resume
+        window.bellAnimationState.actions.push({
+            action: action,
+            time: quarterwayPoint,
+            timeScale: 1
+        });
+    });
+    
+    console.log("Bell animation initialized and paused");
+    
+});
+
+    //load 3d model of glitchy bell
+        const loaderGlitchyBell = new GLTFLoader();
+        loaderGlitchyBell.setPath('');
+        let mixer4;
+      
+        loaderGlitchyBell.load('jbl_charge_3_speaker.glb', function (gltf) {
+            gltf.scene.position.set(-200, 90, -1425);
+            gltf.scene.scale.set(300, 300, 300);
+         //   gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
+            gltf.scene.rotation.set(0, Math.PI/4, -Math.PI/4);
+            scene.add(gltf.scene);
+       
+        mixer4 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer4.clipAction(clip);
+        action.setEffectiveTimeScale(.25); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+        let bell2Model;
+
+        //load 3d model of bell2 with animation
+        const loaderBell2 = new GLTFLoader();
+        loaderBell2.setPath('');
+        let mixer2;
+      
+        loaderBell2.load('colorful-speaker.glb', function (gltf) {
+            gltf.scene.position.set(-270, 148, -1436);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(-Math.PI/16, -Math.PI/2, Math.PI/16);
+       //     scene.add(gltf.scene);
+       //  bell2Model = gltf.scene; // don't add to scene at first
+
+       
+        mixer2 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer2.clipAction(clip);
+        action.setEffectiveTimeScale(0); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+
+        const dracoLoader1 = new DRACOLoader();
+        dracoLoader1.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
+        //load 3d model of bell3 with animation
+        const loaderBell3 = new GLTFLoader();
+        loaderBell3.setDRACOLoader(dracoLoader1);
+        loaderBell3.setPath('');
+        let mixer3;
+      
+        loaderBell3.load('bell4-compressed-inverted.glb', function (gltf) {
+            gltf.scene.position.set(-1500, 0, 800);
+            gltf.scene.scale.set(25, 25, 25);
+            gltf.scene.rotation.set(Math.PI/4, Math.PI/4, 0);
+            scene.add(gltf.scene);
+       
+        mixer3 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer3.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+    });
+
+// Initialize animation state as paused
+window.bell3AnimationState = {
+isPlaying: false,   // Start in paused state
+hasCollided: false,
+canToggle: true,
+actions: [],
+soundsLoaded: false
+};
+
+// For each animation clip
+gltf.animations.forEach((clip) => {
+// Create the action
+const action = mixer3.clipAction(clip);
+
+// Get the animation duration
+const duration = clip.duration;
+console.log(`Bell animation duration: ${duration} seconds`);
+
+// Set initial time to halfway through the animation
+const quarterwayPoint = 3 * duration / 4;
+
+// Set effective time scale to normal (will be paused later)
+action.setEffectiveTimeScale(1);
+
+// Start the action
+action.play();
+
+// Advance the mixer to the halfway point
+mixer3.setTime(quarterwayPoint);
+
+// Now pause by setting timeScale to 0
+action.timeScale = 0;
+
+// Store the action for future resume
+window.bell3AnimationState.actions.push({
+action: action,
+time: quarterwayPoint,
+timeScale: 1
+});
+});
+
+console.log("Bell animation initialized and paused");
+
+});
+
+   /*
+            // Create a DRACOLoader instance
+        const dracoLoader = new DRACOLoader();
+        // Specify the path to the Draco decoder
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
+        // Create GLTFLoader and attach DRACOLoader
+        const loaderBell4 = new GLTFLoader();
+        loaderBell4.setDRACOLoader(dracoLoader);
+        loaderBell4.setPath('');
+
+        let mixer4;
+
+        loaderBell4.load('bell4-compressed.glb', function (gltf) {
+            gltf.scene.position.set(0, -500, 5250);
+            gltf.scene.scale.set(200, 200, 200);
+            gltf.scene.rotation.set(0, 3*Math.PI/4, Math.PI/4);
+       //     scene.add(gltf.scene);
+
+            mixer4 = new THREE.AnimationMixer(gltf.scene);
+            
+            gltf.animations.forEach((clip) => {
+                const action = mixer4.clipAction(clip);
+                action.setEffectiveTimeScale(.8);
+                action.play();
+            });
+        });
+*/
+        // dispose of the decoder when done
+        // dracoLoader.dispose();
+
+         //load 3d model of bell5 with animation
+         const loaderBell5 = new GLTFLoader();
+        loaderBell5.setPath('');
+        let mixer5;
+      
+        loaderBell5.load('', function (gltf) {
+            gltf.scene.position.set(1550, 0, 3250);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(0, 0, 0);
+            scene.add(gltf.scene);
+       
+        mixer5 = new THREE.AnimationMixer(gltf.scene);
+        
+        gltf.animations.forEach((clip) => {
+        const action = mixer5.clipAction(clip);
+        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.play();
+          });
+        });
+  
+        const light = new THREE.HemisphereLight(0xffffff, 0x444444, 6);
+        scene.add(light);
+
+// Define constants for iframe loading
+const LOAD_DISTANCE = 2800;    // Distance at which iframes are loaded
+const UNLOAD_DISTANCE = 3000;  // Distance at which iframes are unloaded
+
+// Improved IframeLazyLoader class
+class IframeLazyLoader {
+    constructor(position, rotation, scale, srcUrl, dimensions = { width: '1000px', height: '1000px' }, options = { pointerEvents: 'none' }) {
+        this.position = new THREE.Vector3(position.x, position.y, position.z);
+        this.rotation = rotation;
+        this.scale = scale;
+        this.srcUrl = srcUrl;
+        this.dimensions = dimensions;
+        this.options = options;
+        this.isLoaded = false;
+        this.loadState = 'unloaded'; // Track more detailed load state: 'unloaded', 'loading', 'loaded', 'unloading'
+        this.loadPromise = null; // For tracking async loading
+        this.lastDistanceCheck = 0; // Prevent excessive checks
+        
+        // Create placeholder element first (without actual iframe)
+        this.createPlaceholder();
+    }
+    
+    createPlaceholder() {
+        // Create container div
+        this.div = document.createElement('div');
+        this.div.style.width = this.dimensions.width;
+        this.div.style.height = this.dimensions.height;
+        this.div.style.pointerEvents = this.options.pointerEvents;
+        this.div.style.zIndex = '-1';
+        this.div.style.background = 'rgba(0,0,0,0.2)'; // Visible placeholder
+        
+        // Create loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.textContent = 'Loading...';
+        loadingIndicator.style.display = 'none';
+        loadingIndicator.style.position = 'absolute';
+        loadingIndicator.style.top = '50%';
+        loadingIndicator.style.left = '50%';
+        loadingIndicator.style.transform = 'translate(-50%, -50%)';
+        loadingIndicator.style.color = '#8956FB';
+        loadingIndicator.style.fontFamily = 'Arial, sans-serif';
+        this.loadingIndicator = loadingIndicator;
+        this.div.appendChild(loadingIndicator);
+        
+        // Create 3D object and set position, rotation, scale
+        this.iframeObject = new CSS3DObject(this.div);
+        this.iframeObject.position.set(this.position.x, this.position.y, this.position.z);
+        this.iframeObject.rotation.set(this.rotation[0], this.rotation[1], this.rotation[2]);
+        this.iframeObject.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+        this.iframeObject.renderOrder = -1;
+        
+        // Add to CSS scene
+        cssScene.add(this.iframeObject);
+    }
+    
+    async load() {
+        if (this.loadState !== 'unloaded') return;
+        
+        this.loadState = 'loading';
+        this.loadingIndicator.style.display = 'block';
+        console.log(`Loading iframe: ${this.srcUrl}`);
+        
+        // Create the actual iframe element
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = '0';
+        iframe.style.pointerEvents = this.options.pointerEvents;
+        iframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+        iframe.allowFullscreen = true;
+        
+        // Create a promise to track when loading is complete
+        this.loadPromise = new Promise((resolve) => {
+            iframe.onload = () => {
+                this.loadingIndicator.style.display = 'none';
+                this.loadState = 'loaded';
+                this.isLoaded = true;
+                resolve();
+                console.log(`Iframe ${this.srcUrl} loaded successfully`);
+            };
+            
+            // Set timeout for failed loads
+            setTimeout(() => {
+                if (this.loadState === 'loading') {
+                    console.warn(`Iframe ${this.srcUrl} load timeout - marking as loaded anyway`);
+                    this.loadingIndicator.style.display = 'none';
+                    this.loadState = 'loaded';
+                    this.isLoaded = true;
+                    resolve();
+                }
+            }, 10000); // 10 second timeout
+        });
+        
+        // Start loading by setting src
+        iframe.src = this.srcUrl;
+        
+        // Add iframe to the container
+        this.iframe = iframe;
+        this.div.appendChild(iframe);
+        
+        return this.loadPromise;
+    }
+    
+    async unload() {
+        if (this.loadState !== 'loaded') return;
+        
+        this.loadState = 'unloading';
+        console.log(`Unloading iframe: ${this.srcUrl}`);
+        
+        // First set to blank page to stop any scripts
+        if (this.iframe) {
+            this.iframe.src = 'about:blank';
+            
+            // Wait a moment to ensure resources are freed
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Then remove the iframe element completely
+            try {
+                this.div.removeChild(this.iframe);
+                this.iframe = null;
+            } catch (e) {
+                console.warn('Error removing iframe:', e);
+            }
+        }
+        
+        this.isLoaded = false;
+        this.loadState = 'unloaded';
+        this.loadPromise = null;
+    }
+    
+    updateVisibility(camera, currentTime) {
+        // Only check distance every 500ms to improve performance
+        if (currentTime - this.lastDistanceCheck < 500) return;
+        this.lastDistanceCheck = currentTime;
+        
+        const distance = camera.position.distanceTo(this.position);
+        
+        // Implement hysteresis - different thresholds for loading vs unloading
+        // This prevents rapid loading/unloading when at the threshold distance
+        if (distance < LOAD_DISTANCE && this.loadState === 'unloaded') {
+            this.load();
+        } else if (distance > UNLOAD_DISTANCE && this.loadState === 'loaded') {
+            this.unload();
+        }
+    }
+    
+    // Full cleanup for when this loader is no longer needed
+    dispose() {
+        // First unload the iframe
+        this.unload();
+        
+        // Then remove the object from the scene
+        if (this.iframeObject && this.iframeObject.parent) {
+            this.iframeObject.parent.remove(this.iframeObject);
+        }
+        
+        // Clear references
+        this.div = null;
+        this.iframeObject = null;
+        this.loadingIndicator = null;
+    }
+}
+
+// Function to create all iframes with proper lazy loading
+function setupLazyLoadedIframes() {
+    console.log("Setting up optimized lazy-loaded iframes...");
+    
+    // Clean up any existing iframe loaders
+    if (window.iframeLoaders && window.iframeLoaders.length > 0) {
+        console.log(`Cleaning up ${window.iframeLoaders.length} existing iframe loaders`);
+        window.iframeLoaders.forEach(loader => {
+            if (loader && typeof loader.dispose === 'function') {
+                loader.dispose();
+            }
+        });
+    }
+    
+    // Reset the array
+    window.iframeLoaders = [];
+    
+    // Create iframe loaders with appropriate settings
+    const iframeConfigs = [
+        // Format: [position, rotation, scale, url, dimensions]
+        [
+            { x: 1560, y: -165, z: -1506 }, 
+            [0, Math.PI/2, 0], 
+            [1.15, .33, 1], 
+            'hydrainwebpage16.html',
+            { width: '2000px', height: '2000px' }
+        ],
+        [
+            { x: 1530, y: -165, z: -380 }, 
+            [0, -Math.PI/2, 0], 
+            [1, .33, 1], 
+            'hydrainwebpage16.html',
+            { width: '2000px', height: '2000px' }
+        ],
+        [
+            { x: -2380, y: 30, z: 6045 }, 
+            [0, Math.PI, 0], 
+            [.8, .8, .8], 
+            'level3-27-5-25.html',
+            { width: '1920px', height: '1080px' },
+            { pointerEvents: 'auto' }  // Enable pointer events for this iframe
+        ],
+        [
+            { x: -73, y: 0, z: -1460 }, 
+            [0, 0, 0], 
+            [3.55, .33, 1], 
+            'hydrainwebpage20.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1600, y: 0, z: -300 }, 
+            [0, Math.PI/2, 0], 
+            [3.2, .33, 1], 
+            'hydrainwebpage18.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: 30, y: 0, z: -1380 }, 
+            [0, Math.PI, 0], 
+            [3, .33, 1], 
+            'hydrainwebpage20.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1350, y: 0, z: 0 }, 
+            [0, Math.PI/2, 0], 
+            [3, .33, 1], 
+            'hydrainwebpage16.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -1830, y: 0, z: 1450 }, 
+            [0, 0, 0], 
+            [1.04, .33, 1], 
+            'hydrainwebpage16.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -2014, y: 0, z: 1300 }, 
+            [0, 0, 0], 
+            [.9, .33, 1], 
+            'hydrainwebpage14.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -2410, y: 90, z: 3190 }, 
+            [0, Math.PI/2, Math.PI], 
+            [4.1, .33, 1], 
+            'hydrainwebpage15.html',
+            { width: '1000px', height: '1000px' }
+        ],
+        [
+            { x: -2350, y: 0, z: 3244 }, 
+            [0, Math.PI/2, 0], 
+            [3.9, .33, 1], 
+            'hydrainwebpage15.html',
+            { width: '1000px', height: '1000px' }
+        ]
+    ];
+    
+    // Create and store all loaders
+    iframeConfigs.forEach(config => {
+        const loader = new IframeLazyLoader(
+            config[0],  // position
+            config[1],  // rotation
+            config[2],  // scale
+            config[3],  // source URL
+            config[4],  // dimensions
+            config[5] || { pointerEvents: 'none' }  // options (default to no pointer events)
+        );
+        window.iframeLoaders.push(loader);
+    });
+    
+    console.log(`Created ${window.iframeLoaders.length} lazy-loaded iframes`);
+    // Add a periodic cleanup check to force garbage collection of stale resources
+    if (!window.iframeCleanupInterval) {
+        window.iframeCleanupInterval = setInterval(() => {
+            console.log("Running periodic iframe resource cleanup");
+            // Force unload of distant iframes to reclaim memory
+            if (window.iframeLoaders) {
+                window.iframeLoaders.forEach(loader => {
+                    if (loader && loader.isLoaded && 
+                        loader.position.distanceTo(camera.position) > UNLOAD_DISTANCE * 1.5) {
+                        loader.unload();
+                    }
+                });
+            }
+        }, 60000); // Run every minute
+    }
+ }
+
+setupAudioInput();   
+setupLazyLoadedIframes();
+
+
+// Function to calculate gains based on listener position - FIRST SOURCE
+function calculateChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 1200;
+    const baseGain = Math.max(0, 1 - distance / maxDistance); //Bell 2 gain
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
+// Function to calculate gains for the second sound source
+function calculateSecondChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain - different falloff for second source
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 1200; // Different max distance for second source
+    const baseGain = Math.max(0, 1 - distance / maxDistance); //Bell 1 gain
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
+// Function to calculate gains for the third sound source
+function calculateThirdChannelGains(listenerPos, sourcePos, controls) {
+    // Calculate relative position of the source
+    const relativePos = sourcePos.clone().sub(listenerPos);
+    
+    // Get the world quaternion of the camera
+    const cameraWorldQuaternion = new THREE.Quaternion();
+    controls.getObject().getWorldQuaternion(cameraWorldQuaternion);
+    
+    // Create an inverse quaternion manually
+    const inverseQuaternion = cameraWorldQuaternion.clone();
+    inverseQuaternion.conjugate();
+    
+    // Rotate the relative position
+    const rotatedRelativePos = relativePos.clone();
+    rotatedRelativePos.applyQuaternion(inverseQuaternion);
+    
+    // Calculate distance and base gain - different falloff for third source
+    const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
+    const maxDistance = 2500; // Different max distance for second source
+    const baseGain = Math.max(0, .5 - (distance / maxDistance)/2); //Floating speakers gain
+
+    // Calculate angle from camera's forward direction (z-axis)
+    const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
+    
+    // Distribute audio around the listener using normalized directional weights
+    const backLeftGain = Math.max(0, Math.cos(angle + Math.PI/4));
+    const backRightGain = Math.max(0, Math.cos(angle - Math.PI/4));
+    const frontLeftGain = Math.max(0, Math.cos(angle + Math.PI*3/4));
+    const frontRightGain = Math.max(0, Math.cos(angle - Math.PI*3/4));
+
+    // Normalize the directional weights so they sum to 1
+    const weights = [frontLeftGain, frontRightGain, backLeftGain, backRightGain];
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+    
+    // Apply the base gain (distance-based attenuation) to all channels
+    // This step preserves the distance-based volume changes
+    return normalizedWeights.map(weight => weight * baseGain);
+}
+
+// Define the fixed 3D position for the first sound source
+const soundSourcePosition = new THREE.Vector3(-2430, 50, 3300);
+
+// Define the fixed 3D position for the second sound source
+const secondSoundSourcePosition = new THREE.Vector3(-1450, 50, 1000);
+
+// Define the fixed 3D position for the third sound source
+const thirdSoundSourcePosition = new THREE.Vector3(-200, 50, -1450);
+
+// Load and play sound at a fixed position
+const audioLoader = new THREE.AudioLoader();
+let sourceNode;
+let channelGains = [];
+
+// Create Channel Merger with the appropriate number of channels
+const mergerChannels = isQuadSupported ? 4 : 2;
+const merger = audioContext.createChannelMerger(mergerChannels);
+merger.connect(audioContext.destination);
+
+// Create a master gain for fading in/out
+const masterGain = audioContext.createGain();
+masterGain.gain.value = 0; // Start silent
+masterGain.connect(audioContext.destination);
+
+audioLoader.load('pulsarMarioFlawless.mp3', function(buffer) {
+    // Create a buffer source
+    sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = buffer;
+    sourceNode.loop = true;
+    
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Audio file has ${numChannels} channels`);
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    channelGains = []; // Clear the array to avoid duplicates if reloaded
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Initial gain value
+        channelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        // Note: We're using the merger directly as in the original code
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources (most common case), we need to send the same signal to all channels
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < channelGains.length; i++) {
+            sourceNode.connect(channelGains[i]);
+        }
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        sourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(channelGains[0], 0);
+            splitter.connect(channelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(channelGains[1], 1);
+            splitter.connect(channelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(channelGains[0], 0); // Left to left
+            splitter.connect(channelGains[1], 1); // Right to right
+        }
+    }
+
+    // Store the buffer but DON'T start playback immediately
+    // Initialize audio state tracker
+    window.audioState = {
+        isPlaying: false,
+        buffer: buffer,
+        currentSource: sourceNode,
+        lastStartTime: 0,
+        playbackOffset: 0,
+        duration: buffer.duration
+    };
+    
+    // Set initial gain values and start update loop
+    updateAudioGains();
+});
+
+// Function to update audio gains dynamically
+// Function to update audio gains dynamically
+let audioGainsFrameId = null;
+let secondAudioGainsFrameId = null;
+let thirdAudioGainsFrameId = null;
+function updateAudioGains() {
+    if (!sourceNode || !channelGains || channelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
+    
+    // Calculate positional gains
+    const posGains = calculateChannelGains(
+        camera.position, 
+        soundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        for (let i = 0; i < channelGains.length; i++) {
+            if (channelGains[i] && channelGains[i].gain) {
+                channelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
+            }
+        }
+    } else {
+        if (channelGains[0] && channelGains[0].gain) {
+            channelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (channelGains[1] && channelGains[1].gain) {
+            channelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+}
+
+// Create a second set of channel gains for the new sound source
+let secondSourceNode;
+let secondChannelGains = [];
+
+// Load and play second sound at its fixed position
+// Load and play second sound at its fixed position
+audioLoader.load('pulsar_1.mp3', function(buffer) {
+    // Create a buffer source for the second sound
+    secondSourceNode = audioContext.createBufferSource();
+    secondSourceNode.buffer = buffer;
+    secondSourceNode.loop = true;
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Start with audible gain to test
+        secondChannelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources, we need to send the same signal to all channels
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Second audio file has ${numChannels} channels`);
+    
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < secondChannelGains.length; i++) {
+            secondSourceNode.connect(secondChannelGains[i]);
+        }
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        secondSourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(secondChannelGains[0], 0);
+            splitter.connect(secondChannelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(secondChannelGains[1], 1);
+            splitter.connect(secondChannelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(secondChannelGains[0], 0); // Left to left
+            splitter.connect(secondChannelGains[1], 1); // Right to right
+        }
+    }
+
+    // Start playback
+ //   secondSourceNode.start();
+    
+    // Set initial gain values and start update loop
+    updateSecondAudioGains();
+});
+
+// Function to update second audio gains dynamically
+function updateSecondAudioGains() {
+    if (!secondSourceNode || !secondChannelGains || secondChannelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
+    
+    const posGains = calculateSecondChannelGains(
+        camera.position, 
+        secondSoundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        for (let i = 0; i < secondChannelGains.length; i++) {
+            if (secondChannelGains[i] && secondChannelGains[i].gain) {
+                secondChannelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
+            }
+        }
+    } else {
+        if (secondChannelGains[0] && secondChannelGains[0].gain) {
+            secondChannelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (secondChannelGains[1] && secondChannelGains[1].gain) {
+            secondChannelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+}
+
+// Create a third set of channel gains
+let thirdSourceNode;
+let thirdChannelGains = [];
+
+// Load and play second sound at its fixed position
+// Load and play second sound at its fixed position
+audioLoader.load('sax-air-noise.mp3', function(buffer) {
+    // Create a buffer source for the second sound
+    thirdSourceNode = audioContext.createBufferSource();
+    thirdSourceNode.buffer = buffer;
+    thirdSourceNode.loop = true;
+    
+    // Create individual gain nodes - use either 4 or 2 based on isQuadSupported
+    const gainNodeCount = isQuadSupported ? 4 : 2;
+    
+    for (let i = 0; i < gainNodeCount; i++) {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.5; // Start with audible gain to test
+        thirdChannelGains.push(gainNode);
+        
+        // Connect each gain node to its corresponding merger input
+        gainNode.connect(merger, 0, i);
+    }
+    
+    // For mono sources, we need to send the same signal to all channels
+    const numChannels = buffer.numberOfChannels;
+    console.log(`Third audio file has ${numChannels} channels`);
+    
+    if (numChannels === 1) {
+        // Connect source directly to all gain nodes
+        for (let i = 0; i < thirdChannelGains.length; i++) {
+            thirdSourceNode.connect(thirdChannelGains[i]);
+        }
+    } 
+    // For stereo sources, handle differently based on quad support
+    else if (numChannels === 2) {
+        const splitter = audioContext.createChannelSplitter(2);
+        thirdSourceNode.connect(splitter);
+        
+        if (isQuadSupported) {
+            // Quad mode - Left channel to front-left and back-left
+            splitter.connect(thirdChannelGains[0], 0);
+            splitter.connect(thirdChannelGains[2], 0);
+            
+            // Right channel to front-right and back-right
+            splitter.connect(thirdChannelGains[1], 1);
+            splitter.connect(thirdChannelGains[3], 1);
+        } else {
+            // Stereo mode - direct connections
+            splitter.connect(thirdChannelGains[0], 0); // Left to left
+            splitter.connect(thirdChannelGains[1], 1); // Right to right
+        }
+    }
+
+    // Start playback
+    thirdSourceNode.start();
+    
+    // Set initial gain values and start update loop
+    updateThirdAudioGains();
+});
+
+// Function to update third audio gains dynamically
+function updateThirdAudioGains() {
+    if (!thirdSourceNode || !thirdChannelGains || thirdChannelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
+    
+    const posGains = calculateThirdChannelGains(
+        camera.position, 
+        thirdSoundSourcePosition, 
+        controls
+    );
+
+    if (isQuadSupported) {
+        for (let i = 0; i < thirdChannelGains.length; i++) {
+            if (thirdChannelGains[i] && thirdChannelGains[i].gain) {
+                thirdChannelGains[i].gain.setTargetAtTime(
+                    posGains[i], 
+                    audioContext.currentTime, 
+                    0.1
+                );
+            }
+        }
+    } else {
+        if (thirdChannelGains[0] && thirdChannelGains[0].gain) {
+            thirdChannelGains[0].gain.setTargetAtTime(
+                posGains[0] + posGains[2],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+        
+        if (thirdChannelGains[1] && thirdChannelGains[1].gain) {
+            thirdChannelGains[1].gain.setTargetAtTime(
+                posGains[1] + posGains[3],
+                audioContext.currentTime,
+                0.1
+            );
+        }
+    }
+}
+
+// Function to cleanup all audio animation frames
+function stopAllAudioGainUpdates() {
+    if (audioGainsFrameId) {
+        cancelAnimationFrame(audioGainsFrameId);
+        audioGainsFrameId = null;
+    }
+    if (secondAudioGainsFrameId) {
+        cancelAnimationFrame(secondAudioGainsFrameId);
+        secondAudioGainsFrameId = null;
+    }
+    if (thirdAudioGainsFrameId) {
+        cancelAnimationFrame(thirdAudioGainsFrameId);
+        thirdAudioGainsFrameId = null;
+    }
+}
+
+// Start the updates properly
+function startAudioGainUpdates() {
+    // Only start if not already running
+    if (!audioGainsFrameId && sourceNode) {
+        audioGainsFrameId = requestAnimationFrame(updateAudioGains);
+    }
+    if (!secondAudioGainsFrameId && secondSourceNode) {
+        secondAudioGainsFrameId = requestAnimationFrame(updateSecondAudioGains);
+    }
+    if (!thirdAudioGainsFrameId && thirdSourceNode) {
+        thirdAudioGainsFrameId = requestAnimationFrame(updateThirdAudioGains);
+    }
+}
+
+    function resizeRendererToDisplaySize(renderer) {
+        const canvas = renderer.domElement;
+        // Use the renderer's pixel ratio instead of window.devicePixelRatio
+        const pixelRatio = renderer.getPixelRatio();
+        const width = canvas.clientWidth * pixelRatio | 0;
+        const height = canvas.clientHeight * pixelRatio | 0;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            // Don't override our custom pixel ratio setting
+            renderer.setSize(width / pixelRatio, height / pixelRatio, false);
+            cssRenderer.setSize(width / pixelRatio, height / pixelRatio);
+        }
+        return needResize;
+    }
+   
+  
+// Create the text in top left corner
+const abcDiv = document.createElement('div');
+abcDiv.style.position = 'fixed';
+abcDiv.style.top = '.9rem';
+abcDiv.style.left = '.9rem';
+abcDiv.style.backgroundColor = 'rgba(255, 0, 0, 255)';
+abcDiv.style.color = 'white';
+abcDiv.style.padding = '0.3rem 0.3rem';
+abcDiv.style.borderRadius = '0.5rem';
+abcDiv.style.fontFamily = 'arial';
+abcDiv.style.fontSize = '.9rem';
+abcDiv.innerHTML = 'LIVE';
+document.body.appendChild(abcDiv);
+
+// Create a viewer count element
+const viewerCountDiv = document.getElementById('clockDiv') || document.createElement('div');
+viewerCountDiv.id = 'viewerCountDiv';
+viewerCountDiv.style.position = 'fixed';
+viewerCountDiv.style.top = '1rem';
+viewerCountDiv.style.right = '1rem';
+viewerCountDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'; // Slightly darker background
+viewerCountDiv.style.color = '#FFFFFF'; // Purple-pink color to match the game theme
+viewerCountDiv.style.padding = '0.5rem 1rem';
+viewerCountDiv.style.whiteSpace = 'nowrap';
+viewerCountDiv.style.borderRadius = '0.5rem';
+viewerCountDiv.style.fontFamily = 'Arial';
+viewerCountDiv.style.fontSize = '1.25rem';
+viewerCountDiv.style.display = 'flex';
+viewerCountDiv.style.alignItems = 'center';
+viewerCountDiv.style.gap = '0.5rem';
+//viewerCountDiv.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.7)'; // Glow effect
+
+// Add a dot that pulses to indicate "live" status
+const liveIndicator = document.createElement('span');
+liveIndicator.innerHTML = '⬤';
+liveIndicator.style.color = '#ff3333';
+liveIndicator.style.fontSize = '0.7rem';
+liveIndicator.style.animation = 'pulse-live 2s infinite';
+
+// Add animation for the live indicator
+const style = document.createElement('style');
+style.textContent = `
+@keyframes pulse-live {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+`;
+document.head.appendChild(style);
+
+// Create wrapper for the viewer count
+const countWrapper = document.createElement('span');
+countWrapper.id = 'viewerCount';
+
+// Append elements
+viewerCountDiv.appendChild(liveIndicator);
+viewerCountDiv.appendChild(countWrapper);
+document.body.appendChild(viewerCountDiv);
+
+// Clear the existing clock interval if it exists
+if (window.clockInterval) {
+  clearInterval(window.clockInterval);
+}
+
+// Parameters for the countdown
+const startCount = 700;
+const endCount = 1; // Changed to 1 instead of 0
+const durationMinutes = 10;
+const durationMs = durationMinutes * 60 * 1000;
+const startTime = Date.now();
+const endTime = startTime + durationMs;
+
+// Function to generate fluctuations - sometimes up, mostly down
+function getFluctuation(currentCount) {
+  // Bigger fluctuations for higher viewer counts
+  const baseFluctuation = Math.max(1, Math.floor(currentCount * 0.015));
+  
+  // 80% chance of dropping, 20% chance of increasing
+  if (Math.random() < 0.8) {
+    return -Math.floor(Math.random() * baseFluctuation);
+  } else {
+    return Math.floor(Math.random() * (baseFluctuation / 2));
+  }
+}
+
+const lowViewerWarning = document.createElement('div');
+lowViewerWarning.id = 'low-viewer-warning';
+lowViewerWarning.className = 'glitch';
+lowViewerWarning.textContent = 'LOW VIEWER COUNT!';
+lowViewerWarning.style.position = 'fixed';
+lowViewerWarning.style.top = '3.5rem';
+lowViewerWarning.style.right = '1rem';
+lowViewerWarning.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+lowViewerWarning.style.color = '#ff3333';
+lowViewerWarning.style.fontFamily = 'Arial, sans-serif';
+lowViewerWarning.style.fontWeight = 'bold';
+lowViewerWarning.style.padding = '0.5rem 1rem';
+lowViewerWarning.style.borderRadius = '0.5rem';
+lowViewerWarning.style.border = '2px solid #ff3333';
+lowViewerWarning.style.display = 'none'; // Hidden initially
+lowViewerWarning.style.zIndex = '2000';
+lowViewerWarning.style.textTransform = 'uppercase';
+lowViewerWarning.style.fontSize = '0.9rem';
+lowViewerWarning.style.letterSpacing = '1px';
+lowViewerWarning.style.boxShadow = '0 0 10px rgba(255, 51, 51, 0.5)';
+
+// Add the element to the DOM immediately
+// document.body.appendChild(lowViewerWarning);
+
+// Add CSS styles for animations
+const warningStyle = document.createElement('style');
+warningStyle.id = 'warning-styles';
+warningStyle.textContent = `
+  @keyframes warning-flash {
+    from { opacity: 1; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
+    to { opacity: 0.7; box-shadow: 0 0 20px rgba(255, 51, 51, 0.8); }
+  }
+  
+  #low-viewer-warning {
+    animation: warning-flash 0.8s infinite alternate;
+  }
+  
+  #low-viewer-warning.glitch::before,
+  #low-viewer-warning.glitch::after {
+    content: "LOW VIEWER COUNT!";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+  }
+  
+  #low-viewer-warning.glitch::before {
+    left: 2px;
+    color: #ff3333;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  }
+  
+  #low-viewer-warning.glitch::after {
+    left: -2px;
+    color: #3333ff;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+  
+  @keyframes glitch-anim-1 {
+    0% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+    20% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 1px); }
+    40% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 0); }
+    60% { clip: rect(1px, 450px, 56px, 0); transform: translate(0px, 1px); }
+    80% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, -1px); }
+    100% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+  }
+  
+  @keyframes glitch-anim-2 {
+    0% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+    20% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, -1px); }
+    40% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, 1px); }
+    60% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, -1px); }
+    80% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 0); }
+    100% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+  }
+`;
+document.head.appendChild(warningStyle);
+
+// Parameters for the viewer count with faster decay but no speed influence
+const baseViewerCount = 1000; // Starting viewer count base
+const minViewerCount = 1; // Changed to 1 instead of 0
+const viewerFluctuation = 50; // Random fluctuation range
+const viewerDecayRate = 0.8; // Higher value = steeper decay
+const viewerDecayTimeScale = 1.0; // Lower value = shorter total decay time (1.0 = ten mins)
+
+// Track if we've reached the final state
+let hasReachedOne = false;
+
+// Update function with faster decay but no speed boost
+function updateViewerCount() {
+  const now = Date.now();
+  
+  // Calculate base count with configurable decay
+  const timeElapsed = now - startTime;
+  const timeProgress = Math.min(1, timeElapsed / (durationMs * viewerDecayTimeScale)); 
+  
+  // Use exponential decay to ensure we actually reach 1
+  // This formula ensures we go from baseViewerCount down to 1
+  let baseCount;
+  if (timeProgress >= 1) {
+    // After the decay period, force to 1
+    baseCount = 1;
+  } else {
+    // Exponential decay from baseViewerCount to 1
+    const decayFactor = Math.pow(1 - timeProgress, 3); // Cubic decay for faster drop
+    baseCount = Math.floor(1 + (baseViewerCount - 1) * decayFactor);
+  }
+  
+  // If we've reached 1, stay at 1 forever
+  if (baseCount <= 1) {
+    hasReachedOne = true;
+    countWrapper.textContent = `1 viewer`;
+    
+    // Keep the warning visible since we're at the minimum
+    lowViewerWarning.style.display = 'block';
+    
+    // Add chat message for the lone viewer
+    if (Math.random() < 0.5) {
+      const leaveMessages = [
+        "AsunaLoveAhri: Hellloooo",
+        "AsunaLoveAhri: ??",
+        "AsunaLoveAhri: i'm still here i love ur chanel"
+      ];
+      const randomIndex = Math.floor(Math.random() * leaveMessages.length);
+      
+      // Use a slightly modified chat message function for negative messages
+      const messageText = leaveMessages[randomIndex];
+      
+      // Only add message if chatContainer exists
+      if (typeof chatContainer !== 'undefined') {
+        const messageElement = document.createElement('div');
+        messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+        messageElement.style.color = '#ffffff';
+        messageElement.style.borderRadius = '8px';
+        messageElement.style.padding = '10px';
+        messageElement.style.marginBottom = '10px';
+        messageElement.style.maxWidth = '85%';
+        messageElement.style.marginLeft = 'auto';
+        messageElement.style.wordWrap = 'break-word';
+        messageElement.style.position = 'relative';
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+        messageElement.style.borderLeft = '3px solid #8956FB';
+        messageElement.innerHTML = messageText;
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Scroll to the bottom
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+    
+    // Return a longer delay since we don't need frequent updates anymore
+    return 5000; // Update every 5 seconds just to maintain the live indicator
+  }
+  
+  // Add random fluctuation with negative bias (only if we haven't reached 1 yet)
+  const negativeFluctuationBias = 0.7; // 70% chance for negative fluctuation
+  let fluctuation;
+  if (Math.random() < negativeFluctuationBias) {
+    // Negative fluctuation (viewers leaving)
+    fluctuation = -Math.floor(Math.random() * viewerFluctuation);
+  } else {
+    // Positive fluctuation (viewers joining)
+    fluctuation = Math.floor(Math.random() * viewerFluctuation);
+  }
+  
+  let displayCount = Math.max(minViewerCount, baseCount + fluctuation);
+  
+  // Ensure we don't go below 1
+  displayCount = Math.max(1, displayCount);
+  
+  // Add occasional larger drops in viewers (but not below 1)
+  if (Math.random() < 0.05 && displayCount > 1) { // 5% chance of a viewer exodus
+    const viewerDrop = Math.floor(displayCount * 0.15); // Drop by up to 15% at once
+    displayCount = Math.max(minViewerCount, displayCount - viewerDrop);
+    
+    // Add a chat message about viewers leaving
+    if (Math.random() < 0.5 && displayCount < 500) {
+      const leaveMessages = [
+        "StreamKing99: viewers dropping fast...",
+        "GameMaster33: need more action!",
+        "xXGamer4LifeXx: people are leaving 😭",
+        "TwitchQueen: chat is deadd, changing channels"
+      ];
+      const randomIndex = Math.floor(Math.random() * leaveMessages.length);
+      
+      // Use a slightly modified chat message function for negative messages
+      const messageText = leaveMessages[randomIndex];
+      
+      // Only add message if chatContainer exists
+      if (typeof chatContainer !== 'undefined') {
+        const messageElement = document.createElement('div');
+        messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+        messageElement.style.color = '#ffffff';
+        messageElement.style.borderRadius = '8px';
+        messageElement.style.padding = '10px';
+        messageElement.style.marginBottom = '10px';
+        messageElement.style.maxWidth = '85%';
+        messageElement.style.marginLeft = 'auto';
+        messageElement.style.wordWrap = 'break-word';
+        messageElement.style.position = 'relative';
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+        messageElement.style.borderLeft = '3px solid #8956FB';
+        messageElement.innerHTML = messageText;
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Scroll to the bottom
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+  }
+  
+  // Display the count with "viewer" or "viewers" text
+  const viewerText = displayCount === 1 ? 'viewer' : 'viewers';
+  countWrapper.textContent = `${displayCount.toLocaleString()} ${viewerText}`;
+  
+  // Show/hide warning based on current count
+  if (displayCount < 500) {
+    // Show warning
+    lowViewerWarning.style.display = 'block';
+    
+    // Add occasional glitch effect to the warning
+    if (Math.random() < 0.05) {
+      // Briefly disable animation classes
+      lowViewerWarning.classList.remove('glitch');
+      
+      // Force reflow
+      void lowViewerWarning.offsetWidth;
+      
+      // Re-add classes after a brief delay
+      setTimeout(() => {
+        lowViewerWarning.classList.add('glitch');
+      }, 50);
+    }
+  } else {
+    // Hide warning
+    lowViewerWarning.style.display = 'none';
+  }
+  
+  // Random chance for small visual glitch effect on the counter
+  if (Math.random() < 0.05) {
+    // Save original text
+    const originalText = countWrapper.textContent;
+    
+    // Apply glitch effect
+    countWrapper.style.opacity = '0.8';
+    countWrapper.style.transform = 'translateX(2px)';
+    
+    // Restore after brief moment
+    setTimeout(() => {
+      countWrapper.style.opacity = '1';
+      countWrapper.style.transform = 'translateX(0)';
+      countWrapper.textContent = originalText;
+    }, 100);
+  }
+  
+  // Update at faster intervals when losing viewers
+  // Makes the decay feel even more rapid
+  const nextUpdateDelay = (displayCount < 700) 
+    ? 300 + Math.random() * 1200 // Update faster when viewers are low
+    : 800 + Math.random() * 2000; // Normal update rate when viewers are high
+    
+  return nextUpdateDelay;
+}
+
+// Run initially
+const initialDelay = updateViewerCount();
+
+// Update with dynamic timing
+function scheduleNextUpdate() {
+  const nextDelay = updateViewerCount();
+  setTimeout(scheduleNextUpdate, nextDelay);
+}
+
+// Start the update cycle with initial delay
+setTimeout(scheduleNextUpdate, initialDelay);
+
+// Create speed meter
+const speedMeter = document.getElementById('speed-meter') || document.createElement('div');
+speedMeter.id = 'speed-meter';
+speedMeter.style.position = 'fixed';
+speedMeter.style.bottom = '1rem';
+speedMeter.style.left = '1rem';
+speedMeter.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+speedMeter.style.color = '#ffffff';
+speedMeter.style.padding = '0.5rem 1rem';
+speedMeter.style.borderRadius = '0.5rem';
+speedMeter.style.fontFamily = 'monospace';
+speedMeter.style.fontSize = '.75rem';
+speedMeter.style.display = 'none';
+speedMeter.style.alignItems = 'center';
+speedMeter.style.zIndex = '1000';
+speedMeter.innerHTML = `
+  <span>Noise: </span>
+  <div style="margin-left: 0.5rem; width: 200px; height: 20px; background-color: rgba(50, 50, 50, 0.7); 
+       border-radius: 10px; overflow: hidden; position: relative;">
+    <div id="speed-marker" style="position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background-color: #ffffff; z-index: 2;"></div>
+    <div id="speed-fill-negative" style="position: absolute; right: 50%; top: 0; height: 100%; width: 0%; background-color: #ff6633; 
+         transition: width 0.15s ease, background-color 0.2s ease;"></div>
+    <div id="speed-fill-positive" style="position: absolute; left: 50%; top: 0; height: 100%; width: 0%; background-color: #00aaff; 
+         transition: width 0.15s ease, background-color 0.2s ease;"></div>
+    <!-- Removed numerical display -->
+  </div>
+`;
+
+// Make sure it's in the DOM
+if (!document.getElementById('speed-meter')) {
+  document.body.appendChild(speedMeter);
+}
+
+// Function to update the speed meter with light smoothing
+function setupVerticalSpeedMeter() {
+  // Find the existing speed meter element
+  const speedMeter = document.getElementById('speed-meter');
+  
+  if (speedMeter) {
+    // Update styles for vertical orientation - in bottom left corner
+    speedMeter.style.position = 'fixed';
+    speedMeter.style.top = 'auto'; // Remove top positioning
+    speedMeter.style.transform = 'none'; // Remove transform
+    speedMeter.style.bottom = '1rem';
+    speedMeter.style.left = '1rem';
+    speedMeter.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+    speedMeter.style.color = '#ffffff';
+    speedMeter.style.padding = '0.5rem 0.75rem'; // Smaller padding
+    speedMeter.style.borderRadius = '0.5rem';
+    speedMeter.style.fontFamily = 'arial';
+    speedMeter.style.fontSize = '.65rem'; // Smaller font
+    speedMeter.style.flexDirection = 'column'; // Changed to column for vertical layout
+    speedMeter.style.alignItems = 'center';
+    speedMeter.style.zIndex = '1000';
+    
+    // Update inner HTML for vertical meter with labels at top and bottom
+    speedMeter.innerHTML = `
+      <span style="margin-bottom: 0rem;"></span>
+      <div style="position: relative; height: 120px; width: 15px;">
+        <div style="height: 120px; width: 15px; background-color: rgba(50, 50, 50, 0.7); 
+             border-radius: 10px; overflow: hidden; position: relative;">
+          <div id="speed-marker" style="position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background-color: #ffffff; z-index: 2;"></div>
+          <div id="speed-fill-negative" style="position: absolute; top: 50%; left: 0; width: 100%; height: 0%; background-color: #ff6633; 
+               transition: height 0.15s ease, background-color 0.2s ease;"></div>
+          <div id="speed-fill-positive" style="position: absolute; bottom: 50%; left: 0; width: 100%; height: 0%; background-color: #00aaff; 
+               transition: height 0.15s ease, background-color 0.2s ease;"></div>
+        </div>
+      </div>
+      <span style="margin-top: 0rem;"></span>
+    `;
+    
+    console.log("Vertical speed meter with labels setup complete");
+  } else {
+    console.error("Speed meter element not found");
+  }
+}
+
+// Function to update the vertical speed meter with swapped directions
+function updateVerticalSpeedMeter(speed) {
+  // Get the DOM elements
+  const speedFillNegative = document.getElementById('speed-fill-negative');
+  const speedFillPositive = document.getElementById('speed-fill-positive');
+  
+  if (!speedFillNegative || !speedFillPositive) return; // Ensure elements exist
+  
+  // Maximum speed for scaling the meter (can be adjusted)
+  const maxSpeed = 300;
+  
+  // Calculate percentage for display (0-50%)
+  const percentage = Math.min(50, Math.abs(speed) / maxSpeed * 50);
+  
+  // Update the appropriate fill based on direction - DIRECTIONS SWAPPED:
+  // Negative values go UP, positive values go DOWN
+  if (speed < 0) {
+    // Negative speed - fill top half
+    speedFillNegative.style.height = percentage + '%';
+    speedFillPositive.style.height = '0%';
+    
+    // Color based on magnitude (red spectrum)
+    const absSpeed = Math.abs(speed);
+    if (absSpeed > 200) {
+      speedFillNegative.style.backgroundColor = '#ff3333'; // high backward speed
+    } else if (absSpeed > 100) {
+      speedFillNegative.style.backgroundColor = '#ff6633'; // medium backward speed
+    } else {
+      speedFillNegative.style.backgroundColor = '#ff9933'; // slow backward speed
+    }
+  } else if (speed > 0) {
+    // Positive speed - fill bottom half
+    speedFillPositive.style.height = percentage + '%';
+    speedFillNegative.style.height = '0%';
+    
+    // Color based on magnitude (blue spectrum)
+    if (speed > 200) {
+      speedFillPositive.style.backgroundColor = '#FF56FB'; // high forward speed
+    } else if (speed > 100) {
+      speedFillPositive.style.backgroundColor = '#C456FB'; // medium forward speed
+    } else {
+      speedFillPositive.style.backgroundColor = '#8956FB'; // slow forward speed
+    }
+  } else {
+    // Speed is exactly zero
+    speedFillNegative.style.height = '0%';
+    speedFillPositive.style.height = '0%';
+  }
+}
+
+// Call this function to replace the existing updateSpeedMeter with vertical version
+function installVerticalSpeedMeter() {
+  // Set up the vertical meter UI
+  setupVerticalSpeedMeter();
+  
+  // Replace the old update function with the new vertical one
+  window.originalUpdateSpeedMeter = window.updateSpeedMeter;
+  window.updateSpeedMeter = updateVerticalSpeedMeter;
+  
+  console.log("Vertical speed meter installed successfully");
+}
+
+// Execute the installation
+installVerticalSpeedMeter();
+
+
+  //Gamepad setup
+  function handleGamepadInput() {
+  const gamepads = navigator.getGamepads();
+  const gp = gamepads[0]; // Assuming a single gamepad
+
+  if (gp) {
+    // Get the most recent delta time from our stored value
+    const deltaTime = window.lastDeltaTime || 0.016; // Default to ~60fps if not set
+    
+    const leftStickY = gp.axes[1]; // Left stick vertical
+    const rightStickX = gp.axes[2]; // Right stick horizontal
+    const rightStickY = gp.axes[3]; // Right stick vertical
+    
+    const deadzone = 0.05; // Ignore small stick movements
+    
+    // LEFT STICK - Movement control
+    if (Math.abs(leftStickY) > deadzone) {
+      // Direct influence on speed
+      if (window.microphoneInput) {
+        // Scale factor for analog stick's influence on speed
+        const stickInfluence = -leftStickY * 50;
+        
+        // Add the stick influence to the current targetSpeed
+        window.microphoneInput.targetSpeed += stickInfluence;
+        
+        // Also directly adjust the speed variable for immediate feedback
+        speed += -leftStickY * 10;
+      } else {
+        // Fallback if microphoneInput is not available
+        speed += -leftStickY * 10;
+      }
+    }
+    
+    // RIGHT STICK - Camera control with deltaTime
+    if (Math.abs(rightStickX) > deadzone || Math.abs(rightStickY) > deadzone) {
+      // Apply deltaTime to make camera movement framerate-independent
+      // Use higher base values since we'll multiply by deltaTime (which is small)
+      const baseLookSpeedX = 500; // Higher value for horizontal look
+      const baseLookSpeedY = 400; // Slightly lower for vertical look
+      
+      // Create framerate-independent look speeds by multiplying by deltaTime
+      const lookSpeedX = baseLookSpeedX * deltaTime;
+      const lookSpeedY = baseLookSpeedY * deltaTime;
+      
+      // Apply non-linear response curve for better control precision
+      const moveX = Math.sign(rightStickX) * Math.pow(Math.abs(rightStickX), 1.5) * lookSpeedX;
+      const moveY = Math.sign(rightStickY) * Math.pow(Math.abs(rightStickY), 1.5) * lookSpeedY;
+      
+      // Create a MouseEvent with the calculated movement
+      const mouseMoveEvent = new MouseEvent("mousemove", {
+        movementX: moveX,
+        movementY: moveY
+      });
+      
+      // Dispatch the event to simulate mouse movement
+      document.dispatchEvent(mouseMoveEvent);
+    }
+  }
+}
+
+//End of basic gamepad setup
+
+let speed = 0; // Movement speed
+let rms = 0;
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Microphone Input and Analysis Code
+async function setupAudioInput() {
+    try {
+        console.log("Setting up enhanced microphone analysis...");
+        
+        // Create a separate audio context for microphone analysis to avoid interfering with the 4-channel output
+        const micAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Request microphone access with high-quality settings
+        const micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+                sampleRate: { ideal: 48000 }
+            }
+        });
+        
+        console.log("Microphone access granted");
+        
+        // Create microphone source
+        const micSource = micAudioContext.createMediaStreamSource(micStream);
+        
+        // Create analyzer for frequency and time-domain analysis
+        const analyzer = micAudioContext.createAnalyser();
+        analyzer.fftSize = 2048; // Higher value for more detailed frequency analysis
+        const bufferLength = analyzer.frequencyBinCount;
+        
+        // Create data arrays for different types of analysis
+        const timeDataArray = new Float32Array(analyzer.fftSize);
+        const frequencyDataArray = new Float32Array(bufferLength);
+        const previousFrequencies = new Float32Array(bufferLength);
+        
+        // Connect microphone to analyzer
+        micSource.connect(analyzer);
+        
+        // Analysis parameters
+        const speedFactor = .95;
+      //  const AMPLITUDE_THRESHOLD = 0.001;
+      const AMPLITUDE_THRESHOLD = 0.001;
+        let targetSpeed = 0;
+        
+        // Store references in the global scope
+        window.microphoneInput = {
+            context: micAudioContext,
+            stream: micStream,
+            source: micSource,
+            analyzer: analyzer,
+            timeDataArray: timeDataArray,
+            frequencyDataArray: frequencyDataArray,
+            previousFrequencies: previousFrequencies,
+            bufferLength: bufferLength,
+            isAnalyzing: true,
+            speedFactor: speedFactor,
+            amplitudeThreshold: AMPLITUDE_THRESHOLD,
+            targetSpeed: targetSpeed
+        };
+        
+        // Start analysis loop
+        analyzeAudio();
+        
+        console.log("Enhanced microphone analysis started");
+        return true;
+    } catch (error) {
+        console.error("Error setting up microphone:", error.message);
+        return false;
+    }
+}
+
+// Spectral analysis functions
+function calculateSpectralCentroid(frequencyData, sampleRate, bufferLength) {
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * sampleRate / (2 * bufferLength);
+        const magnitude = Math.abs(frequencyData[i]);
+        numerator += frequency * magnitude;
+        denominator += magnitude;
+    }
+    return denominator !== 0 ? numerator / denominator : 0;
+}
+
+function calculateSpectralSpread(frequencyData, centroid, sampleRate, bufferLength) {
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * sampleRate / (2 * bufferLength);
+        const magnitude = Math.abs(frequencyData[i]);
+        numerator += magnitude * Math.pow(frequency - centroid, 2);
+        denominator += magnitude;
+    }
+    return denominator !== 0 ? Math.sqrt(numerator / denominator) : 0;
+}
+
+function calculateSpectralKurtosis(frequencyData, centroid, spread, sampleRate, bufferLength) {
+    let numerator = 0, denominator = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+        const frequency = i * sampleRate / (2 * bufferLength);
+        const magnitude = Math.abs(frequencyData[i]);
+        // Check for valid spread to avoid division by zero
+        if (spread > 0) {
+            numerator += magnitude * Math.pow((frequency - centroid) / spread, 4);
+            denominator += magnitude;
+        }
+    }
+    return denominator !== 0 && spread > 0 ? (numerator / denominator) - 3 : 0; // Subtract 3 to center at zero
+}
+
+function calculateSpectralFlux(currentFrequencies, previousFrequencies) {
+    let sum = 0;
+    for (let i = 0; i < currentFrequencies.length; i++) {
+        const diff = currentFrequencies[i] - previousFrequencies[i];
+        sum += diff * diff;
+    }
+    return Math.sqrt(sum) / currentFrequencies.length;
+}
+
+// Main audio analysis function
+function analyzeAudio() {
+    if (!window.microphoneInput || !window.microphoneInput.isAnalyzing) return;
+    
+    const { 
+        analyzer, timeDataArray, frequencyDataArray, previousFrequencies, 
+        bufferLength, context, amplitudeThreshold, speedFactor
+    } = window.microphoneInput;
+    
+    // Get time domain data for RMS calculation
+    analyzer.getFloatTimeDomainData(timeDataArray);
+    
+    // Calculate RMS (audio volume)
+    let sumSquares = 0;
+    for (let i = 0; i < timeDataArray.length; i++) {
+        sumSquares += timeDataArray[i] * timeDataArray[i];
+    }
+    const rms = Math.sqrt(sumSquares / timeDataArray.length);
+    
+    // Only perform detailed analysis if sound is above threshold
+    if (rms >= amplitudeThreshold) {
+        // Get frequency data
+        analyzer.getFloatFrequencyData(frequencyDataArray);
+        
+        // Convert from dB to linear scale
+        const linearFrequencies = frequencyDataArray.map(db => Math.pow(10, db / 20));
+        
+        // Perform spectral analysis
+        const centroid = calculateSpectralCentroid(linearFrequencies, context.sampleRate, bufferLength);
+        const spread = calculateSpectralSpread(linearFrequencies, centroid, context.sampleRate, bufferLength);
+        const flux = calculateSpectralFlux(linearFrequencies, previousFrequencies);
+        const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread, context.sampleRate, bufferLength);
+        
+        // Log detailed analysis to console
+   //: RMS=${rms.toFixed(5)}, Centroid=${centroid.toFixed(2)}Hz, Spread=${spread.toFixed(2)}, Flux=${flux.toFixed(7)}, Kurtosis=${kurtosis.toFixed(2)}`);
+        
+        // Set movement speed based on audio characteristics
+        if (centroid > 0) {
+            // Calculate target speed using the formula
+         //   window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
+            window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // good for performance
+
+            // window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
+          //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
+
+            // Log target speed
+         //   console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
+        }
+        
+        // Save current frequencies for next flux calculation
+        previousFrequencies.set(linearFrequencies);
+    } else {
+        // Reset target speed when audio is below threshold
+        window.microphoneInput.targetSpeed = 0;
+    }
+    
+    // Gradually adjust speed for smoother movement
+    if (typeof speed !== 'undefined') {
+        speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
+    } else {
+        // If speed variable doesn't exist in global scope, create it
+        window.speed = 0;
+        speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
+    }
+
+    const gamepads = navigator.getGamepads();
+    const gp = gamepads[0];
+    if (gp) {
+        const leftStickY = gp.axes[1];
+        if (Math.abs(leftStickY) > 0.1) {
+            // Direct influence on speed (not just targetSpeed)
+        speed += -leftStickY * 100; // Gamepad speed amount
+            console.log("Direct gamepad speed adjustment:", speed);
+        }
+    }
+    
+    // Continue analysis loop
+    requestAnimationFrame(analyzeAudio);
+}
+
+// Function to stop microphone input and analysis
+function stopMicrophoneInput() {
+    if (window.microphoneInput) {
+        console.log("Stopping microphone input...");
+        
+        // Stop analysis
+        window.microphoneInput.isAnalyzing = false;
+        
+        // Stop audio tracks
+        if (window.microphoneInput.stream) {
+            window.microphoneInput.stream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Close audio context
+        if (window.microphoneInput.context && window.microphoneInput.context.state !== 'closed') {
+            window.microphoneInput.context.close();
+        }
+        
+        // Clear references
+        window.microphoneInput = null;
+        
+        console.log("Microphone input stopped");
+        return true;
+    }
+    return false;
+}
+
+// Add a function to toggle microphone input
+function toggleMicrophoneInput() {
+    if (window.microphoneInput) {
+        return stopMicrophoneInput();
+    } else {
+        return setupAudioInput();
+    }
+}
+
+// Minimap implementation
+let minimap;
+
+function initMinimap() {
+  console.log("Initializing minimap...");
+  const minimapCanvas = document.getElementById('minimap');
+  const minimapCtx = minimapCanvas.getContext('2d');
+  const minimap = {
+    canvas: minimapCanvas,
+    ctx: minimapCtx,
+    width: 200,
+    height: 200,
+    scale: 0.05, // Adjust this scale factor to make the map fit properly
+    offsetX: 100, // Center position X
+    offsetY: 100, // Center position Y
+    rotation: 0,  // Current rotation to match camera view
+    walls: [],    // Will store all collision walls
+    initialized: false
+  };
+  
+  // Set canvas dimensions for proper rendering
+  minimapCanvas.width = minimap.width;
+  minimapCanvas.height = minimap.height;
+  
+  // Collect all collidable objects to draw on the minimap
+  const walls = [];
+  
+  // Add all the collision boxes to the walls array
+  scene.traverse((object) => {
+    if (object.userData && object.userData.collidable) {
+      // Get the bounding box from the mesh
+      const bbox = new THREE.Box3().setFromObject(object);
+      const size = new THREE.Vector3();
+      bbox.getSize(size);
+      
+      // Extract position and dimensions
+      walls.push({
+        x: object.position.x,
+        z: object.position.z,
+        width: size.x,
+        depth: size.z
+      });
+    }
+  });
+  
+  minimap.walls = walls;
+  minimap.initialized = true;
+  
+  // First render
+  renderMinimap(minimap, camera.position);
+  
+  // Return the minimap object so we can use it later
+  return minimap;
+}
+
+function renderMinimap(minimap, playerPosition) {
+  if (!minimap || !minimap.initialized) return;
+  
+  const ctx = minimap.ctx;
+  
+  // Clear the canvas
+  ctx.clearRect(0, 0, minimap.width, minimap.height);
+  
+  // Set background
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.fillRect(0, 0, minimap.width, minimap.height);
+  
+  // Get the camera's rotation around the Y axis
+  const cameraRotationY = Math.atan2(
+    camera.getWorldDirection(new THREE.Vector3()).x,
+    camera.getWorldDirection(new THREE.Vector3()).z
+  );
+  
+  // Save the current drawing state
+  ctx.save();
+  
+  // Move to center and rotate the map so north is always up
+  ctx.translate(minimap.offsetX, minimap.offsetY);
+  ctx.rotate(cameraRotationY + Math.PI);
+  
+  // Define colors for special boxes
+  const specialBoxColors = {
+    '-2400_3200': 'rgba(137, 86, 251, 0.7)',   // Box 13 (red)
+    '-1500_1000': 'rgba(137, 86, 251, 0.7)',   // Box 14 (green)
+    '-200_-1450': 'rgba(137, 86, 251, 0.7)'  // Box 15 (blue)
+  };
+  
+  // Draw all walls
+  minimap.walls.forEach(wall => {
+    // Convert from world coordinates to minimap coordinates
+    const x = (wall.x - playerPosition.x) * minimap.scale;
+    const z = (wall.z - playerPosition.z) * minimap.scale;
+    const width = wall.width * minimap.scale;
+    const depth = wall.depth * minimap.scale;
+    
+    // Create a unique key for this wall based on its position
+    const positionKey = `${Math.round(wall.x)}_${Math.round(wall.z)}`;
+    
+    // Set the color based on whether this is a special box or not
+    if (specialBoxColors[positionKey]) {
+      ctx.fillStyle = specialBoxColors[positionKey];
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';  // Brighter outline for special boxes
+      ctx.lineWidth = 1.5;  // Thicker outline
+    } else {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';  // Regular color for other boxes
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.lineWidth = 1;
+    }
+    
+    // Draw the wall
+    ctx.fillRect(x - width/2, z - depth/2, width, depth);
+    ctx.strokeRect(x - width/2, z - depth/2, width, depth);
+  });
+  
+  // Restore the drawing state
+  ctx.restore();
+  
+  // Draw a compass indicator at the edge of the minimap
+  drawCompass(minimap, cameraRotationY);
+}
+
+function drawCompass(minimap, rotation) {
+  const ctx = minimap.ctx;
+  const radius = minimap.width / 2 - 10;
+  const centerX = minimap.width / 2;
+  const centerY = minimap.height / 2;
+  
+  // North
+  const northX = centerX + Math.sin(-rotation) * radius;
+  const northY = centerY + Math.cos(-rotation) * radius;
+  
+  // South
+  const southX = centerX + Math.sin(-rotation + Math.PI) * radius;
+  const southY = centerY + Math.cos(-rotation + Math.PI) * radius;
+  
+  // East
+  const eastX = centerX + Math.sin(-rotation + Math.PI/2) * radius;
+  const eastY = centerY + Math.cos(-rotation + Math.PI/2) * radius;
+  
+  // West
+  const westX = centerX + Math.sin(-rotation - Math.PI/2) * radius;
+  const westY = centerY + Math.cos(-rotation - Math.PI/2) * radius;
+}
+
+function updateMinimap() {
+  if (minimap && minimap.initialized) {
+    renderMinimap(minimap, camera.position);
+  }
+}
+
+minimap = initMinimap();
+   
+   
+function animate() {
+    const delta = clock.getDelta();
+    window.lastDeltaTime = delta;
+    handleGamepadInput();
+    updateAudioGains();
+    updateSecondAudioGains();
+    updateThirdAudioGains();
+    updateMinimap();
+  
+    // Update iframe visibility
+    if (window.iframeLoaders) {
+        window.iframeLoaders.forEach(loader => {
+            loader.updateVisibility(camera);
+        });
+    }
+  
+    if (isPointerLocked) {
+       move.forward = true; // Comment out for DEVELOPMENT
+    }
+    
+    if (mixer) {
+        mixer.update(delta);
+    }
+  
+    if (firstBellMixer) {
+        firstBellMixer.update(delta);
+    }
+
+     if (mixer2) {
+        mixer2.update(delta);
+    }
+
+    if (mixer3) {
+        mixer3.update(delta);
+    }
+
+    if (mixer4) {
+        mixer4.update(delta);
+    }
+
+    if (mixer5) {
+        mixer5.update(delta);
+    }
+  
+    const baseMoveSpeed = 1; // Base speed multiplier
+    const maxSpeed = 800
+    const minSpeed = -800;
+    const clampedSpeed = Math.max(minSpeed, Math.min(speed, maxSpeed));
+   const adjustedSpeed = clampedSpeed * delta * baseMoveSpeed; // for performance
+  //  const adjustedSpeed = 150 * delta; // for DEVELOPMENT
+
+    updateSpeedMeter(adjustedSpeed / delta, 800); // Display raw speed value
+
+  
+    // Store initial position
+    const initialPosition = camera.position.clone();
+    let finalPosition = initialPosition.clone();
+    
+    // Calculate the movement vector
+    const moveVector = new THREE.Vector3(0, 0, 0);
+    
+    // Get the camera's forward and right vectors
+    const forward = new THREE.Vector3();
+    const right = new THREE.Vector3();
+    controls.getDirection(forward);
+    right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+    
+    // Normalize vectors to handle diagonal movement correctly
+    forward.normalize();
+    right.normalize();
+    
+    // Add movement components
+    if (move.forward) moveVector.add(forward.multiplyScalar(adjustedSpeed));
+    if (move.backward) moveVector.sub(forward.multiplyScalar(adjustedSpeed));
+    if (move.left) moveVector.sub(right.multiplyScalar(adjustedSpeed));
+    if (move.right) moveVector.add(right.multiplyScalar(adjustedSpeed));
+    
+    // Test moving along both axes separately
+    if (moveVector.length() > 0) {
+        // Try X movement
+        const xMovement = new THREE.Vector3(moveVector.x, 0, 0);
+        camera.position.add(xMovement);
+        updateBoundingBoxes();
+
+    const hitBox13 = cameraBoundingBox.intersectsBox(boundingBox13);
+    const hitBox14 = cameraBoundingBox.intersectsBox(boundingBox14);
+    const hitBox15 = cameraBoundingBox.intersectsBox(boundingBox15);
+
+     // Track the bell animation state
+    if (!window.bellAnimationState) {
+    window.bellAnimationState = {
+        isPlaying: true,   // Track if animation is currently playing
+        hasCollided: false, // Track if user is currently colliding with bell
+        canToggle: true,    // Track if we can perform another toggle action
+        actions: null       // Store paused actions
+    };
+    }
+
+    // Handle bell interaction when collision happens
+    if (hitBox13) {
+        hasReachedBell = true;
+  // Only toggle state when entering the collision zone
+  if (!window.bellAnimationState.hasCollided && window.bellAnimationState.canToggle) {
+    if (firstBellMixer) {
+      // Toggle between play/stop
+      if (window.bellAnimationState.isPlaying) {
+        // Pause the bell animation
+        console.log("Camera collided with bell - pausing animation and audio");
+        
+        // Always recreate the actions array to fix the issue after first pause/resume
+        window.bellAnimationState.actions = [];
+        
+        // Save the state of all active actions
+        firstBellMixer._actions.forEach(action => {
+          if (action.isRunning() || action.timeScale !== 0) {
+            window.bellAnimationState.actions.push({
+              action: action,
+              time: action.time,
+              timeScale: action.getEffectiveTimeScale()
+            });
+            
+            // Pause by setting timeScale to 0 
+            action.timeScale = 0;
+          }
+        });
+        
+        // Pause the spatial audio with fade out
+        if (window.audioState && window.audioState.isPlaying) {
+          const fadeTime = 0.2; // 200ms fade out
+          
+          // Calculate the current playback position accurately
+          const elapsedTime = audioContext.currentTime - window.audioState.lastStartTime;
+          window.audioState.playbackOffset = (window.audioState.playbackOffset + elapsedTime) % window.audioState.duration;
+          
+          // Reduce all channel gains smoothly
+          const currentTime = audioContext.currentTime;
+          channelGains.forEach(gainNode => {
+            const currentGain = gainNode.gain.value;
+            gainNode.gain.setValueAtTime(currentGain, currentTime);
+            gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+          });
+          
+          // Schedule stopping the source after fade completes
+          setTimeout(() => {
+            if (window.audioState.currentSource) {
+              try {
+                window.audioState.currentSource.stop();
+              } catch (e) {
+                console.log("Error stopping audio source:", e);
+              }
+            }
+            window.audioState.isPlaying = false;
+          }, fadeTime * 1000);
+          
+          console.log("Audio paused at offset:", window.audioState.playbackOffset.toFixed(3), "seconds");
+        }
+        
+        window.bellAnimationState.isPlaying = false;
+        showStopMessageAnimation();
+      } else {
+        // Resume the animation from its current position
+        console.log("Camera collided with bell - resuming animation and audio");
+        
+        // If we have stored actions, restore them
+        if (window.bellAnimationState.actions && window.bellAnimationState.actions.length > 0) {
+          window.bellAnimationState.actions.forEach(savedAction => {
+            // Restore the original timeScale to resume animation
+            savedAction.action.timeScale = savedAction.timeScale || 1;
+          });
+        } else {
+          // Fallback in case there are no saved actions
+          firstBellMixer._actions.forEach(action => {
+            action.timeScale = 1;
+            if (!action.isRunning()) {
+              action.play();
+            }
+          });
+        }
+        
+        // Resume the spatial audio with fade in
+        if (window.audioState) {
+          const fadeTime = 0.1; // 100ms fade in
+          
+          // Create a new buffer source with the same connections as original
+          const newSourceNode = audioContext.createBufferSource();
+          newSourceNode.buffer = window.audioState.buffer;
+          newSourceNode.loop = true;
+          
+          // Get number of channels in the buffer
+          const numChannels = window.audioState.buffer.numberOfChannels;
+          
+          // Connect to channel gains based on channel count
+          if (numChannels === 1) {
+            // Mono source - connect to all gain nodes
+            for (let i = 0; i < channelGains.length; i++) {
+              newSourceNode.connect(channelGains[i]);
+            }
+          } else if (numChannels === 2) {
+            // Stereo source - use splitter
+            const splitter = audioContext.createChannelSplitter(2);
+            newSourceNode.connect(splitter);
+            
+            if (isQuadSupported) {
+              // Quad mode connections
+              splitter.connect(channelGains[0], 0); // Left to front-left
+              splitter.connect(channelGains[2], 0); // Left to back-left
+              splitter.connect(channelGains[1], 1); // Right to front-right
+              splitter.connect(channelGains[3], 1); // Right to back-right
+            } else {
+              // Stereo mode connections
+              splitter.connect(channelGains[0], 0); // Left to left
+              splitter.connect(channelGains[1], 1); // Right to right
+            }
+          }
+          
+          // Start from the stored offset position
+          newSourceNode.start(0, window.audioState.playbackOffset);
+          window.audioState.lastStartTime = audioContext.currentTime;
+          window.audioState.currentSource = newSourceNode;
+          window.audioState.isPlaying = true;
+          
+          // Calculate the position gains now
+          const posGains = calculateChannelGains(
+            camera.position,
+            soundSourcePosition,
+            controls
+          );
+          
+          // Fade in each channel gain with the appropriate spatial balance
+          const currentTime = audioContext.currentTime;
+          
+          if (isQuadSupported) {
+            // Quad mode - fade in each channel with proper spatial value
+            for (let i = 0; i < channelGains.length; i++) {
+              channelGains[i].gain.setValueAtTime(0, currentTime);
+              channelGains[i].gain.linearRampToValueAtTime(posGains[i], currentTime + fadeTime);
+            }
+          } else {
+            // Stereo mode - downmix and fade in
+            channelGains[0].gain.setValueAtTime(0, currentTime);
+            channelGains[0].gain.linearRampToValueAtTime(
+              posGains[0] + posGains[2], // mix front-left and back-left
+              currentTime + fadeTime
+            );
+            
+            channelGains[1].gain.setValueAtTime(0, currentTime);
+            channelGains[1].gain.linearRampToValueAtTime(
+              posGains[1] + posGains[3], // mix front-right and back-right
+              currentTime + fadeTime
+            );
+          }
+          
+          console.log("Audio resumed from offset:", window.audioState.playbackOffset.toFixed(3), "seconds");
+        }
+        
+        window.bellAnimationState.isPlaying = true;
+        showInteractionChatMessage();
+
+      }
+      
+      // Prevent multiple toggles while inside collision zone
+      window.bellAnimationState.canToggle = false;
+    }
+  }
+  window.bellAnimationState.hasCollided = true;
+} else {
+  // When player moves away from the bell, allow toggling again
+  if (window.bellAnimationState.hasCollided) {
+    window.bellAnimationState.hasCollided = false;
+    window.bellAnimationState.canToggle = true;
+    console.log("Player exited bell collision zone - ready for next interaction");
+  }
+}
+
+if (!window.bell3AnimationState) {
+    window.bell3AnimationState = {
+        isPlaying: false,
+        hasCollided: false,
+        canToggle: true,
+        actions: []
+    };
+}
+
+// Initialize second audio state tracker if it doesn't exist
+if (!window.bell3AnimationState) {
+    window.bell3AnimationState = {
+        isPlaying: false,
+        hasCollided: false,
+        canToggle: true,
+        actions: []
+    };
+}
+
+// Initialize second audio state tracker if it doesn't exist
+if (!window.secondAudioState) {
+    window.secondAudioState = {
+        isPlaying: false,
+        buffer: secondSourceNode ? secondSourceNode.buffer : null,
+        currentSource: null,
+        startTime: 0,
+        pauseTime: 0,
+        offset: 0
+    };
+}
+
+// Handle bell3 interaction when collision with hitBox14 happens
+if (hitBox14) {
+    // Only toggle state when entering the collision zone
+    if (!window.bell3AnimationState.hasCollided && window.bell3AnimationState.canToggle) {
+        if (mixer3) {
+            // Toggle between play/stop based on current state
+            if (!window.bell3AnimationState.isPlaying) {
+                // START THE ANIMATION
+                console.log("Camera collided with bell3 - starting animation and audio");
+                
+                // Handle animation
+                mixer3._actions.forEach(action => {
+                    action.timeScale = 1;
+                    if (!action.isRunning()) {
+                        action.play();
+                    }
+                });
+                
+                // Handle audio - create a new source node
+                if (window.secondAudioState.buffer) {
+                    // Create a new source node
+                    const newSource = audioContext.createBufferSource();
+                    newSource.buffer = window.secondAudioState.buffer;
+                    newSource.loop = true;
+                    
+                    // Store the new source
+                    window.secondAudioState.currentSource = newSource;
+                    window.secondAudioState.startTime = audioContext.currentTime;
+                    
+                    // Connect the source to all gain nodes
+                    const numChannels = newSource.buffer.numberOfChannels;
+                    if (numChannels === 1) {
+                        // Mono source - connect to all gain nodes
+                        for (let i = 0; i < secondChannelGains.length; i++) {
+                            newSource.connect(secondChannelGains[i]);
+                        }
+                    } else if (numChannels === 2) {
+                        // Stereo source - handle based on system capabilities
+                        const splitter = audioContext.createChannelSplitter(2);
+                        newSource.connect(splitter);
+                        
+                        if (isQuadSupported) {
+                            // Quad mode connections
+                            splitter.connect(secondChannelGains[0], 0); // Left to front-left
+                            splitter.connect(secondChannelGains[2], 0); // Left to back-left
+                            splitter.connect(secondChannelGains[1], 1); // Right to front-right
+                            splitter.connect(secondChannelGains[3], 1); // Right to back-right
+                        } else {
+                            // Stereo mode connections
+                            splitter.connect(secondChannelGains[0], 0); // Left to left
+                            splitter.connect(secondChannelGains[1], 1); // Right to right
+                        }
+                    }
+                    
+                    // Fade in the gain nodes
+                    const fadeTime = 0.5; // 500ms fade in
+                    const currentTime = audioContext.currentTime;
+                    const posGains = calculateSecondChannelGains(
+                        camera.position,
+                        secondSoundSourcePosition,
+                        controls
+                    );
+                    
+                    // Set initial gain to 0 and fade in
+                    if (isQuadSupported) {
+                        for (let i = 0; i < secondChannelGains.length; i++) {
+                            secondChannelGains[i].gain.setValueAtTime(0, currentTime);
+                            secondChannelGains[i].gain.linearRampToValueAtTime(posGains[i], currentTime + fadeTime);
+                        }
+                    } else {
+                        // Stereo mode - downmix
+                        secondChannelGains[0].gain.setValueAtTime(0, currentTime);
+                        secondChannelGains[0].gain.linearRampToValueAtTime(
+                            posGains[0] + posGains[2], // mix front-left and back-left
+                            currentTime + fadeTime
+                        );
+                        
+                        secondChannelGains[1].gain.setValueAtTime(0, currentTime);
+                        secondChannelGains[1].gain.linearRampToValueAtTime(
+                            posGains[1] + posGains[3], // mix front-right and back-right
+                            currentTime + fadeTime
+                        );
+                    }
+                    
+                    // Start playback from the stored offset
+                    console.log("Starting audio at offset:", window.secondAudioState.offset);
+                    newSource.start(0, window.secondAudioState.offset);
+                }
+                
+                // Update state
+                window.bell3AnimationState.isPlaying = true;
+                window.secondAudioState.isPlaying = true;
+                showInteractionChatMessage();
+            } else {
+                // STOP THE ANIMATION
+                console.log("Camera collided with bell3 - stopping animation and audio");
+                
+                // Pause animation by setting timeScale to 0
+                mixer3._actions.forEach(action => {
+                    action.timeScale = 0;
+                });
+                
+                // Calculate and store the current playback position
+                if (window.secondAudioState.currentSource && window.secondAudioState.buffer) {
+                    const playbackDuration = audioContext.currentTime - window.secondAudioState.startTime;
+                    const bufferDuration = window.secondAudioState.buffer.duration;
+                    
+                    // Calculate the current position in the loop, considering the initial offset
+                    window.secondAudioState.offset = (window.secondAudioState.offset + playbackDuration) % bufferDuration;
+                    console.log("Pausing audio at offset:", window.secondAudioState.offset);
+                    
+                    // Fade out audio
+                    const fadeTime = 0.5; // 500ms fade out
+                    const currentTime = audioContext.currentTime;
+                    
+                    // Fade out all gain nodes
+                    secondChannelGains.forEach(gainNode => {
+                        const currentGain = gainNode.gain.value;
+                        gainNode.gain.setValueAtTime(currentGain, currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+                    });
+                    
+                    // Schedule source stop after fade completes
+                    setTimeout(() => {
+                        try {
+                            if (window.secondAudioState.currentSource) {
+                                window.secondAudioState.currentSource.stop();
+                                window.secondAudioState.currentSource = null;
+                            }
+                        } catch (e) {
+                            console.log("Error stopping audio source:", e);
+                        }
+                    }, fadeTime * 1000);
+                }
+                
+                // Update state
+                window.bell3AnimationState.isPlaying = false;
+                window.secondAudioState.isPlaying = false;
+                showStopMessageAnimation();
+            }
+            
+            // Prevent multiple toggles while inside collision zone
+            window.bell3AnimationState.canToggle = false;
+        }
+    }
+    // Mark that we're inside the collision zone
+    window.bell3AnimationState.hasCollided = true;
+} else {
+    // When player moves away from bell3, allow toggling again
+    if (window.bell3AnimationState && window.bell3AnimationState.hasCollided) {
+        window.bell3AnimationState.hasCollided = false;
+        window.bell3AnimationState.canToggle = true;
+        console.log("Player exited bell3 collision zone - ready for next interaction");
+    }
+}
+
+if (bell2Model) {
+        if (cameraBoundingBox.intersectsBox(boundingBox14)) {
+            // Add to scene if not already added
+            if (!bell2Model.parent) {
+                console.log("Adding bell2 to scene - camera entered trigger zone");
+                scene.add(bell2Model);
+                
+                // Optionally show an interaction message
+                if (typeof showInteractionChatMessage === 'function') {
+                    showInteractionChatMessage();
+                }
+            }
+        } else {
+            // Remove from scene if added
+            if (bell2Model.parent) {
+            //    console.log("Removing bell2 from scene - camera left trigger zone");
+           //     scene.remove(bell2Model);
+            }
+        }
+    }
+        
+        const hitXRed = cameraBoundingBox.intersectsBox(redBoxBoundingBox);
+        const hitXGreen = cameraBoundingBox.intersectsBox(greenBoxBoundingBox);
+        const hitX3 = cameraBoundingBox.intersectsBox(boundingBox3);
+        const hitX4 = cameraBoundingBox.intersectsBox(boundingBox4);
+        const hitX5 = cameraBoundingBox.intersectsBox(boundingBox5);
+        const hitX6 = cameraBoundingBox.intersectsBox(boundingBox6);
+        const hitX7 = cameraBoundingBox.intersectsBox(boundingBox7);
+        const hitX8 = cameraBoundingBox.intersectsBox(boundingBox8);
+        const hitX9 = cameraBoundingBox.intersectsBox(boundingBox9);
+        const hitX10 = cameraBoundingBox.intersectsBox(boundingBox10);
+        const hitX11 = cameraBoundingBox.intersectsBox(boundingBox11);
+        const hitX12 = cameraBoundingBox.intersectsBox(boundingBox12);
+        
+        if (hitXRed || hitXGreen || hitX3 || hitX4 || hitX5 || hitX6 || hitX7 || hitX8 || hitX9 || hitX10 || hitX11 || hitX12 ) {
+            // Revert X movement if there's a collision
+            camera.position.sub(xMovement);
+        } else {
+            finalPosition.add(xMovement);
+        }
+        
+        //Test Z movement
+        const zMovement = new THREE.Vector3(0, 0, moveVector.z);
+        camera.position.copy(initialPosition);
+        camera.position.add(zMovement);
+        updateBoundingBoxes();
+        
+        const hitZRed = cameraBoundingBox.intersectsBox(redBoxBoundingBox);
+        const hitZGreen = cameraBoundingBox.intersectsBox(greenBoxBoundingBox);
+        const hitZ3 = cameraBoundingBox.intersectsBox(boundingBox3);
+        const hitZ4 = cameraBoundingBox.intersectsBox(boundingBox4);
+        const hitZ5 = cameraBoundingBox.intersectsBox(boundingBox5);
+        const hitZ6 = cameraBoundingBox.intersectsBox(boundingBox6);
+        const hitZ7 = cameraBoundingBox.intersectsBox(boundingBox7);
+        const hitZ8 = cameraBoundingBox.intersectsBox(boundingBox8);
+        const hitZ9 = cameraBoundingBox.intersectsBox(boundingBox9);
+        const hitZ10 = cameraBoundingBox.intersectsBox(boundingBox10);
+        const hitZ11 = cameraBoundingBox.intersectsBox(boundingBox11);
+        const hitZ12 = cameraBoundingBox.intersectsBox(boundingBox12);
+      
+        if (hitZRed || hitZGreen || hitZ3 || hitZ4 || hitZ5 || hitZ6 || hitZ7 || hitZ8 || hitZ9 || hitZ10 || hitZ11 || hitZ12 ) {
+            // Revert Z movement if there's a collision
+            camera.position.sub(zMovement);
+        } else {
+            finalPosition.add(zMovement);
+        }
+        
+        // Set final position
+        camera.position.copy(finalPosition);
+        updateBoundingBoxes();
+    }
+    
+    if (resizeRendererToDisplaySize(renderer)) {
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+    }
+    
+    updateBoundingBoxes();
+      
+    renderer.render(scene, camera);
+    cssRenderer.render(cssScene, camera);
+    requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+    }
+    
+</script>
+</body>
+</html>

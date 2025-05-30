@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>hydra inside a webpage</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+   <!-- import the webpage's stylesheet -->
+   <link rel="stylesheet" href="/main.css" />
+
+   <!-- import the latest version of hydra synth-->
+   <script src="https://unpkg.com/hydra-synth"></script>
+
+   <style>
+       html, body {
+           height: 100%;
+           margin: 0;
+           overflow: hidden;
+           font-family: "Courier New", monospace;
+       }
+
+       #controls {
+           position: absolute;
+           bottom: 20px;
+           left: 280px;
+           display: flex;
+           align-items: center;
+           gap: 10px;
+           background-color: rgba(255, 255, 255, 0.2);
+           padding: 10px;
+           border-radius: 8px;
+       }
+
+       input[type="range"] {
+           -webkit-appearance: none;
+           width: 200px;
+           height: 6px;
+           background: #ddd;
+           outline: none;
+           border-radius: 5px;
+           overflow: hidden;
+       }
+
+       input[type="range"]::-webkit-slider-thumb {
+           -webkit-appearance: none;
+           width: 15px;
+           height: 15px;
+           background: #555;
+           border-radius: 50%;
+           cursor: pointer;
+       }
+
+       input[type="range"]::-moz-range-thumb {
+           width: 15px;
+           height: 15px;
+           background: #555;
+           border-radius: 50%;
+           cursor: pointer;
+       }
+
+       button {
+           padding: 10px 15px;
+           font-family: "Courier New", monospace;
+           font-size: 16px;
+           background: #fff;
+           border: 1px solid #ccc;
+           cursor: pointer;
+           border-radius: 5px;
+       }
+
+       button:hover {
+           background: #f0f0f0;
+       }
+   </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="250px" height="192px"></canvas>
+    <script>
+        function init() {
+            // create a new hydra-synth instance
+            var hydra = new Hydra({
+                canvas: document.getElementById("myCanvas"),
+                detectAudio: true,
+                enableStreamCapture: true,
+            });
+
+            // Starting Hydra code here   
+            a.setBins(3);
+            a.setSmooth(.03);
+            a.setScale(4);
+            a.setCutoff(0.05);
+            a.hide();
+
+            s0.initCam();
+            src(s0)
+            .thresh(.5) //good for regular lighting
+         //   .thresh(.3) //for blackbox?
+            .luma(() => a.fft[2]/4)
+            .blend(o0, 0.01)
+            .pixelate(() => 1/(Math.sin(time*time) + (time/12) * Math.tan(Math.tan((5*time*time)/2) / (Math.cos(7*time) + 1/2)) + (time/6) * Math.tan(Math.sin(4*time) * Math.cos(3*time) + 1/10) * Math.sin(6*time))*250, 192)
+            .out(o0);
+            
+            src(o0)
+            .blend(o1, 0.1)
+            .colorama(.1)
+            .out(o1);
+
+            solid(.1,.1,.1)
+            .layer(
+            src(o1)
+            .saturate(0))
+            .out(o2);
+           
+            src(s0)  
+        //    .blend(o2, () => Math.sin(time*.01))
+   /*         .blend(o2, () => (Math.sin(time*time*.1) + 
+(time*time*.008) * Math.tan(Math.tan(.25*time) / (Math.cos(.7*time) + 1)) + 
+(time*.19) * Math.tan(Math.sin(.4*time) * Math.cos(.3*time) + 1/10) * Math.sin(.6*time))*.001) 
+*/
+
+        .blend(o2, () => a.fft[0]*a.fft[1]*a.fft[2]*.05)
+        //    .pixelate(250, () => Math.sin(time*.2)*Math.sin(time*.2)*Math.sin(time*.2)*19.2)
+          //  .saturate(0)
+            .out(o3);
+            render(o3);
+        };
+        // Call init() immediately when the page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
