@@ -4136,8 +4136,7 @@ async function setupAudioInput() {
         
         // Analysis parameters
         const speedFactor = .95;
-      //  const AMPLITUDE_THRESHOLD = 0.001;
-      const AMPLITUDE_THRESHOLD = 0.001;
+      const AMPLITUDE_THRESHOLD = 0.003;
         let targetSpeed = 0;
         
         // Store references in the global scope
@@ -4254,7 +4253,7 @@ function analyzeAudio() {
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // adjust multiplier and forward bias according to microphone and mic placement
+            window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+20); // adjust multiplier and forward bias according to microphone and mic placement
             // Log target speed
             // console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
         }
