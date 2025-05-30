@@ -4136,8 +4136,7 @@ async function setupAudioInput() {
         
         // Analysis parameters
         const speedFactor = .95;
-      //  const AMPLITUDE_THRESHOLD = 0.001;
-      const AMPLITUDE_THRESHOLD = 0.001;
+      const AMPLITUDE_THRESHOLD = 0.003;
         let targetSpeed = 0;
         
         // Store references in the global scope
@@ -4255,7 +4254,7 @@ function analyzeAudio() {
         if (centroid > 0) {
             // Calculate target speed using the formula
          //   window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
-            window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // good for performance
+            window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+20); // adjust multiplier and forward bias according to microphone and mic placement
 
             // window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
           //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
