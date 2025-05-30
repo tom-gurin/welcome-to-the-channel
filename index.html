@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>Welcome to my channel ˙✧˖°📺⋆｡˚</title>
+    <title>Welcome to the channel ˙✧˖°📺⋆｡˚</title>
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: "Courier New", monospace; }
         #c { width: 100%; height: 100%; display: block; }
@@ -9,19 +9,146 @@
             z-index: 2;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            display: flex;
+            display: none; /* Hide initially */
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0);
+            background: rgba(0, 0, 0, 1);
+            flex-direction: column;
         }
-        #overlay button {
-            background: rgba(0, 0, 0, 0); border: 0;
-            color: #808080; padding: 16px 20px;
-            text-transform: uppercase; cursor: pointer;
-			      font-family: "Courier New", monospace;
-			      font-size: 40px;
+
+        /* Main title styling */
+        #game-title {
+            color: #8956FB;
+            font-family: "Arial Black", sans-serif;
+            font-size: 82px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-title 2s infinite ease-in-out;
         }
-        #loading-screen {
+
+        /* Button container for animation effects */
+        #button-container {
+            position: relative;
+            margin-top: 30px;
+        }
+
+        /* Styling for start button */
+        #startButton {
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #8956FB; 
+            color: #FFFFFF;
+            padding: 20px 40px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 28px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(137, 86, 251, 0.8);
+            animation: button-glow 1.5s infinite alternate;
+        }
+
+        #startButton:hover {
+            background: rgba(137, 86, 251, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(137, 86, 251, 1), 0 0 40px rgba(137, 86, 251, 0.5);
+        }
+
+        #startButton:active {
+            transform: scale(0.98);
+        }
+
+        /* Decorative elements */
+        .corner-decoration {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #8956FB;
+            opacity: 0.8;
+            display: none
+        }
+
+        .corner-decoration.top-left {
+            top: -15px;
+            left: -15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.top-right {
+            top: -15px;
+            right: -15px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: -15px;
+            left: -15px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: -15px;
+            right: -15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Subtitle text */
+        #subtitle {
+            color: #ffffff;
+            font-family: "Arial", sans-serif;
+            font-size: 24px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        /* Time limit display styling */
+        #time-limit-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 6px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        /*    border: 2px solid #8956FB; */
+         /*   box-shadow: 0 0 20px rgba(137, 86, 251, 0.6); */
+            z-index: 1500;
+            display: none;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        #time-limit-display.warning {
+            border-color: #ff3333;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
+            animation: time-warning 0.5s infinite alternate;
+        }
+
+        #time-limit-display.critical {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+            animation: time-critical 0.3s infinite alternate;
+        }
+
+        /* Game over overlay */
+        #game-over-overlay {
             position: absolute;
             z-index: 3;
             top: 0; left: 0;
@@ -29,10 +156,318 @@
             display: none;
             align-items: center;
             justify-content: center;
-            background: rgb(255, 255, 255);
-            color: #acacac;
+            background: rgba(0, 0, 0, 0.9);
+            flex-direction: column;
+        }
+
+        #game-over-title {
+            color: #ff3333;
+            font-family: "Arial Black", sans-serif;
+            font-size: 72px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-game-over 1.5s infinite ease-in-out;
+        }
+
+        #game-over-message {
+            color: #ffffff;
+            font-family: "Arial", sans-serif;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        #restart-button {
+            background: rgba(255, 51, 51, 0.2);
+            border: 3px solid #ff3333;
+            color: #ffffff;
+            padding: 15px 30px;
+            font-family: "Arial Black", sans-serif;
+            font-size: 20px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.6);
+        }
+
+        #restart-button:hover {
+            background: rgba(255, 51, 51, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 51, 51, 1);
+        }
+
+        /* Animations */
+        @keyframes pulse-title {
+            0% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+            50% { text-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 50px rgba(137, 86, 251, 0.8); }
+            100% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+        }
+
+        @keyframes pulse-game-over {
+            0% { text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6); }
+            50% { text-shadow: 0 0 25px rgba(255, 51, 51, 1), 0 0 50px rgba(255, 51, 51, 0.8); }
+            100% { text-shadow: 0 0 15px rgba(255, 51, 51, 0.8), 0 0 30px rgba(255, 51, 51, 0.6); }
+        }
+
+        @keyframes button-glow {
+            from { box-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+            to { box-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 40px rgba(137, 86, 251, 0.7); }
+        }
+
+        @keyframes time-warning {
+            from { 
+                box-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
+                transform: translateX(-50%) scale(1);
+            }
+            to { 
+                box-shadow: 0 0 30px rgba(255, 51, 51, 1);
+                transform: translateX(-50%) scale(1.02);
+            }
+        }
+
+        @keyframes time-critical {
+            from { 
+                box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+                transform: translateX(-50%) scale(1);
+            }
+            to { 
+                box-shadow: 0 0 40px rgba(255, 0, 0, 1);
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* For button shine effect */
+        @keyframes shine {
+            0% { transform: translateX(-300%) skewX(30deg); }
+            100% { transform: translateX(300%) skewX(30deg); }
+        }
+
+        .shine-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(30deg);
+            animation: shine 4s infinite;
+        }
+
+        #countdown-overlay {
+            position: absolute;
+            z-index: 2;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        #countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #countdown-message {
+            color: #FFFFFF;
+            font-family: "Arial Black", sans-serif;
             font-size: 60px;
-            font-family: "Courier New", monospace;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            letter-spacing: 3px;
+            animation: pulse-title 2s infinite ease-in-out;
+        }
+
+        #countdown {
+            color: #8956FB;
+            font-family: "Arial Black", sans-serif;
+            font-size: 82px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6);
+            animation: pulse-countdown 1.5s infinite ease-in-out;
+            position: relative;
+            padding: 20px 40px;
+        }
+
+        .countdown-decoration {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #8956FB;
+            opacity: 0.8;
+            display: none;
+        }
+
+        .countdown-decoration.top-left {
+            top: -15px;
+            left: -15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .countdown-decoration.top-right {
+            top: -15px;
+            right: -15px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .countdown-decoration.bottom-left {
+            bottom: -15px;
+            left: -15px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .countdown-decoration.bottom-right {
+            bottom: -15px;
+            right: -15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Animation for countdown */
+        @keyframes pulse-countdown {
+            0% { transform: scale(1); text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+            50% { transform: scale(1.05); text-shadow: 0 0 25px rgba(137, 86, 251, 1), 0 0 50px rgba(137, 86, 251, 0.8); }
+            100% { transform: scale(1); text-shadow: 0 0 15px rgba(137, 86, 251, 0.8), 0 0 30px rgba(137, 86, 251, 0.6); }
+        }
+
+        #countdown-background {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(25, 10, 38, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%);
+            z-index: -1;
+            animation: background-pulse 8s infinite ease-in-out;
+        }
+
+        @keyframes background-pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.7; }
+        }
+        /* Loading Screen CSS */
+        #loading-screen {
+            position: absolute;
+            z-index: 1501;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgb(0, 0, 0);
+            flex-direction: column;
+        }
+
+        #loading-progress {
+            width: 300px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #loading-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8956FB, #FF56FB);
+            box-shadow: 0 0 10px rgba(137, 86, 251, 0.8);
+            animation: progress-animation 1s infinite alternate;
+            transition: width 5s ease-in-out;
+        }
+
+        /* Loading Screen Animations */
+        @keyframes pulse-text {
+            0% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+            50% { text-shadow: 0 0 25px rgba(137, 86, 251, 1); }
+            100% { text-shadow: 0 0 15px rgba(137, 86, 251, 0.8); }
+        }
+
+        @keyframes progress-animation {
+            from { box-shadow: 0 0 10px rgba(137, 86, 251, 0.5); }
+            to { box-shadow: 0 0 20px rgba(137, 86, 251, 1); }
+        }
+
+        @keyframes glitch-animation {
+            0% { transform: translate(0); filter: none; }
+            10% { transform: translate(-5px, 5px); filter: hue-rotate(90deg) brightness(1.5); }
+            20% { transform: translate(5px, -8px); filter: contrast(1.5) brightness(0.8); }
+            30% { transform: translate(-8px, -12px); filter: hue-rotate(-90deg) brightness(1.3); }
+            40% { transform: translate(8px, 12px); filter: invert(0.3) brightness(1.2); }
+            50% { transform: translate(-10px, -5px); filter: contrast(1.7); }
+            60% { transform: translate(10px, 8px); filter: hue-rotate(180deg) brightness(0.7); }
+            70% { transform: translate(-12px, 10px); filter: invert(0.1) contrast(1.4); }
+            80% { transform: translate(12px, -10px); filter: hue-rotate(-120deg) brightness(1.4); }
+            90% { transform: translate(-8px, -8px); filter: contrast(1.3) brightness(0.8); }
+            100% { transform: translate(0); filter: none; }
+        }
+
+        #countdown.glitching {
+            animation: glitch-animation 0.3s ease;
+            position: relative;
+            overflow: visible;
+        }
+
+        #countdown.glitching::before, 
+        #countdown.glitching::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        #countdown.glitching::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-1 0.25s linear alternate-reverse;
+        }
+
+        #countdown.glitching::after {
+            left: -2px;
+            text-shadow: 2px 0 #00ffff;
+            clip: rect(24px, 450px, 36px, 0);
+            animation: glitch-anim-2 0.25s linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(30px, 450px, 36px, 0); }
+            20% { clip: rect(25px, 450px, 31px, 0); }
+            40% { clip: rect(63px, 450px, 71px, 0); }
+            60% { clip: rect(12px, 450px, 31px, 0); }
+            80% { clip: rect(51px, 450px, 81px, 0); }
+            100% { clip: rect(42px, 450px, 73px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(59px, 450px, 71px, 0); }
+            20% { clip: rect(26px, 450px, 51px, 0); }
+            40% { clip: rect(48px, 450px, 53px, 0); }
+            60% { clip: rect(80px, 450px, 86px, 0); }
+            80% { clip: rect(15px, 450px, 26px, 0); }
+            100% { clip: rect(32px, 450px, 49px, 0); }
+        }
+        
+        #countdown.glitching {
+            animation: glitch-animation 0.3s ease;
         }
         #info {
             position: absolute; 
@@ -54,8 +489,8 @@
             bottom: 20px;
             left: 100px;
             bottom: 15px;
-            width: 200px;
-            height: 200px;
+            width: 170px;
+            height: 170px;
             background-color: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
@@ -99,12 +534,101 @@
         #player-marker {
             animation: pulse 1.5s infinite ease-in-out;
         }
+        .stream-host-message {
+            background: linear-gradient(135deg, #8956FB 0%, #FF56FB 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-width: 90%;
+            margin-left: auto;
+            word-wrap: break-word;
+            position: relative;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 20px rgba(137, 86, 251, 0.6);
+            animation: host-message-glow 2s infinite alternate;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .stream-host-label {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: linear-gradient(135deg, #FF56FB 0%, #8956FB 100%);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ffffff;
+            box-shadow: 0 0 10px rgba(255, 86, 251, 0.8);
+        }
+
+        .typing-content {
+            font-size: 20px;
+            line-height: 1.4;
+            min-height: 20px;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #ffffff;
+            margin-left: 2px;
+            animation: cursor-blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes host-message-glow {
+            from { box-shadow: 0 0 20px rgba(137, 86, 251, 0.6); }
+            to { box-shadow: 0 0 30px rgba(255, 86, 251, 0.8); }
+        }
     </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="overlay"><button id="startButton">Start Live Stream</button></div>
-<div id="loading-screen">3</div>
+<div id="countdown-overlay">
+    <div id="countdown-background"></div>
+    <div id="countdown-container">
+        <div id="countdown-message">Live Stream Starting Soon</div>
+        <div id="countdown" style="position: relative;">
+            <div class="countdown-decoration top-left"></div>
+            <div class="countdown-decoration top-right"></div>
+            <div class="countdown-decoration bottom-left"></div>
+            <div class="countdown-decoration bottom-right"></div>
+            10:00
+        </div>
+    </div>
+</div>
+<div id="overlay">
+    <h1 id="game-title">Welcome to the Channel</h1>
+    <div id="subtitle"></div>
+    <div id="button-container">
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        <button id="startButton">
+            Start Level 1
+            <div class="shine-effect"></div>
+        </button>
+    </div>
+</div>
+<div id="loading-screen">
+    <div id="loading-progress">
+        <div id="loading-progress-bar"></div>
+    </div>
+</div>
 <div id="speed-meter" style="position: fixed; bottom: 1rem; left: 1rem; background-color: rgba(0, 0, 0, 0.6); 
      color: #ffffff; padding: 0.5rem 1rem; border-radius: 0.5rem; font-family: monospace; 
      font-size: .75rem; display: none; align-items: center; z-index: 1000;">
@@ -121,6 +645,17 @@
     <canvas id="minimap"></canvas>
     <div id="player-marker"></div>
   </div>
+<!-- Time Limit Display -->
+<div id="time-limit-display">
+    <div id="time-remaining" style="font-size: 32px; margin-top: 5px;">60</div>
+</div>
+
+<!-- Game Over Overlay -->
+<div id="game-over-overlay">
+    <h1 id="game-over-title">TIME'S UP!</h1>
+    <div id="game-over-message">You died! 1 life remaining.<br></div>
+<!--    <button id="restart-button">Restart Now</button> -->
+</div>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
@@ -132,7 +667,719 @@
 
     const startButton = document.getElementById('startButton');
     const loadingScreen = document.getElementById('loading-screen');
+    const countdownElement = document.getElementById('countdown');
+    const countdownOverlay = document.getElementById('countdown-overlay');
+    const regularOverlay = document.getElementById('overlay');
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function triggerGlitch() {
+    const countdownElement = document.getElementById('countdown');
+    countdownElement.setAttribute('data-text', countdownElement.textContent);
+    countdownElement.classList.add('glitching');
+    
+    // Remove the class after the animation duration to reset it
+    setTimeout(() => {
+        countdownElement.classList.remove('glitching');
+    }, 300); // Match to animation duration
+}
+
+// Schedule random glitches
+function scheduleRandomGlitches() {
+        // Random delay between 5-15 seconds
+        const randomDelay = 5000 + Math.random() * 10000;
+        
+        setTimeout(() => {
+            // Only trigger if countdown is still visible
+            if (document.getElementById('countdown-overlay').style.display !== 'none') {
+                triggerGlitch();
+                
+                // Chance for a double glitch effect
+                if (Math.random() > 0.7) {
+                    setTimeout(triggerGlitch, 150);
+                }
+            }
+            // Schedule next glitch
+            scheduleRandomGlitches();
+        }, randomDelay);
+    }
+
+    // Start scheduling random glitches on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        scheduleRandomGlitches();
+    });
+
+    // Game over sound setup
+    class SoundManager {
+        constructor(audioContext) {
+            this.audioContext = audioContext;
+            this.sounds = new Map();
+            this.masterGain = audioContext.createGain();
+            this.masterGain.connect(audioContext.destination);
+            this.masterGain.gain.value = 0.7; // Master volume
+        }
+
+        async loadSound(name, url) {
+            try {
+                console.log(`Loading sound: ${name} from ${url}`);
+                const response = await fetch(url);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.sounds.set(name, audioBuffer);
+                console.log(`Successfully loaded sound: ${name}`);
+                return true;
+            } catch (error) {
+                console.error(`Failed to load sound ${name}:`, error);
+                return false;
+            }
+        }
+
+        playSound(name, volume = 1.0, loop = false) {
+            const buffer = this.sounds.get(name);
+            if (!buffer) {
+                console.warn(`Sound ${name} not found`);
+                return null;
+            }
+
+            const source = this.audioContext.createBufferSource();
+            const gainNode = this.audioContext.createGain();
+            
+            source.buffer = buffer;
+            source.loop = loop;
+            gainNode.gain.value = volume;
+
+            source.connect(gainNode);
+            gainNode.connect(this.masterGain);
+
+            source.start();
+            console.log(`Playing sound: ${name} at volume ${volume}`);
+            
+            return {
+                source: source,
+                gainNode: gainNode,
+                stop: () => source.stop(),
+                fadeOut: (duration = 1.0) => {
+                    const currentTime = this.audioContext.currentTime;
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+                    setTimeout(() => source.stop(), duration * 1000);
+                }
+            };
+        }
+
+        async preloadAllSounds() {
+    console.log("Preloading game sounds...");
+    
+    return new Promise((resolve) => {
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load('lose.mp3', (buffer) => {
+            this.sounds.set('lose', buffer);
+            console.log('Lose sound loaded successfully');
+            resolve(true);
+        }, undefined, (error) => {
+            console.error('Failed to load lose sound:', error);
+            resolve(false);
+        });
+    });
+        }
+    }
+
+    // Initialize sound manager
+    const soundManager = new SoundManager(audioContext);
+
+// Countdown timer
+// let timeRemaining = 10 * 60; //10m for performance
+ let timeRemaining = 10 // 10s for development
+    
+    // Start the countdown immediately
+    const countdownInterval = setInterval(() => {
+        timeRemaining--;
+        
+        // Update the countdown display
+        countdownElement.textContent = formatTime(timeRemaining);
+        
+        // When countdown reaches zero
+        if (timeRemaining <= 0) {
+            clearInterval(countdownInterval);
+            
+            // Hide countdown overlay
+            countdownOverlay.style.display = 'none';
+            
+            // Show the regular overlay with the start button
+            regularOverlay.style.display = 'flex';
+
+            const hudElements = initializeHud(); //HUD before click
+            setupHudToggleControls();
+            triggerStreamHostMessages()
+        }
+    }, 1000);
+    
+    // Function to format time as MM:SS
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+// Create a chat container
+const chatContainer = document.createElement('div');
+chatContainer.style.position = 'fixed';
+chatContainer.style.bottom = '20px';
+chatContainer.style.right = '0px';
+chatContainer.style.width = '300px';
+chatContainer.style.maxHeight = '400px';
+chatContainer.style.overflowY = 'auto';
+chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+chatContainer.style.borderRadius = '10px';
+chatContainer.style.padding = '10px';
+chatContainer.style.fontFamily = '"Arial", monospace';
+chatContainer.style.zIndex = '1000';
+document.body.appendChild(chatContainer);
+
+// Arrays of possible noise messages
+const initialNoiseMessages = [
+    "AsunaLoveAhri: Hellloooo",
+    "AsunaLoveAhri: is anyon watching alredy?",
+    "xXGamer4LifeXx: is ths the right chanel??",
+    "Visitor498: Hiiii",
+    "ShadowPlay22: Im soo exited for this 1!",
+    "AsunaLoveAhri: Anybdy here new?",
+    "AsunaLoveAhri: Did u heer that?",
+    "🔔 AsunaLoveAhri tipped 1.50 - 'Luv ur chanell'",
+    "LostViewer55: Do u kno wich way is out??????",
+    "StreamFan99: Hiiiii",
+    "xXGamer4LifeXx: [message deleted by a moderator.]",
+    "👻👻👻: console.log('CONTROLLER LOSING POWER')",
+    "xXGamer4LifeXx: lol this SUCKS @AsunaLoveAhri let's goooo",
+    "ProGamer876: Forwrd",
+    "AsunaLoveAhri: wtf no this is amzing",
+    "NightOwl42: Who's controling the game? Go Leftt",
+    "👻👻👻: window.microphoneInput = null;",
+    "👻👻👻: console.log('STARTING MICROPHONE')",
+    "RandomChatter: Whre is this lol",
+    "TwitchQueen: can u go forwrd & then trn:)",
+    "DarkModeAlways: y is it soo dark rn",
+    "GamerBro44: 😂😂😂😂😂",
+    "HypeSquad101: thsi is epic",
+    "👻👻👻: console.log('CONTROLLER LOSING POWER')",
+    "🔔 AsunaLoveAhri tipped 25.00 - 'Luvvv'",
+    "HilariousGamer9: Gretings frm Glasgow"
+];
+
+const laterNoiseMessages = [
+    "U all still there?",
+    "👻👻👻:[message unavailable]",
+    "AsunaLoveAhri: Anybody?",
+    "AsunaLoveAhri: Did u hear it that time?",
+    "👻👻👻: window.microphoneInput = null;",
+    "xXGamer4LifeXx: well there goes 100k",
+    "👻👻👻:newSourceNode.start(0, window.audioState.playbackOffset);",
+    "OooOo",
+    "Connection unstable"
+];
+
+// Track when the page was loaded
+const pageLoadTime = Date.now();
+const initialPeriodDuration = 210000; // 210 seconds in milliseconds
+
+// Keep track of which initial message to show next
+let initialMessageIndex = 0;
+
+// Array of interaction-specific messages
+const interactionMessages = [
+    "console.log('NOISE INCREASED 👻)",
+];
+
+function showRandomChatMessage() {
+    // Determine which message set to use based on elapsed time
+    const currentTime = Date.now();
+    const useInitialMessages = (currentTime - pageLoadTime < initialPeriodDuration);
+    
+    // Get the message text - sequential for initial period, random for later
+    let messageText;
+    if (useInitialMessages) {
+        // Get the next message in sequence
+        messageText = initialNoiseMessages[initialMessageIndex];
+        
+        // Increment the index for next time, loop back to beginning if needed
+        initialMessageIndex = (initialMessageIndex + 1) % initialNoiseMessages.length;
+    } else {
+        // Randomly select from later messages
+        const messageIndex = Math.floor(Math.random() * laterNoiseMessages.length);
+        messageText = laterNoiseMessages[messageIndex];
+    }
+    
+    // Create a new message element
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    messageElement.style.color = '#ffffff';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '85%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+    messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #8956FB'; // Neutral border for random messages
+    
+    // Add a typing indicator that will be shown before the message
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #8956FB'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message
+    const randomPoints = Math.floor(Math.random() * 100) + 1;
+    
+    // Message text is already selected based on the sequential/random logic above
+    
+  /*  // Add points to the end of the message
+    const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
+*/
+     const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
+    
+    // Add the typing indicator first
+    chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Trigger animation
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom of the chat
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a timestamp after a short delay
+        setTimeout(() => {
+            const timestamp = document.createElement('div');
+            timestamp.style.fontSize = '10px';
+            timestamp.style.color = '#aaaaaa';
+            timestamp.style.textAlign = 'right';
+            timestamp.style.marginTop = '5px';
+            
+            // Get current time
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+       //     timestamp.textContent = `${hours}:${minutes}`;
+            
+            messageElement.appendChild(timestamp);
+        }, 300);
+        
+        // Sometimes add a glitch effect to the message
+        if (Math.random() > 0.5) {
+            setTimeout(() => {
+                // Create a glitch effect by briefly changing the text
+                const originalHTML = messageElement.innerHTML;
+                
+                // Generate glitched version of the text
+                const glitched = originalHTML.replace(/[a-zA-Z]/g, (char) => {
+                    return Math.random() > 0.7 ? String.fromCharCode(Math.random() > 0.5 ? 48 + Math.floor(Math.random() * 10) : 33 + Math.floor(Math.random() * 14)) : char;
+                });
+                
+                // Apply glitch briefly
+                messageElement.innerHTML = glitched;
+                
+                // Restore original after short delay
+                setTimeout(() => {
+                    messageElement.innerHTML = originalHTML;
+                }, 200);
+            }, 800);
+        }
+    }, 1500); // 1.5 second typing animation
+}
+
+// Add the styles to the document
+if (!document.querySelector('#stream-host-styles')) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'stream-host-styles';
+    //styleElement.textContent = streamHostStyles;
+    document.head.appendChild(styleElement);
+}
+
+// Function to show Stream Host message with real-time typing
+function showStreamHostMessage(messageText) {
+    // Create the message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'stream-host-message';
+    
+    // Create the Stream Host label
+    const labelElement = document.createElement('div');
+    labelElement.className = 'stream-host-label';
+    labelElement.textContent = 'Stream Host';
+    
+    // Create the typing content area
+    const contentElement = document.createElement('div');
+    contentElement.className = 'typing-content';
+    
+    // Create the typing cursor
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    
+    // Append elements
+    messageElement.appendChild(labelElement);
+    messageElement.appendChild(contentElement);
+    contentElement.appendChild(cursor);
+    
+    // Add to your existing chat container
+    chatContainer.appendChild(messageElement);
+    
+    // Animate entrance
+    setTimeout(() => {
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Scroll to bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // Start typing animation
+    let currentCharIndex = 0;
+    const typingSpeed = 80; // milliseconds per character
+    
+    function typeNextCharacter() {
+    if (currentCharIndex < messageText.length) {
+        const currentChar = messageText[currentCharIndex];
+        
+        // Add the next character before the cursor
+        const textBeforeCursor = messageText.substring(0, currentCharIndex + 1);
+        contentElement.innerHTML = textBeforeCursor + '<span class="typing-cursor"></span>';
+        
+        currentCharIndex++;
+        
+        // Variable typing speed based on character type
+        let delay = getTypingDelay(currentChar, currentCharIndex);
+        
+        // Continue typing
+        setTimeout(typeNextCharacter, delay);
+        
+        // Auto-scroll as text appears
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    } else {
+        // Typing complete - remove cursor after a brief pause
+        setTimeout(() => {
+            contentElement.innerHTML = messageText;
+        }, 1000);
+    }
+}
+
+function getTypingDelay(char, index) {
+    const baseSpeed = 80; // Base typing speed in ms
+    const variation = Math.random() * 40 - 20; // Random variation ±20ms
+    
+    let delay = baseSpeed + variation;
+    
+    // Adjust delays for different characters
+    switch (char) {
+        case ' ':
+            // Slight pause for spaces
+            delay += Math.random() * 50 + 25;
+            break;
+        case '.':
+        case '!':
+        case '?':
+            // Longer pause after sentence endings
+            delay += Math.random() * 200 + 150;
+            break;
+        case ',':
+        case ';':
+        case ':':
+            // Medium pause for punctuation
+            delay += Math.random() * 100 + 50;
+            break;
+        case '\n':
+            // Pause for line breaks
+            delay += Math.random() * 150 + 100;
+            break;
+        default:
+            // Occasionally add small hesitations on random letters
+            if (Math.random() < 0.1) { // 10% chance
+                delay += Math.random() * 80 + 40;
+            }
+            break;
+    }
+    
+    // Slightly slower at the beginning (like warming up)
+    if (index < 10) {
+        delay += (10 - index) * 5;
+    }
+    
+    // Ensure minimum delay
+    return Math.max(delay, 30);
+}
+
+// Start typing after a short delay with some randomness
+setTimeout(typeNextCharacter, 300 + Math.random() * 400);
+}
+
+// Function to trigger Stream Host messages after countdown reaches zero
+function triggerStreamHostMessages() {
+    // First message after a delay
+    setTimeout(() => {
+        showStreamHostMessage('Hey all, thanks for joining!! today we have some really exciting content for you.');
+    }, 5000); // 5 seconds after countdown ends
+    //typing sounds are done by saxophone key clicks in real time
+
+    setTimeout(() => {
+        showStreamHostMessage('We have some truly amazing content for you to enjoy today.');
+    }, 20000); // 20 seconds after countdown ends
+    
+    // Second message after another delay
+    setTimeout(() => {
+        showStreamHostMessage("Are you ready to make some noise???");
+    }, 30000); // 30 seconds after countdown ends
+
+    // Third message after another delay
+    setTimeout(() => {
+        showStreamHostMessage("Let's get this showwww on the road gang 🚀");
+    }, 40000); // 40 seconds after countdown ends    
+}
+
+// Function to show game interaction-triggered chat message
+function showInteractionChatMessage() {
+    // Create a new message element with distinct styling
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(20, 60, 80, 0.9)'; // Different background color
+    messageElement.style.color = '#ffffff';
+    messageElement.style.fontSize = '20px';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '100%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+ //   messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #00aaff'; // Blue border for interaction messages
+    
+    // Add a typing indicator with a different style
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(20, 60, 80, 0.9)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #00aaff'; // Match the message border
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 0.6s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Generate random points for the message - higher for interactions
+    const interactionPoints = Math.floor(Math.random() * 500) + 100;
+    
+    // Select a random message from the interaction array
+    const messageIndex = Math.floor(Math.random() * interactionMessages.length);
+    const messageText = interactionMessages[messageIndex];
+    
+    // Add points to the end of the message with enhanced styling
+    const fullMessage = `${messageText} <span style="color: #00ffaa; font-weight: bold">+${interactionPoints} noise!</span>`;
+    
+    // Don't add the typing indicator
+ //   chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add a distinct label for interaction messages
+        const label = document.createElement('div');
+        label.style.position = 'absolute';
+        label.style.top = '-12px';
+        label.style.right = '15px';
+        label.style.padding = '4px 12px';
+        label.style.fontSize = '12px';
+        label.style.fontWeight = 'bold';
+        label.style.color = '#ffffff';
+        label.style.backgroundColor = 'rgba(0, 100, 200, 0.9)';
+        label.style.borderRadius = '8px';
+        label.textContent = 'GAME 👻';
+        label.style.letterSpacing = '1px';
+        messageElement.appendChild(label);
+ 
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+        
+        // Add a pulsing glow effect to the message
+      //  messageElement.style.animation = 'pulse 2s ease-in-out';
+        messageElement.style.animation = 'shakeY 0.5s ease-in-out';
+        messageElement.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.5)';
+        
+       // Create style for shake animation if it doesn't exist
+       if (!document.querySelector('#shakeY-animation')) {
+            const style = document.createElement('style');
+            style.id = 'shakeY-animation';
+            style.textContent = `
+                @keyframes shakeY {
+                    0%, 100% { transform: translateY(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateY(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateY(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Trigger animation
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom again
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add a pronounced glitch effect
+        setTimeout(() => {
+            // Create a series of glitches
+            const originalHTML = messageElement.innerHTML;
+            const glitchCount = 3;
+            
+            for (let i = 0; i < glitchCount; i++) {
+                setTimeout(() => {
+                    // Generate heavily glitched version
+                    const glitched = originalHTML.replace(/[a-zA-Z0-9]/g, (char) => {
+                        return Math.random() > 0.3 ? String.fromCharCode(33 + Math.floor(Math.random() * 93)) : char;
+                    });
+                    
+                    // Apply glitch
+                    messageElement.innerHTML = glitched;
+                    
+                    // Restore after brief interval
+                    setTimeout(() => {
+                        messageElement.innerHTML = originalHTML;
+                    }, 100);
+                }, i * 300); // Stagger the glitches
+            }
+        }, 800);
+    }, 1000); // Show typing for 1 second
+}
+
+// Function to show the stop message
+function showStopMessageAnimation() {
+    // Create a special error message
+    const errorMessage = document.createElement('div');
+    errorMessage.style.backgroundColor = 'rgba(80, 0, 0, 0.8)';
+    errorMessage.style.color = '#ff5555';
+    errorMessage.style.borderRadius = '8px';
+    errorMessage.style.padding = '10px';
+    errorMessage.style.marginBottom = '10px';
+    errorMessage.style.width = '85%';
+    errorMessage.style.marginLeft = 'auto';
+    errorMessage.style.wordWrap = 'break-word';
+    errorMessage.style.fontWeight = 'bold';
+    errorMessage.style.opacity = '0';
+    errorMessage.style.transform = 'translateY(20px)';
+    errorMessage.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    errorMessage.innerHTML = 'CONNECTION TERMINATED 😭';
+    
+    // Add the message to the container
+    chatContainer.appendChild(errorMessage);
+    
+    // Trigger animation
+    setTimeout(() => {
+        errorMessage.style.opacity = '1';
+        errorMessage.style.transform = 'translateY(0)';
+        
+        // Add shake effect
+        errorMessage.style.animation = 'shake 0.5s ease-in-out';
+        
+        // Create style for shake animation if it doesn't exist
+        if (!document.querySelector('#shake-animation')) {
+            const style = document.createElement('style');
+            style.id = 'shake-animation';
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+            
+    }, 10);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Start showing messages automatically
+function startRandomChatMessages() {
+    // Show first message after 8 seconds
+    setTimeout(() => {
+        showRandomChatMessage();
+        
+        // Then start showing messages periodically
+        setInterval(() => {
+            // 70% chance to show a message each time
+            if (Math.random() < 0.7) {
+                showRandomChatMessage();
+            }
+        }, 3000 + Math.random() * 20000); // Random interval between 3-23 seconds
+    }, 8000);
+}
+startRandomChatMessages()
 
     // Check the maximum number of audio channels supported
 console.log("Maximum channels supported:", audioContext.destination.maxChannelCount);
@@ -159,39 +1406,457 @@ if (isQuadSupported) {
   
     startButton.addEventListener('click', init);
 
+// Create a function to add the HUD iframe
+function createHudIframe() {
+  console.log("Setting up HUD iframe...");
+  
+  // Create container div for the HUD
+  const hudContainer = document.createElement('div');
+  hudContainer.style.position = 'fixed';
+  hudContainer.style.right = '0';
+  hudContainer.style.top = '20%';
+  hudContainer.style.transform = 'translateY(-50%)';
+  hudContainer.style.width = '250px';  // Adjust width as needed
+  hudContainer.style.height = '192px'; // Adjust height as needed
+  hudContainer.style.zIndex = '1000';  // Make sure it's above other elements
+  hudContainer.style.pointerEvents = 'none'; // Make it click-through by default
+  hudContainer.style.transition = 'opacity 0.3s ease, width 0.3s ease';
+  hudContainer.style.opacity = '1';
+  hudContainer.style.display = 'none';  // Start hidden
+ // hudContainer.style.borderLeft = '2px solid rgba(255, 255, 255, 0.3)';
+ // hudContainer.style.boxShadow = '-5px 0 15px rgba(0, 0, 0, 0.5)';
+  
+  // Create iframe element
+  const hudIframe = document.createElement('iframe');
+  hudIframe.src = 'hydrainwebpage24.html';
+  hudIframe.style.width = '100%';
+  hudIframe.style.height = '100%';
+  hudIframe.style.border = '0';
+  hudIframe.style.pointerEvents = 'none'; // Make it click-through
+  
+  // Set permissions
+  hudIframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
+  hudIframe.allowFullscreen = true;
+  
+  // Add hover effect
+  hudContainer.addEventListener('mouseenter', () => {
+    hudContainer.style.opacity = '1';
+    hudContainer.style.width = '300px'; // Expand width on hover
+  });
+  
+  hudContainer.addEventListener('mouseleave', () => {
+    hudContainer.style.opacity = '1';
+    hudContainer.style.width = '250px'; // Return to original width
+  });
+  
+  // Append iframe to container
+  hudContainer.appendChild(hudIframe);
+  
+  // Append the container to the document body
+  document.body.appendChild(hudContainer);
+  
+  console.log("HUD iframe created successfully");
+  
+  return {
+    container: hudContainer,
+    iframe: hudIframe
+  };
+}
+
+// Create a toggle function to show/hide the HUD
+function toggleHudVisibility(visible) {
+  const hudContainer = document.querySelector('.hud-container');
+  if (hudContainer) {
+    hudContainer.style.display = visible ? 'block' : 'none';
+  }
+}
+
+// Create a function to update the HUD position based on screen size
+function updateHudPosition() {
+  const hudContainer = document.querySelector('.hud-container');
+  if (hudContainer) {
+    // Keep it centered vertically and on the right side
+    hudContainer.style.top = '50%';
+    hudContainer.style.right = '0';
+    hudContainer.style.transform = 'translateY(-50%)';
+  }
+}
+
+// Call this function to add the HUD to your scene
+function initializeHud() {
+  const hudElements = createHudIframe();
+  
+  // Add a class for easier selection later
+  hudElements.container.classList.add('hud-container');
+  
+  // Set up a resize listener to adjust position if needed
+  window.addEventListener('resize', updateHudPosition);
+  
+  return hudElements;
+}
+
+// Create a keyboard shortcut to toggle HUD visibility
+function setupHudToggleControls() {
+  let hudVisible = false; //set to false for hidden start
+  
+  document.addEventListener('keydown', (event) => {
+    // Press 'H' key to toggle HUD
+    if (event.code === 'KeyH') {
+      hudVisible = !hudVisible;
+      toggleHudVisibility(hudVisible);
+      console.log(`HUD visibility set to: ${hudVisible}`);
+    }
+  });
+}
+
+function setupGamepadOverlay() {
+  console.log("Setting up canvas-based gamepad overlay...");
+  
+  // Create the container and canvas
+  const container = document.createElement('div');
+  container.id = 'gamepad-canvas-container';
+  container.style.position = 'fixed';
+  container.style.bottom = '200px';
+  container.style.left = '20px';
+  container.style.width = '300px';
+  container.style.height = '170px';
+  container.style.zIndex = '1000';
+  container.style.opacity = '0.8';
+  container.style.transition = 'opacity 0.3s ease';
+  container.style.display = 'none'; // Hidden until gamepad is connected
+  container.style.pointerEvents = 'none'; // Don't interfere with mouse events
+  
+  // Create canvas element
+  const canvas = document.createElement('canvas');
+  canvas.id = 'gamepad-canvas';
+  canvas.width = 300;
+  canvas.height = 170;
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  
+  // Add canvas to container
+  container.appendChild(canvas);
+  
+  // Add to document body
+  document.body.appendChild(container);
+  
+  // Hover effect
+  container.addEventListener('mouseenter', () => {
+    container.style.opacity = '1';
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    container.style.opacity = '0.8';
+  });
+  
+  // Track connected state
+  let isConnected = false;
+  
+  // Add connection listeners
+  window.addEventListener("gamepadconnected", (event) => {
+    console.log("Gamepad connected:", event.gamepad);
+    isConnected = true;
+    container.style.display = 'block';
+ //   showGamepadNotification('GAMEPAD CONNECTED', 'Press G to hide/show overlay');
+  });
+  
+  window.addEventListener("gamepaddisconnected", (event) => {
+    console.log("Gamepad disconnected:", event.gamepad);
+    isConnected = false;
+    container.style.display = 'none';
+    showGamepadNotification('GAMEPAD DISCONNECTED', 'Connect a controller to continue');
+  });
+  
+  // Toggle visibility with G key
+  let isVisible = true;
+  document.addEventListener('keydown', (event) => {
+    if (event.code === 'KeyG' && isConnected) {
+      isVisible = !isVisible;
+      container.style.display = isVisible ? 'block' : 'none';
+      console.log("Gamepad overlay visibility toggled:", isVisible);
+    }
+  });
+  
+  // Start the render loop
+  requestAnimationFrame(renderGamepad);
+  
+  // Function to render the gamepad overlay on the canvas
+  function renderGamepad() {
+    // Continue the animation loop
+    requestAnimationFrame(renderGamepad);
+    
+    // Skip if not connected or not visible
+    if (!isConnected || !isVisible) return;
+    
+    // Get gamepad state
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[0]; // Using first gamepad
+    
+    if (!gamepad) return;
+    
+    // Get canvas context
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Get gamepad state with deadzone
+    const deadzone = 0.1;
+    
+    // Get stick values (apply deadzone)
+    const leftX = Math.abs(gamepad.axes[0]) > deadzone ? gamepad.axes[0] : 0;
+    const leftY = Math.abs(gamepad.axes[1]) > deadzone ? gamepad.axes[1] : 0;
+    const rightX = Math.abs(gamepad.axes[2]) > deadzone ? gamepad.axes[2] : 0;
+    const rightY = Math.abs(gamepad.axes[3]) > deadzone ? gamepad.axes[3] : 0;
+    
+    // Draw controller body (path)
+    ctx.beginPath();
+    ctx.moveTo(75, 45);
+    ctx.bezierCurveTo(75, 45, 90, 30, 150, 30);
+    ctx.bezierCurveTo(210, 30, 225, 45, 225, 45);
+    ctx.lineTo(250, 80);
+    ctx.bezierCurveTo(260, 95, 260, 110, 250, 125);
+    ctx.bezierCurveTo(240, 140, 220, 140, 210, 125);
+    ctx.bezierCurveTo(200, 110, 180, 110, 150, 110);
+    ctx.bezierCurveTo(120, 110, 100, 110, 90, 125);
+    ctx.bezierCurveTo(80, 140, 60, 140, 50, 125);
+    ctx.bezierCurveTo(40, 110, 40, 95, 50, 80);
+    ctx.closePath();
+    
+    // Fill and stroke
+    ctx.fillStyle = 'rgba(40, 40, 40, 0.75)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Constants for stick positions and sizes
+    const leftStickX = 100;
+    const leftStickY = 80;
+    const rightStickX = 200;
+    const rightStickY = 80;
+    const stickRadius = 30;
+    const stickBallRadius = 10;
+    const maxTravel = 20;
+    
+    // Draw left stick boundary
+    ctx.beginPath();
+    ctx.arc(leftStickX, leftStickY, stickRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 30, 30, 0.6)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw left stick crosshairs
+    ctx.beginPath();
+    ctx.moveTo(leftStickX - stickRadius, leftStickY);
+    ctx.lineTo(leftStickX + stickRadius, leftStickY);
+    ctx.moveTo(leftStickX, leftStickY - stickRadius);
+    ctx.lineTo(leftStickX, leftStickY + stickRadius);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Draw right stick boundary
+    ctx.beginPath();
+    ctx.arc(rightStickX, rightStickY, stickRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 30, 30, 0.6)';
+    ctx.fill();
+    ctx.strokeStyle = '#8956FB';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw right stick crosshairs
+    ctx.beginPath();
+    ctx.moveTo(rightStickX - stickRadius, rightStickY);
+    ctx.lineTo(rightStickX + stickRadius, rightStickY);
+    ctx.moveTo(rightStickX, rightStickY - stickRadius);
+    ctx.lineTo(rightStickX, rightStickY + stickRadius);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Calculate stick ball positions
+    const leftBallX = leftStickX + leftX * maxTravel;
+    const leftBallY = leftStickY + leftY * maxTravel;
+    const rightBallX = rightStickX + rightX * maxTravel;
+    const rightBallY = rightStickY + rightY * maxTravel;
+    
+    // Calculate intensities for glow effects
+    const leftIntensity = Math.sqrt(leftX*leftX + leftY*leftY);
+    const rightIntensity = Math.sqrt(rightX*rightX + rightY*rightY);
+    
+    // Left stick glow (shadow)
+    ctx.beginPath();
+    ctx.arc(leftBallX, leftBallY, stickBallRadius + 3, 0, Math.PI * 2);
+    
+    // Glow color based on intensity
+    let leftGlowColor;
+    if (leftIntensity < 0.3) {
+      leftGlowColor = 'rgba(137, 86, 251, 0.4)';
+    } else if (leftIntensity < 0.7) {
+      leftGlowColor = 'rgba(154, 106, 251, 0.5)';
+    } else {
+      leftGlowColor = 'rgba(181, 126, 251, 0.6)';
+    }
+    
+    ctx.fillStyle = leftGlowColor;
+    ctx.fill();
+    
+    // Right stick glow (shadow)
+    ctx.beginPath();
+    ctx.arc(rightBallX, rightBallY, stickBallRadius + 3, 0, Math.PI * 2);
+    
+    // Glow color based on intensity
+    let rightGlowColor;
+    if (rightIntensity < 0.3) {
+      rightGlowColor = 'rgba(137, 86, 251, 0.4)';
+    } else if (rightIntensity < 0.7) {
+      rightGlowColor = 'rgba(154, 106, 251, 0.5)';
+    } else {
+      rightGlowColor = 'rgba(181, 126, 251, 0.6)';
+    }
+    
+    ctx.fillStyle = rightGlowColor;
+    ctx.fill();
+    
+    // Draw left stick ball
+    ctx.beginPath();
+    ctx.arc(leftBallX, leftBallY, stickBallRadius, 0, Math.PI * 2);
+    
+    // Ball color based on intensity
+    let leftBallColor;
+    if (leftIntensity < 0.3) {
+      leftBallColor = '#8956FB';
+    } else if (leftIntensity < 0.7) {
+      leftBallColor = '#9A6AFB';
+    } else {
+      leftBallColor = '#B57EFB';
+    }
+    
+    ctx.fillStyle = leftBallColor;
+    ctx.fill();
+    ctx.strokeStyle = leftBallColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Draw right stick ball
+    ctx.beginPath();
+    ctx.arc(rightBallX, rightBallY, stickBallRadius, 0, Math.PI * 2);
+    
+    // Ball color based on intensity
+    let rightBallColor;
+    if (rightIntensity < 0.3) {
+      rightBallColor = '#8956FB';
+    } else if (rightIntensity < 0.7) {
+      rightBallColor = '#9A6AFB';
+    } else {
+      rightBallColor = '#B57EFB';
+    }
+    
+    ctx.fillStyle = rightBallColor;
+    ctx.fill();
+    ctx.strokeStyle = rightBallColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  
+  return container;
+}
+
+// Helper function to show temporary notifications
+function showGamepadNotification(title, message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.position = 'fixed';
+  notification.style.top = '20px';
+  notification.style.left = '50%';
+  notification.style.transform = 'translateX(-50%)';
+  notification.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  notification.style.color = '#ffffff';
+  notification.style.padding = '15px 20px';
+  notification.style.borderRadius = '8px';
+  notification.style.zIndex = '2000';
+  notification.style.textAlign = 'center';
+  notification.style.boxShadow = '0 0 20px rgba(137, 86, 251, 0.7)';
+  notification.style.border = '1px solid #8956FB';
+  notification.style.fontFamily = 'Arial, sans-serif';
+  notification.style.opacity = '0';
+  notification.style.transition = 'opacity 0.3s ease';
+  
+  // Create title
+  const titleElement = document.createElement('div');
+  titleElement.textContent = title;
+  titleElement.style.fontSize = '16px';
+  titleElement.style.fontWeight = 'bold';
+  titleElement.style.marginBottom = '5px';
+  titleElement.style.color = '#8956FB';
+  
+  // Create message
+  const messageElement = document.createElement('div');
+  messageElement.textContent = message;
+  messageElement.style.fontSize = '14px';
+  
+  // Add elements to notification
+  notification.appendChild(titleElement);
+  notification.appendChild(messageElement);
+  
+  // Add to document
+  document.body.appendChild(notification);
+  
+  // Fade in
+  setTimeout(() => {
+    notification.style.opacity = '1';
+  }, 10);
+  
+  // Remove after 5 seconds
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 300);
+  }, 5000);
+}
+
+// Setup the canvas-based gamepad overlay when the page loads
+document.addEventListener('DOMContentLoaded', setupGamepadOverlay);
+
+// If we're running this after page load, call setup directly
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setupGamepadOverlay();
+}
+
   async function init() {
         document.getElementById("overlay").remove();
+        startLoadingAnimation();
         loadingScreen.style.display = 'flex';
-        document.getElementById('minimap-container').style.display = 'flex';
-        document.getElementById('speed-meter').style.display = 'flex';
+     //   const hudElements = initializeHud(); //use for HUD after click
+     //   setupHudToggleControls();
       
-        // Start the loading countdown
-        let countdown = 3;
-        const countInterval = setInterval(() => {
-            countdown--;
-            loadingScreen.textContent = countdown;
+     function startLoadingAnimation() {
+        // Show the loading screen
+        loadingScreen.style.display = 'flex';
+        
+        // Get progress bar element
+        const progressBar = document.getElementById('loading-progress-bar');
+        
+        // Set immediate progress to ensure animation starts properly
+        progressBar.style.width = '5%';
+        
+        // Start the progress animation - animate to full over 5 seconds
+        setTimeout(() => {
+            progressBar.style.width = '100%';
             
-            if (countdown <= 0) {
-                clearInterval(countInterval);
-                loadingScreen.textContent = "m@ke s0me n0ise";
-                setTimeout(() => {
-                    loadingScreen.textContent = "m@ke s0me no!se";
-                    setTimeout(() => {
-                        loadingScreen.textContent = "m@ke s0me N0ise";
-                            setTimeout(() => {
-                                loadingScreen.textContent = "m@ke s0me n0!se";
-                                    setTimeout(() => {
-                                        loadingScreen.textContent = "m@ke s0me n0ise";
-                                            setTimeout (() => {
-                                                loadingScreen.style.display = 'none';
-                                            }, 200); // fifth message duration
-                                    }, 70); // fourth message duration
-                            }, 300); // third message duration
-                    }, 80); // second message duration
-                 }, 400); // first message duration
-            }
-        }, 1000);
-
+            // After 5 seconds (when progress bar is full), hide the loading screen
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                document.getElementById('minimap-container').style.display = 'flex';
+                document.getElementById('speed-meter').style.display = 'flex';
+            }, 5000);
+        }, 100);
+    }
       
        // Add gamepad listener
         window.addEventListener("gamepadconnected", (event) => {
@@ -242,8 +1907,9 @@ if (isQuadSupported) {
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-     //   camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
-        camera.position.set(1580, 30, -500);  //for performance
+    //    camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
+   //  camera.position.set(-850, 30, -1440);  //for development 2
+       camera.position.set(1550, 30, -500);  //for performance 
 
         adjustForDisplayScaling();
 
@@ -291,19 +1957,19 @@ if (isQuadSupported) {
 
         document.addEventListener('keydown', (event) => {
             switch (event.code) {
-                case 'ArrowUp': case 'KeyW': move.forward = true; break;
-                case 'ArrowDown': case 'KeyS': move.backward = true; break;
-                case 'ArrowLeft': case 'KeyA': move.left = true; break;
-                case 'ArrowRight': case 'KeyD': move.right = true; break;
+               case 'ArrowUp': case 'KeyW': move.forward = true; break; //for development
+           //    case 'ArrowDown': case 'KeyS': move.backward = true; break;
+           //     case 'ArrowLeft': case 'KeyA': move.left = true; break;
+           //     case 'ArrowRight': case 'KeyD': move.right = true; break; 
             }
         });
 
         document.addEventListener('keyup', (event) => {
             switch (event.code) {
-                case 'ArrowUp': case 'KeyW': move.forward = false; break;
-                case 'ArrowDown': case 'KeyS': move.backward = false; break;
-                case 'ArrowLeft': case 'KeyA': move.left = false; break;
-                case 'ArrowRight': case 'KeyD': move.right = false; break;
+                case 'ArrowUp': case 'KeyW': move.forward = false; break; //for development
+             //   case 'ArrowDown': case 'KeyS': move.backward = false; break;
+             //   case 'ArrowLeft': case 'KeyA': move.left = false; break;
+             //   case 'ArrowRight': case 'KeyD': move.right = false; break;
             }
         });
 
@@ -313,7 +1979,7 @@ if (isQuadSupported) {
             return color;
         }
         const gridHelper = new THREE.GridHelper(12000, 40, 0xff43cd, 0xff43cd);
-      //  scene.add(gridHelper);
+     //  scene.add(gridHelper);
 
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -323,6 +1989,282 @@ if (isQuadSupported) {
             }
             return result;
         }
+        
+   // Time limit variables
+let levelTimeLimit = 126; 
+let levelStartTime = null;
+let levelTimerInterval = null;
+let hasReachedBell = false;
+const timeLimitDisplay = document.getElementById('time-limit-display');
+const timeRemainingElement = document.getElementById('time-remaining');
+const gameOverOverlay = document.getElementById('game-over-overlay');
+// const restartButton = document.getElementById('restart-button');
+
+let loseSound = null;
+
+// Load the lose sound directly like your other audio
+const loseAudioLoader = new THREE.AudioLoader();
+loseAudioLoader.load('lose.mp3', function(buffer) {
+    loseSound = buffer;
+    console.log("Lose sound loaded successfully");
+});
+
+// Function to format time as MM:SS
+function formatTimeDisplay(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Function to show level completed message
+function showLevelCompleted() {
+    // Create level completed overlay
+    const levelCompletedOverlay = document.createElement('div');
+    levelCompletedOverlay.id = 'level-completed-overlay';
+    levelCompletedOverlay.style.position = 'absolute';
+    levelCompletedOverlay.style.zIndex = '3';
+    levelCompletedOverlay.style.top = '0';
+    levelCompletedOverlay.style.left = '0';
+    levelCompletedOverlay.style.width = '100%';
+    levelCompletedOverlay.style.height = '100%';
+    levelCompletedOverlay.style.display = 'flex';
+    levelCompletedOverlay.style.alignItems = 'center';
+    levelCompletedOverlay.style.justifyContent = 'center';
+    levelCompletedOverlay.style.background = 'rgba(0, 0, 0, 0.2)';
+    levelCompletedOverlay.style.flexDirection = 'column';
+    levelCompletedOverlay.style.opacity = '0';
+    levelCompletedOverlay.style.transition = 'opacity 0.5s ease';
+
+    // Create success title
+    const successTitle = document.createElement('div');
+    successTitle.style.color = '#00ff88';
+    successTitle.style.fontFamily = '"Arial Black", sans-serif';
+    successTitle.style.fontSize = '72px';
+    successTitle.style.textTransform = 'uppercase';
+    successTitle.style.marginBottom = '30px';
+    successTitle.style.textShadow = '0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6)';
+    successTitle.style.letterSpacing = '3px';
+    successTitle.style.animation = 'pulse-success 1.5s infinite ease-in-out';
+    successTitle.textContent = 'LEVEL COMPLETED!';
+
+    // Calculate completion time
+    const completionTime = (Date.now() - levelStartTime) / 1000;
+    const timeText = formatTimeDisplay(levelTimeLimit - completionTime);
+    
+    // Create success message
+    const successMessage = document.createElement('div');
+    successMessage.style.color = '#ffffff';
+    successMessage.style.fontFamily = '"Arial", sans-serif';
+    successMessage.style.fontSize = '24px';
+    successMessage.style.marginBottom = '40px';
+    successMessage.style.textAlign = 'center';
+    successMessage.style.opacity = '0.9';
+    successMessage.innerHTML = `Congratulations! You survived!<br>Time remaining: ${timeText}`;
+
+    // Add CSS animation for success pulse
+    if (!document.querySelector('#success-animation')) {
+        const style = document.createElement('style');
+        style.id = 'success-animation';
+        style.textContent = `
+            @keyframes pulse-success {
+                0% { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6); }
+                50% { text-shadow: 0 0 25px rgba(0, 255, 136, 1), 0 0 50px rgba(0, 255, 136, 0.8); }
+                100% { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.6); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Append elements
+    levelCompletedOverlay.appendChild(successTitle);
+    levelCompletedOverlay.appendChild(successMessage);
+    document.body.appendChild(levelCompletedOverlay);
+
+    // Fade in the overlay
+    setTimeout(() => {
+        levelCompletedOverlay.style.opacity = '1';
+    }, 10);
+
+    // Remove overlay after 4 seconds
+    setTimeout(() => {
+        levelCompletedOverlay.style.opacity = '0';
+        setTimeout(() => {
+            if (levelCompletedOverlay.parentNode) {
+                levelCompletedOverlay.parentNode.removeChild(levelCompletedOverlay);
+            }
+        }, 500);
+    }, 4000);
+}
+
+// Function to start the level timer
+function startLevelTimer() {
+    console.log("Starting level timer");
+    levelStartTime = Date.now();
+    hasReachedBell = false;
+    
+    // Show the time limit display
+    timeLimitDisplay.style.display = 'block';
+    
+    // Clear any existing timer
+    if (levelTimerInterval) {
+        clearInterval(levelTimerInterval);
+    }
+    
+    // Start the countdown timer
+    levelTimerInterval = setInterval(() => {
+        if (hasReachedBell) {
+            // Player reached the bell, stop the timer
+            clearInterval(levelTimerInterval);
+            timeLimitDisplay.style.display = 'none';
+            console.log("Level completed! Player reached the bell in time.");
+            showLevelCompleted();
+            return;
+        }
+        
+        const elapsed = (Date.now() - levelStartTime) / 1000;
+        const remaining = Math.max(0, levelTimeLimit - elapsed);
+        
+        // Update the display with MM:SS format
+        timeRemainingElement.textContent = formatTimeDisplay(remaining);
+        
+        // Add visual warnings based on remaining time
+        if (remaining <= 10) {
+            timeLimitDisplay.className = 'critical';
+        } else if (remaining <= 20) {
+            timeLimitDisplay.className = 'warning';
+        } else {
+            timeLimitDisplay.className = '';
+        }
+        
+        // Check if time is up
+        if (remaining <= 0) {
+            clearInterval(levelTimerInterval);
+            handleGameOver();
+        }
+    }, 100); // Update every 100ms for smooth countdown
+}
+
+// Function to handle game over (time up)
+function handleGameOver() {
+    console.log("Time's up! Game over.");
+        // Play lose sound directly
+        if (loseSound) {
+        const source = audioContext.createBufferSource();
+        source.buffer = loseSound;
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.8;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        source.start();
+    } else {
+        console.warn("Lose sound not loaded yet");
+    }
+
+    
+    // Hide the time limit display
+    timeLimitDisplay.style.display = 'none';
+    
+    // Show game over overlay
+    gameOverOverlay.style.display = 'flex';
+    
+    // Auto-restart after 5 seconds
+    setTimeout(() => {
+        restartLevel();
+    }, 4000);
+}
+
+// Function to restart the level
+function restartLevel() {
+    console.log("Restarting level...");
+    
+    // Hide game over overlay
+    gameOverOverlay.style.display = 'none';
+    
+    // Reset player position to starting position
+    if (camera) {
+        camera.position.set(1550, 30, -500);
+        camera.lookAt(camera.position.x, camera.position.y, camera.position.z - 1);
+    }
+    
+    // Reset bell animation state
+    if (window.bellAnimationState) {
+        window.bellAnimationState.hasCollided = false;
+        window.bellAnimationState.canToggle = true;
+        
+        // If bell is playing, pause it
+        if (window.bellAnimationState.isPlaying && firstBellMixer) {
+            firstBellMixer._actions.forEach(action => {
+                action.timeScale = 0;
+            });
+            window.bellAnimationState.isPlaying = false;
+            
+            // Pause audio
+            if (window.audioState && window.audioState.isPlaying) {
+                channelGains.forEach(gainNode => {
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                });
+                if (window.audioState.currentSource) {
+                    try {
+                        window.audioState.currentSource.stop();
+                    } catch (e) {
+                        console.log("Error stopping audio source:", e);
+                    }
+                }
+                window.audioState.isPlaying = false;
+            }
+        }
+    }
+    
+    // Reset other animation states
+    if (window.bell3AnimationState) {
+        window.bell3AnimationState.hasCollided = false;
+        window.bell3AnimationState.canToggle = true;
+        
+        if (window.bell3AnimationState.isPlaying && mixer3) {
+            mixer3._actions.forEach(action => {
+                action.timeScale = 0;
+            });
+            window.bell3AnimationState.isPlaying = false;
+            
+            // Pause second audio
+            if (window.secondAudioState && window.secondAudioState.isPlaying) {
+                secondChannelGains.forEach(gainNode => {
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                });
+                if (window.secondAudioState.currentSource) {
+                    try {
+                        window.secondAudioState.currentSource.stop();
+                    } catch (e) {
+                        console.log("Error stopping second audio source:", e);
+                    }
+                }
+                window.secondAudioState.isPlaying = false;
+            }
+        }
+    }
+    
+    // Restart the level timer
+    startLevelTimer();
+}
+
+// Function to call when player reaches the bell
+function playerReachedBell() {
+    if (!hasReachedBell) {
+        hasReachedBell = true;
+        console.log("Player reached the bell!");
+        // The timer will automatically stop and show completion message
+        
+        // Optional: trigger any special effects or sounds here
+        showInteractionChatMessage(); // Show the interaction chat message
+    }
+}
+/*
+// Add restart button click handler
+restartButton.addEventListener('click', () => {
+    restartLevel();
+});
+*/
+    startLevelTimer()
              
       const geometry = new THREE.BoxGeometry( 40, 200, 2830 ); 
         const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
@@ -369,11 +2311,11 @@ if (isQuadSupported) {
         const geometry7 = new THREE.BoxGeometry( 100, 200, 1500 ); 
         const material7 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube7 = new THREE.Mesh( geometry7, material7 ); 
-        cube7.position.set(1680, 50, -750);
+        cube7.position.set(1610, 50, -750);
         cube7.userData.collidable = true;
         scene.add( cube7 );
       
-        const geometry8 = new THREE.BoxGeometry( 200, 200, 200 ); 
+        const geometry8 = new THREE.BoxGeometry( 100, 200, 200 ); 
         const material8 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube8 = new THREE.Mesh( geometry8, material8 ); 
         cube8.position.set(1560, 50, -380);
@@ -401,33 +2343,33 @@ if (isQuadSupported) {
         cube11.userData.collidable = true;
         scene.add( cube11 );
       
-        const geometry12 = new THREE.BoxGeometry( 840, 230, 100 ); 
+        const geometry12 = new THREE.BoxGeometry( 150, 230, 100 ); 
         const material12 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
         const cube12 = new THREE.Mesh( geometry12, material12 ); 
-        cube12.position.set(-2475, 70, 5275);
+        cube12.position.set(-2400, 70, 5275);
         cube12.userData.collidable = true;
         scene.add( cube12 );      
 
-        const geometry13 = new THREE.BoxGeometry( 300, 300, 300 ); 
-        const material13 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const geometry13 = new THREE.BoxGeometry( 500, 500, 500 ); 
+        const material13 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
         const cube13 = new THREE.Mesh( geometry13, material13 ); 
         cube13.position.set(-2400, 50, 3200);
         cube13.userData.collidable = true;
         scene.add( cube13 ); 
 
         const geometry14 = new THREE.BoxGeometry( 500, 500, 500 ); 
-        const material14 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const material14 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
         const cube14 = new THREE.Mesh( geometry14, material14 ); 
         cube14.position.set(-1500, 0, 1000);
         cube14.userData.collidable = true;
         scene.add( cube14 ); 
 
         const geometry15 = new THREE.BoxGeometry( 500, 500, 500 ); 
-        const material15 = new THREE.MeshBasicMaterial( {color: 0x00ff00, transparent: true, opacity: 0} ); 
+        const material15 = new THREE.MeshBasicMaterial( {color: 0x8956FB, transparent: true, opacity: 0} ); 
         const cube15 = new THREE.Mesh( geometry15, material15 ); 
         cube15.position.set(-200, 50, -1450);
         cube15.userData.collidable = true;
-        scene.add( cube15 ); 
+      //  scene.add( cube15 ); 
       
       // Add bounding box 1
       const greenBoxBoundingBox = new THREE.Box3().setFromObject(cube);
@@ -547,7 +2489,7 @@ if (isQuadSupported) {
       
  //       firstBellLoader.load('the_accumoli_bell_animated.glb', function (gltf) {
             firstBellLoader.load('bell4-compressed-inverted-blender.glb', function (gltf) {
-            gltf.scene.position.set(-2400, 0, 3200);
+            gltf.scene.position.set(-2385, 0, 3200);
             gltf.scene.scale.set(10, 10, 50);
             gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
@@ -610,32 +2552,34 @@ if (isQuadSupported) {
         loaderGlitchyBell.setPath('');
         let mixer4;
       
-        loaderGlitchyBell.load('glitchybellpink.glb', function (gltf) {
-            gltf.scene.position.set(-200, 100, -1450);
-            gltf.scene.scale.set(70, 70, 70);
-            gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
-         //   scene.add(gltf.scene);
+        loaderGlitchyBell.load('jbl_charge_3_speaker.glb', function (gltf) {
+            gltf.scene.position.set(-200, 90, -1425);
+            gltf.scene.scale.set(300, 300, 300);
+         //   gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
+            gltf.scene.rotation.set(0, Math.PI/4, -Math.PI/4);
+            scene.add(gltf.scene);
        
         mixer4 = new THREE.AnimationMixer(gltf.scene);
         
         gltf.animations.forEach((clip) => {
         const action = mixer4.clipAction(clip);
-        action.setEffectiveTimeScale(1); // 0.5 for half speed, 2.0 for double speed
+        action.setEffectiveTimeScale(.25); // 0.5 for half speed, 2.0 for double speed
         action.play();
           });
         });
 
         let bell2Model;
+
         //load 3d model of bell2 with animation
         const loaderBell2 = new GLTFLoader();
         loaderBell2.setPath('');
         let mixer2;
       
-        loaderBell2.load('bell-ascii-inverted.glb', function (gltf) {
-            gltf.scene.position.set(-2430, 400, 3200);
-            gltf.scene.scale.set(135, 150, 1000);
-            gltf.scene.rotation.set(0, -1/41 * Math.PI, -Math.PI);
-         //   scene.add(gltf.scene);
+        loaderBell2.load('colorful-speaker.glb', function (gltf) {
+            gltf.scene.position.set(-270, 148, -1436);
+            gltf.scene.scale.set(100, 100, 100);
+            gltf.scene.rotation.set(-Math.PI/16, -Math.PI/2, Math.PI/16);
+       //     scene.add(gltf.scene);
        //  bell2Model = gltf.scene; // don't add to scene at first
 
        
@@ -658,7 +2602,7 @@ if (isQuadSupported) {
         let mixer3;
       
         loaderBell3.load('bell4-compressed-inverted.glb', function (gltf) {
-            gltf.scene.position.set(-1500, -50, 800);
+            gltf.scene.position.set(-1500, 0, 800);
             gltf.scene.scale.set(25, 25, 25);
             gltf.scene.rotation.set(Math.PI/4, Math.PI/4, 0);
             scene.add(gltf.scene);
@@ -771,13 +2715,12 @@ console.log("Bell animation initialized and paused");
         scene.add(light);
 
 // Define constants for iframe loading
-const LOAD_DISTANCE = 3000;    // Distance at which iframes are loaded
+const LOAD_DISTANCE = 2800;    // Distance at which iframes are loaded
 const UNLOAD_DISTANCE = 3000;  // Distance at which iframes are unloaded
 
 // Improved IframeLazyLoader class
 class IframeLazyLoader {
     constructor(position, rotation, scale, srcUrl, dimensions = { width: '1000px', height: '1000px' }, options = { pointerEvents: 'none' }) {
-        // Store position and other details for distance calculations
         this.position = new THREE.Vector3(position.x, position.y, position.z);
         this.rotation = rotation;
         this.scale = scale;
@@ -785,175 +2728,251 @@ class IframeLazyLoader {
         this.dimensions = dimensions;
         this.options = options;
         this.isLoaded = false;
+        this.loadState = 'unloaded'; // Track more detailed load state: 'unloaded', 'loading', 'loaded', 'unloading'
+        this.loadPromise = null; // For tracking async loading
+        this.lastDistanceCheck = 0; // Prevent excessive checks
         
-        // Create the iframe object
-        this.iframeObject = this.createIframeObject(this.position, this.rotation, this.scale, this.srcUrl, this.dimensions, this.options);
+        // Create placeholder element first (without actual iframe)
+        this.createPlaceholder();
     }
     
-    createIframeObject(position, rotation, scale, srcUrl, dimensions, options) {
+    createPlaceholder() {
         // Create container div
-        const iframeDiv = document.createElement('div');
-        iframeDiv.style.width = dimensions.width;
-        iframeDiv.style.height = dimensions.height;
-        iframeDiv.style.pointerEvents = options.pointerEvents;
-        iframeDiv.style.zIndex = '-1';
+        this.div = document.createElement('div');
+        this.div.style.width = this.dimensions.width;
+        this.div.style.height = this.dimensions.height;
+        this.div.style.pointerEvents = this.options.pointerEvents;
+        this.div.style.zIndex = '-1';
+        this.div.style.background = 'rgba(0,0,0,0.2)'; // Visible placeholder
         
-        // Create iframe element with initially blank src
+        // Create loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.textContent = 'Loading...';
+        loadingIndicator.style.display = 'none';
+        loadingIndicator.style.position = 'absolute';
+        loadingIndicator.style.top = '50%';
+        loadingIndicator.style.left = '50%';
+        loadingIndicator.style.transform = 'translate(-50%, -50%)';
+        loadingIndicator.style.color = '#8956FB';
+        loadingIndicator.style.fontFamily = 'Arial, sans-serif';
+        this.loadingIndicator = loadingIndicator;
+        this.div.appendChild(loadingIndicator);
+        
+        // Create 3D object and set position, rotation, scale
+        this.iframeObject = new CSS3DObject(this.div);
+        this.iframeObject.position.set(this.position.x, this.position.y, this.position.z);
+        this.iframeObject.rotation.set(this.rotation[0], this.rotation[1], this.rotation[2]);
+        this.iframeObject.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+        this.iframeObject.renderOrder = -1;
+        
+        // Add to CSS scene
+        cssScene.add(this.iframeObject);
+    }
+    
+    async load() {
+        if (this.loadState !== 'unloaded') return;
+        
+        this.loadState = 'loading';
+        this.loadingIndicator.style.display = 'block';
+        console.log(`Loading iframe: ${this.srcUrl}`);
+        
+        // Create the actual iframe element
         const iframe = document.createElement('iframe');
-        iframe.src = 'about:blank';  // Start with blank page
         iframe.style.width = '100%';
         iframe.style.height = '100%';
         iframe.style.border = '0';
-        iframe.style.pointerEvents = options.pointerEvents;  // Apply same pointer events to iframe
-        
-        // Set permissions
+        iframe.style.pointerEvents = this.options.pointerEvents;
         iframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
         iframe.allowFullscreen = true;
         
-        // Append iframe to container
-        iframeDiv.appendChild(iframe);
+        // Create a promise to track when loading is complete
+        this.loadPromise = new Promise((resolve) => {
+            iframe.onload = () => {
+                this.loadingIndicator.style.display = 'none';
+                this.loadState = 'loaded';
+                this.isLoaded = true;
+                resolve();
+                console.log(`Iframe ${this.srcUrl} loaded successfully`);
+            };
+            
+            // Set timeout for failed loads
+            setTimeout(() => {
+                if (this.loadState === 'loading') {
+                    console.warn(`Iframe ${this.srcUrl} load timeout - marking as loaded anyway`);
+                    this.loadingIndicator.style.display = 'none';
+                    this.loadState = 'loaded';
+                    this.isLoaded = true;
+                    resolve();
+                }
+            }, 10000); // 10 second timeout
+        });
         
-        // Create 3D object and set position, rotation, scale
-        const iframeObject = new CSS3DObject(iframeDiv);
-        iframeObject.position.set(position.x, position.y, position.z);
-        iframeObject.rotation.set(rotation[0], rotation[1], rotation[2]);
-        iframeObject.scale.set(scale[0], scale[1], scale[2]);
-        iframeObject.renderOrder = -1;
+        // Start loading by setting src
+        iframe.src = this.srcUrl;
         
-        // Store references to DOM elements
-        this.div = iframeDiv;
+        // Add iframe to the container
         this.iframe = iframe;
+        this.div.appendChild(iframe);
         
-        // Add to CSS scene
-        cssScene.add(iframeObject);
-        
-        return iframeObject;
+        return this.loadPromise;
     }
     
-    load() {
-        if (!this.isLoaded && this.iframe) {
-            console.log(`Loading iframe: ${this.srcUrl}`);
-            
-            // Special handling for interactive iframes
-            if (this.options.pointerEvents === 'auto') {
-                this.iframe.src = this.srcUrl;
-                
-                // Make sure the iframe is visible and active
-                this.div.style.display = 'block';
-                this.iframe.style.pointerEvents = 'auto';
-                this.div.style.pointerEvents = 'auto';
-            } else {
-                // Normal loading for non-interactive iframes
-                this.iframe.src = this.srcUrl;
-            }
-            
-            this.isLoaded = true;
-        }
-    }
-    
-    unload() {
-        if (this.isLoaded && this.iframe) {
-            console.log(`Unloading iframe: ${this.srcUrl}`);
+    async unload() {
+        if (this.loadState !== 'loaded') return;
+        
+        this.loadState = 'unloading';
+        console.log(`Unloading iframe: ${this.srcUrl}`);
+        
+        // First set to blank page to stop any scripts
+        if (this.iframe) {
             this.iframe.src = 'about:blank';
-            this.isLoaded = false;
+            
+            // Wait a moment to ensure resources are freed
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Then remove the iframe element completely
+            try {
+                this.div.removeChild(this.iframe);
+                this.iframe = null;
+            } catch (e) {
+                console.warn('Error removing iframe:', e);
+            }
         }
+        
+        this.isLoaded = false;
+        this.loadState = 'unloaded';
+        this.loadPromise = null;
     }
     
-    updateVisibility(camera) {
+    updateVisibility(camera, currentTime) {
+        // Only check distance every 500ms to improve performance
+        if (currentTime - this.lastDistanceCheck < 500) return;
+        this.lastDistanceCheck = currentTime;
+        
         const distance = camera.position.distanceTo(this.position);
         
-        if (distance < LOAD_DISTANCE && !this.isLoaded) {
+        // Implement hysteresis - different thresholds for loading vs unloading
+        // This prevents rapid loading/unloading when at the threshold distance
+        if (distance < LOAD_DISTANCE && this.loadState === 'unloaded') {
             this.load();
-        } else if (distance > UNLOAD_DISTANCE && this.isLoaded) {
+        } else if (distance > UNLOAD_DISTANCE && this.loadState === 'loaded') {
             this.unload();
         }
+    }
+    
+    // Full cleanup for when this loader is no longer needed
+    dispose() {
+        // First unload the iframe
+        this.unload();
+        
+        // Then remove the object from the scene
+        if (this.iframeObject && this.iframeObject.parent) {
+            this.iframeObject.parent.remove(this.iframeObject);
+        }
+        
+        // Clear references
+        this.div = null;
+        this.iframeObject = null;
+        this.loadingIndicator = null;
     }
 }
 
 // Function to create all iframes with proper lazy loading
 function setupLazyLoadedIframes() {
-    // Clear any existing iframe loaders
+    console.log("Setting up optimized lazy-loaded iframes...");
+    
+    // Clean up any existing iframe loaders
+    if (window.iframeLoaders && window.iframeLoaders.length > 0) {
+        console.log(`Cleaning up ${window.iframeLoaders.length} existing iframe loaders`);
+        window.iframeLoaders.forEach(loader => {
+            if (loader && typeof loader.dispose === 'function') {
+                loader.dispose();
+            }
+        });
+    }
+    
+    // Reset the array
     window.iframeLoaders = [];
     
     // Create iframe loaders with appropriate settings
     const iframeConfigs = [
         // Format: [position, rotation, scale, url, dimensions]
         [
-            { x: 1640, y: -165, z: -1506 }, 
+            { x: 1560, y: -165, z: -1506 }, 
             [0, Math.PI/2, 0], 
             [1.15, .33, 1], 
-            'hydrainwebpage16.html',
+            'hydrainwebpage25.html',
             { width: '2000px', height: '2000px' }
         ],
         [
             { x: 1530, y: -165, z: -380 }, 
             [0, -Math.PI/2, 0], 
             [1, .33, 1], 
-            'hydrainwebpage16.html',
+            'hydrainwebpage25.html',
             { width: '2000px', height: '2000px' }
         ],
         [
-            { x: -2380, y: 30, z: 5345 }, 
+            { x: -2380, y: 30, z: 6045 }, 
             [0, Math.PI, 0], 
-            [.2, .2, .2], 
-            'level2.html',
-            { width: '1080px', height: '720px' },
+            [.8, .8, .8], 
+            'level2-27-5-25.html',
+            { width: '1920px', height: '1080px' },
             { pointerEvents: 'auto' }  // Enable pointer events for this iframe
         ],
         [
-            { x: 7, y: 0, z: -1460 }, 
+            { x: -73, y: 0, z: -1460 }, 
             [0, 0, 0], 
             [3.55, .33, 1], 
-            'hydrainwebpage20.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1600, y: 0, z: -300 }, 
             [0, Math.PI/2, 0], 
             [3.2, .33, 1], 
-            'hydrainwebpage18.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: 30, y: 0, z: -1380 }, 
             [0, Math.PI, 0], 
             [3, .33, 1], 
-            'hydrainwebpage20.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1350, y: 0, z: 0 }, 
             [0, Math.PI/2, 0], 
             [3, .33, 1], 
-            'hydrainwebpage14.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -1830, y: 0, z: 1450 }, 
             [0, 0, 0], 
             [1.04, .33, 1], 
-            'hydrainwebpage14.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -2014, y: 0, z: 1300 }, 
             [0, 0, 0], 
             [.9, .33, 1], 
-            'hydrainwebpage14.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -2410, y: 90, z: 3190 }, 
             [0, Math.PI/2, Math.PI], 
             [4.1, .33, 1], 
-            'hydrainwebpage15.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ],
         [
             { x: -2350, y: 0, z: 3244 }, 
             [0, Math.PI/2, 0], 
             [3.9, .33, 1], 
-            'hydrainwebpage15.html',
+            'hydrainwebpage25.html',
             { width: '1000px', height: '1000px' }
         ]
     ];
@@ -972,482 +2991,26 @@ function setupLazyLoadedIframes() {
     });
     
     console.log(`Created ${window.iframeLoaders.length} lazy-loaded iframes`);
-}
+    // Add a periodic cleanup check to force garbage collection of stale resources
+    if (!window.iframeCleanupInterval) {
+        window.iframeCleanupInterval = setInterval(() => {
+            console.log("Running periodic iframe resource cleanup");
+            // Force unload of distant iframes to reclaim memory
+            if (window.iframeLoaders) {
+                window.iframeLoaders.forEach(loader => {
+                    if (loader && loader.isLoaded && 
+                        loader.position.distanceTo(camera.position) > UNLOAD_DISTANCE * 1.5) {
+                        loader.unload();
+                    }
+                });
+            }
+        }, 60000); // Run every minute
+    }
+ }
 
 setupAudioInput();   
 setupLazyLoadedIframes();
-function createHydraIframe() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject6;
-  
-  // Create container div
-  const additionalIframeDiv6 = document.createElement('div');
-  additionalIframeDiv6.style.width = '1000px';
-  additionalIframeDiv6.style.height = '1000px';
-  additionalIframeDiv6.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv6.style.zIndex = '-1';
 
-  // Create iframe element
-  const additionalIframe6 = document.createElement('iframe');
-  additionalIframe6.src = 'hydrainwebpage2.html';
-  additionalIframe6.style.width = '100%';
-  additionalIframe6.style.height = '100%';
-  additionalIframe6.style.border = '0';
-  additionalIframe6.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe6.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe6.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv6.appendChild(additionalIframe6);
-
-  // Create 3D object and position it
-  const additionalIframeObject6 = new CSS3DObject(additionalIframeDiv6);
-  additionalIframeObject6.position.set(1560, 0, -885);
-  additionalIframeObject6.rotation.set(0, -Math.PI/2, 0);
-  additionalIframeObject6.scale.set(1.15, .33, 1);
-  additionalIframeObject6.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject6 = additionalIframeObject6;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject6);
-  
-  // Return the created object
-  return additionalIframeObject6;
-}
-
-function createHydraIframe2() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject5;
-  
-  // Create container div
-  const additionalIframeDiv5 = document.createElement('div');
-  additionalIframeDiv5.style.width = '1000px';
-  additionalIframeDiv5.style.height = '1000px';
-  additionalIframeDiv5.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv5.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe5 = document.createElement('iframe');
-  additionalIframe5.src = 'hydrainwebpage2.html';
-  additionalIframe5.style.width = '100%';
-  additionalIframe5.style.height = '100%';
-  additionalIframe5.style.border = '0';
-  additionalIframe5.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe5.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe5.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv5.appendChild(additionalIframe5);
-
-  // Create 3D object and position it
-  const additionalIframeObject5 = new CSS3DObject(additionalIframeDiv5);
-  additionalIframeObject5.position.set(1530, 0, -880);
-  additionalIframeObject5.rotation.set(0, -Math.PI/2, 0);
-  additionalIframeObject5.scale.set(1, .33, 1);
-  additionalIframeObject5.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject5 = additionalIframeObject5;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject5);
-  
-  // Return the created object
-  return additionalIframeObject5;
-}
-
-function createHydraIframe3() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject7;
-  
-  // Create container div
-  const additionalIframeDiv7 = document.createElement('div');
-  additionalIframeDiv7.style.width = '1080px';
-  additionalIframeDiv7.style.height = '720px';
-  additionalIframeDiv7.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv7.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe7 = document.createElement('iframe');
-  additionalIframe7.src = 'index.html';
-  additionalIframe7.style.width = '100%';
-  additionalIframe7.style.height = '100%';
-  additionalIframe7.style.border = '0';
- // additionalIframe7.style.pointerEvents = 'none';
-
-  // Set permissions
- // additionalIframe7.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe7.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv7.appendChild(additionalIframe7);
-
-  // Create 3D object and position it
-  const additionalIframeObject7 = new CSS3DObject(additionalIframeDiv7);
-  additionalIframeObject7.position.set(-2750, 30, 7500);
-  additionalIframeObject7.rotation.set(0, Math.PI, 0);
-  additionalIframeObject7.scale.set(1, 1, 1);
-  additionalIframeObject7.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject7 = additionalIframeObject7;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject7);
-  
-  // Return the created object
-  return additionalIframeObject7;
-}
-
-function createHydraIframe4() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject3;
-  
-  // Create container div
-  const additionalIframeDiv3 = document.createElement('div');
-  additionalIframeDiv3.style.width = '1000px';
-  additionalIframeDiv3.style.height = '1000px';
-  additionalIframeDiv3.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv3.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe3 = document.createElement('iframe');
-  additionalIframe3.src = 'hydrainwebpage2.html';
-  additionalIframe3.style.width = '100%';
-  additionalIframe3.style.height = '100%';
-  additionalIframe3.style.border = '0';
-  additionalIframe3.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe3.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe3.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv3.appendChild(additionalIframe3);
-
-  // Create 3D object and position it
-  const additionalIframeObject3 = new CSS3DObject(additionalIframeDiv3);
-  additionalIframeObject3.position.set(-73, 0, -1460);
-  additionalIframeObject3.rotation.set(0, 0, 0);
-  additionalIframeObject3.scale.set(3.55, .33, 1);
-  additionalIframeObject3.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject3 = additionalIframeObject3;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject3);
-  
-  // Return the created object
-  return additionalIframeObject3;
-}
-
-function createHydraIframe5() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject2;
-  
-  // Create container div
-  const additionalIframeDiv2 = document.createElement('div');
-  additionalIframeDiv2.style.width = '1000px';
-  additionalIframeDiv2.style.height = '1000px';
-  additionalIframeDiv2.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv2.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe2 = document.createElement('iframe');
-  additionalIframe2.src = 'hydrainwebpage2.html';
-  additionalIframe2.style.width = '100%';
-  additionalIframe2.style.height = '100%';
-  additionalIframe2.style.border = '0';
-  additionalIframe2.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe2.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe2.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv2.appendChild(additionalIframe2);
-
-  // Create 3D object and position it
-  const additionalIframeObject2 = new CSS3DObject(additionalIframeDiv2);
-  additionalIframeObject2.position.set(-1600, 0, -300);
-  additionalIframeObject2.rotation.set(0, Math.PI/2, 0);
-  additionalIframeObject2.scale.set(3.2, .33, 1);
-  additionalIframeObject2.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject2 = additionalIframeObject2;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject2);
-  
-  // Return the created object
-  return additionalIframeObject2;
-}
-
-function createHydraIframe6() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject4;
-  
-  // Create container div
-  const additionalIframeDiv4 = document.createElement('div');
-  additionalIframeDiv4.style.width = '1000px';
-  additionalIframeDiv4.style.height = '1000px';
-  additionalIframeDiv4.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv4.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe4 = document.createElement('iframe');
-  additionalIframe4.src = 'hydrainwebpage2.html';
-  additionalIframe4.style.width = '100%';
-  additionalIframe4.style.height = '100%';
-  additionalIframe4.style.border = '0';
-  additionalIframe4.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe4.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe4.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv4.appendChild(additionalIframe4);
-
-  // Create 3D object and position it
-  const additionalIframeObject4 = new CSS3DObject(additionalIframeDiv4);
-  additionalIframeObject4.position.set(150, 0, -1380);
-  additionalIframeObject4.rotation.set(0, 0, 0);
-  additionalIframeObject4.scale.set(3, .33, 1);
-  additionalIframeObject4.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject4 = additionalIframeObject4;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject4);
-  
-  // Return the created object
-  return additionalIframeObject4;
-}
-
-function createHydraIframe7() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject;
-  
-  // Create container div
-  const additionalIframeDiv = document.createElement('div');
-  additionalIframeDiv.style.width = '1000px';
-  additionalIframeDiv.style.height = '1000px';
-  additionalIframeDiv.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe = document.createElement('iframe');
-  additionalIframe.src = 'hydrainwebpage2.html';
-  additionalIframe.style.width = '100%';
-  additionalIframe.style.height = '100%';
-  additionalIframe.style.border = '0';
-  additionalIframe.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv.appendChild(additionalIframe);
-
-  // Create 3D object and position it
-  const additionalIframeObject = new CSS3DObject(additionalIframeDiv);
-  additionalIframeObject.position.set(-1350, 0, 0);
-  additionalIframeObject.rotation.set(0, Math.PI/2, 0);
-  additionalIframeObject.scale.set(3, .33, 1);
-  additionalIframeObject.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject = additionalIframeObject;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject);
-  
-  // Return the created object
-  return additionalIframeObject;
-}
-
-function createHydraIframe8() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject11;
-  
-  // Create container div
-  const additionalIframeDiv11 = document.createElement('div');
-  additionalIframeDiv11.style.width = '100px';
-  additionalIframeDiv11.style.height = '100px';
-  additionalIframeDiv11.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv11.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe11 = document.createElement('iframe');
-  additionalIframe11.src = 'hydrainwebpage2.html';
-  additionalIframe11.style.width = '100%';
-  additionalIframe11.style.height = '100%';
-  additionalIframe11.style.border = '0';
-  additionalIframe11.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe11.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe11.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv11.appendChild(additionalIframe11);
-
-  // Create 3D object and position it
-  const additionalIframeObject11 = new CSS3DObject(additionalIframeDiv11);
-  additionalIframeObject11.position.set(-1850, 45, 1450);
-  additionalIframeObject11.rotation.set(0, 0, 0);
-  additionalIframeObject11.scale.set(10, 2.4, 1);
-  additionalIframeObject11.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject11 = additionalIframeObject11;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject11);
-  
-  // Return the created object
-  return additionalIframeObject11;
-}
-
-function createHydraIframe9() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject12;
-  
-  // Create container div
-  const additionalIframeDiv12 = document.createElement('div');
-  additionalIframeDiv12.style.width = '100px';
-  additionalIframeDiv12.style.height = '100px';
-  additionalIframeDiv12.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv12.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe12 = document.createElement('iframe');
-  additionalIframe12.src = 'hydrainwebpage2.html';
-  additionalIframe12.style.width = '100%';
-  additionalIframe12.style.height = '100%';
-  additionalIframe12.style.border = '0';
-  additionalIframe12.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe12.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe12.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv12.appendChild(additionalIframe12);
-
-  // Create 3D object and position it
-  const additionalIframeObject12 = new CSS3DObject(additionalIframeDiv12);
-  additionalIframeObject12.position.set(-2100, 45, 1300);
-  additionalIframeObject12.rotation.set(0, 0, 0);
-  additionalIframeObject12.scale.set(10, 2.4, 1);
-  additionalIframeObject12.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject12 = additionalIframeObject12;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject12);
-  
-  // Return the created object
-  return additionalIframeObject12;
-}
-
-function createHydraIframe10() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject13;
-  
-  // Create container div
-  const additionalIframeDiv13 = document.createElement('div');
-  additionalIframeDiv13.style.width = '500px';
-  additionalIframeDiv13.style.height = '500px';
-  additionalIframeDiv13.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv13.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe13 = document.createElement('iframe');
-  additionalIframe13.src = 'hydrainwebpage2.html';
-  additionalIframe13.style.width = '100%';
-  additionalIframe13.style.height = '100%';
-  additionalIframe13.style.border = '0';
-  additionalIframe13.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe13.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe13.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv13.appendChild(additionalIframe13);
-
-  // Create 3D object and position it
-  const additionalIframeObject13 = new CSS3DObject(additionalIframeDiv13);
-  additionalIframeObject13.position.set(-2600, 45, 3290);
-  additionalIframeObject13.rotation.set(0, Math.PI/2, 0);
-  additionalIframeObject13.scale.set(8, .48, 1);
-  additionalIframeObject13.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject13 = additionalIframeObject13;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject13);
-  
-  // Return the created object
-  return additionalIframeObject13;
-}
-
-function createHydraIframe11() {
-  // Declare the global variable for this iframe object
-  let hydraIframeObject14;
-  
-  // Create container div
-  const additionalIframeDiv14 = document.createElement('div');
-  additionalIframeDiv14.style.width = '500px';
-  additionalIframeDiv14.style.height = '500px';
-  additionalIframeDiv14.style.pointerEvents = 'none'; // Click-through
-  additionalIframeDiv14.style.zIndex = '-1';
-
-  // Create iframe element
-  const additionalIframe14 = document.createElement('iframe');
-  additionalIframe14.src = 'hydrainwebpage2.html';
-  additionalIframe14.style.width = '100%';
-  additionalIframe14.style.height = '100%';
-  additionalIframe14.style.border = '0';
-  additionalIframe14.style.pointerEvents = 'none';
-
-  // Set permissions
-  additionalIframe14.allow = 'accelerometer; display-capture; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; camera; microphone';
-  additionalIframe14.allowFullscreen = true;
-  
-  // Append iframe to container
-  additionalIframeDiv14.appendChild(additionalIframe14);
-
-  // Create 3D object and position it
-  const additionalIframeObject14 = new CSS3DObject(additionalIframeDiv14);
-  additionalIframeObject14.position.set(-2350, 45, 3400);
-  additionalIframeObject14.rotation.set(0, Math.PI/2, 0);
-  additionalIframeObject14.scale.set(7.8, .48, 1);
-  additionalIframeObject14.renderOrder = -1;
-  
-  // Assign to global variable
-  hydraIframeObject14 = additionalIframeObject14;
-  
-  // Add to CSS scene
-  cssScene.add(additionalIframeObject14);
-  
-  // Return the created object
-  return additionalIframeObject14;
-}
 
 // Function to calculate gains based on listener position - FIRST SOURCE
 function calculateChannelGains(listenerPos, sourcePos, controls) {
@@ -1468,8 +3031,8 @@ function calculateChannelGains(listenerPos, sourcePos, controls) {
     
     // Calculate distance and base gain
     const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
-    const maxDistance = 2500;
-    const baseGain = Math.max(0, 1 - distance / maxDistance);
+    const maxDistance = 1200;
+    const baseGain = Math.max(0, 1 - distance / maxDistance); //Bell 2 gain
 
     // Calculate angle from camera's forward direction (z-axis)
     const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
@@ -1510,7 +3073,7 @@ function calculateSecondChannelGains(listenerPos, sourcePos, controls) {
     // Calculate distance and base gain - different falloff for second source
     const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
     const maxDistance = 1200; // Different max distance for second source
-    const baseGain = Math.max(0, 1 - distance / maxDistance);
+    const baseGain = Math.max(0, 1 - distance / maxDistance); //Bell 1 gain
 
     // Calculate angle from camera's forward direction (z-axis)
     const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
@@ -1551,7 +3114,7 @@ function calculateThirdChannelGains(listenerPos, sourcePos, controls) {
     // Calculate distance and base gain - different falloff for third source
     const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
     const maxDistance = 2500; // Different max distance for second source
-    const baseGain = Math.max(0, .1 - (distance / maxDistance)/10);
+    const baseGain = Math.max(0, .5 - (distance / maxDistance)/2); //Floating speakers gain
 
     // Calculate angle from camera's forward direction (z-axis)
     const angle = Math.atan2(rotatedRelativePos.x, rotatedRelativePos.z);
@@ -1596,7 +3159,7 @@ const masterGain = audioContext.createGain();
 masterGain.gain.value = 0; // Start silent
 masterGain.connect(audioContext.destination);
 
-audioLoader.load('pulsar_2.mp3', function(buffer) {
+audioLoader.load('pulsarMarioFlawless.mp3', function(buffer) {
     // Create a buffer source
     sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = buffer;
@@ -1662,10 +3225,16 @@ audioLoader.load('pulsar_2.mp3', function(buffer) {
 });
 
 // Function to update audio gains dynamically
+// Function to update audio gains dynamically
+let audioGainsFrameId = null;
+let secondAudioGainsFrameId = null;
+let thirdAudioGainsFrameId = null;
 function updateAudioGains() {
-    if (!sourceNode) return;
+    if (!sourceNode || !channelGains || channelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
     
-    // Calculate positional gains - still get 4 values
+    // Calculate positional gains
     const posGains = calculateChannelGains(
         camera.position, 
         soundSourcePosition, 
@@ -1673,9 +3242,8 @@ function updateAudioGains() {
     );
 
     if (isQuadSupported) {
-        // Quad mode - apply gains directly to the 4 channels
         for (let i = 0; i < channelGains.length; i++) {
-            if (channelGains[i]) {
+            if (channelGains[i] && channelGains[i].gain) {
                 channelGains[i].gain.setTargetAtTime(
                     posGains[i], 
                     audioContext.currentTime, 
@@ -1684,28 +3252,22 @@ function updateAudioGains() {
             }
         }
     } else {
-        // Stereo mode - downmix front/back to left/right
-        // Mix front-left + back-left to left channel
-        // Mix front-right + back-right to right channel
-        if (channelGains[0]) {
+        if (channelGains[0] && channelGains[0].gain) {
             channelGains[0].gain.setTargetAtTime(
-                posGains[0] + posGains[2], // mix front-left and back-left
+                posGains[0] + posGains[2],
                 audioContext.currentTime,
                 0.1
             );
         }
         
-        if (channelGains[1]) {
+        if (channelGains[1] && channelGains[1].gain) {
             channelGains[1].gain.setTargetAtTime(
-                posGains[1] + posGains[3], // mix front-right and back-right
+                posGains[1] + posGains[3],
                 audioContext.currentTime,
                 0.1
             );
         }
     }
-    
-    // Continue updating
-    requestAnimationFrame(updateAudioGains);
 }
 
 // Create a second set of channel gains for the new sound source
@@ -1771,9 +3333,10 @@ audioLoader.load('pulsar_1.mp3', function(buffer) {
 
 // Function to update second audio gains dynamically
 function updateSecondAudioGains() {
-    if (!secondSourceNode) return;
+    if (!secondSourceNode || !secondChannelGains || secondChannelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
     
-    // Calculate positional gains - still get 4 values
     const posGains = calculateSecondChannelGains(
         camera.position, 
         secondSoundSourcePosition, 
@@ -1781,9 +3344,8 @@ function updateSecondAudioGains() {
     );
 
     if (isQuadSupported) {
-        // Quad mode - apply gains directly
         for (let i = 0; i < secondChannelGains.length; i++) {
-            if (secondChannelGains[i]) {
+            if (secondChannelGains[i] && secondChannelGains[i].gain) {
                 secondChannelGains[i].gain.setTargetAtTime(
                     posGains[i], 
                     audioContext.currentTime, 
@@ -1792,26 +3354,22 @@ function updateSecondAudioGains() {
             }
         }
     } else {
-        // Stereo mode - downmix
-        if (secondChannelGains[0]) {
+        if (secondChannelGains[0] && secondChannelGains[0].gain) {
             secondChannelGains[0].gain.setTargetAtTime(
-                posGains[0] + posGains[2], // mix front-left and back-left
+                posGains[0] + posGains[2],
                 audioContext.currentTime,
                 0.1
             );
         }
         
-        if (secondChannelGains[1]) {
+        if (secondChannelGains[1] && secondChannelGains[1].gain) {
             secondChannelGains[1].gain.setTargetAtTime(
-                posGains[1] + posGains[3], // mix front-right and back-right
+                posGains[1] + posGains[3],
                 audioContext.currentTime,
                 0.1
             );
         }
     }
-    
-    // Continue updating
-    requestAnimationFrame(updateSecondAudioGains);
 }
 
 // Create a third set of channel gains
@@ -1877,9 +3435,10 @@ audioLoader.load('sax-air-noise.mp3', function(buffer) {
 
 // Function to update third audio gains dynamically
 function updateThirdAudioGains() {
-    if (!thirdSourceNode) return;
+    if (!thirdSourceNode || !thirdChannelGains || thirdChannelGains.length === 0) {
+        return; // Just return, don't call requestAnimationFrame
+    }
     
-    // Calculate positional gains - still get 4 values
     const posGains = calculateThirdChannelGains(
         camera.position, 
         thirdSoundSourcePosition, 
@@ -1887,9 +3446,8 @@ function updateThirdAudioGains() {
     );
 
     if (isQuadSupported) {
-        // Quad mode - apply gains directly
         for (let i = 0; i < thirdChannelGains.length; i++) {
-            if (thirdChannelGains[i]) {
+            if (thirdChannelGains[i] && thirdChannelGains[i].gain) {
                 thirdChannelGains[i].gain.setTargetAtTime(
                     posGains[i], 
                     audioContext.currentTime, 
@@ -1898,26 +3456,52 @@ function updateThirdAudioGains() {
             }
         }
     } else {
-        // Stereo mode - downmix
-        if (thirdChannelGains[0]) {
+        if (thirdChannelGains[0] && thirdChannelGains[0].gain) {
             thirdChannelGains[0].gain.setTargetAtTime(
-                posGains[0] + posGains[2], // mix front-left and back-left
+                posGains[0] + posGains[2],
                 audioContext.currentTime,
                 0.1
             );
         }
         
-        if (thirdChannelGains[1]) {
+        if (thirdChannelGains[1] && thirdChannelGains[1].gain) {
             thirdChannelGains[1].gain.setTargetAtTime(
-                posGains[1] + posGains[3], // mix front-right and back-right
+                posGains[1] + posGains[3],
                 audioContext.currentTime,
                 0.1
             );
         }
     }
-    
-    // Continue updating
-    requestAnimationFrame(updateThirdAudioGains);
+}
+
+// Function to cleanup all audio animation frames
+function stopAllAudioGainUpdates() {
+    if (audioGainsFrameId) {
+        cancelAnimationFrame(audioGainsFrameId);
+        audioGainsFrameId = null;
+    }
+    if (secondAudioGainsFrameId) {
+        cancelAnimationFrame(secondAudioGainsFrameId);
+        secondAudioGainsFrameId = null;
+    }
+    if (thirdAudioGainsFrameId) {
+        cancelAnimationFrame(thirdAudioGainsFrameId);
+        thirdAudioGainsFrameId = null;
+    }
+}
+
+// Start the updates properly
+function startAudioGainUpdates() {
+    // Only start if not already running
+    if (!audioGainsFrameId && sourceNode) {
+        audioGainsFrameId = requestAnimationFrame(updateAudioGains);
+    }
+    if (!secondAudioGainsFrameId && secondSourceNode) {
+        secondAudioGainsFrameId = requestAnimationFrame(updateSecondAudioGains);
+    }
+    if (!thirdAudioGainsFrameId && thirdSourceNode) {
+        thirdAudioGainsFrameId = requestAnimationFrame(updateThirdAudioGains);
+    }
 }
 
     function resizeRendererToDisplaySize(renderer) {
@@ -1936,497 +3520,376 @@ function updateThirdAudioGains() {
     }
    
   
-// Create the ABC text in top left corner
+// Create the text in top left corner
 const abcDiv = document.createElement('div');
 abcDiv.style.position = 'fixed';
-abcDiv.style.top = '1rem';
-abcDiv.style.left = '1rem';
-abcDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+abcDiv.style.top = '.9rem';
+abcDiv.style.left = '.9rem';
+abcDiv.style.backgroundColor = 'rgba(255, 0, 0, 255)';
 abcDiv.style.color = 'white';
-abcDiv.style.padding = '0.5rem 1rem';
+abcDiv.style.padding = '0.3rem 0.3rem';
 abcDiv.style.borderRadius = '0.5rem';
-abcDiv.style.fontFamily = 'monospace';
-abcDiv.style.fontSize = '1.25rem';
-abcDiv.innerHTML = 'CHANNEL01';
+abcDiv.style.fontFamily = 'arial';
+abcDiv.style.fontSize = '.9rem';
+abcDiv.innerHTML = 'LIVE';
 document.body.appendChild(abcDiv);
 
-// Create the clock div element
-const clockDiv = document.createElement('div');
-clockDiv.style.position = 'fixed';
-clockDiv.style.top = '1rem';
-clockDiv.style.right = '1rem';
-clockDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-clockDiv.style.color = 'white';
-clockDiv.style.padding = '0.5rem 1rem';
-clockDiv.style.whiteSpace = 'nowrap';
-clockDiv.style.borderRadius = '0.5rem';
-clockDiv.style.fontFamily = 'monospace';
-clockDiv.style.fontSize = '1.25rem';
-document.body.appendChild(clockDiv);
+// Create a viewer count element
+const viewerCountDiv = document.getElementById('clockDiv') || document.createElement('div');
+viewerCountDiv.id = 'viewerCountDiv';
+viewerCountDiv.style.position = 'fixed';
+viewerCountDiv.style.top = '1rem';
+viewerCountDiv.style.right = '1rem';
+viewerCountDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'; // Slightly darker background
+viewerCountDiv.style.color = '#FFFFFF'; // Purple-pink color to match the game theme
+viewerCountDiv.style.padding = '0.5rem 1rem';
+viewerCountDiv.style.whiteSpace = 'nowrap';
+viewerCountDiv.style.borderRadius = '0.5rem';
+viewerCountDiv.style.fontFamily = 'Arial';
+viewerCountDiv.style.fontSize = '1.25rem';
+viewerCountDiv.style.display = 'flex';
+viewerCountDiv.style.alignItems = 'center';
+viewerCountDiv.style.gap = '0.5rem';
+//viewerCountDiv.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.7)'; // Glow effect
 
-// Format function to ensure numbers are always two digits
-const formatTime = (num) => num.toString().padStart(2, '0');
+// Add a dot that pulses to indicate "live" status
+const liveIndicator = document.createElement('span');
+liveIndicator.innerHTML = '⬤';
+liveIndicator.style.color = '#ff3333';
+liveIndicator.style.fontSize = '0.7rem';
+liveIndicator.style.animation = 'pulse-live 2s infinite';
 
-// Function to update the clock with current time and date
-function updateClock() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    
-    // Get date components
-    const day = now.getDate();
-    const month = now.getMonth() + 1; // getMonth() returns 0-11
-    const year = now.getFullYear();
-    
-    // Display time and date
-    clockDiv.textContent = `${formatTime(day)}-${formatTime(month)}-${year} ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+// Add animation for the live indicator
+const style = document.createElement('style');
+style.textContent = `
+@keyframes pulse-live {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+`;
+document.head.appendChild(style);
+
+// Create wrapper for the viewer count
+const countWrapper = document.createElement('span');
+countWrapper.id = 'viewerCount';
+
+// Append elements
+viewerCountDiv.appendChild(liveIndicator);
+viewerCountDiv.appendChild(countWrapper);
+document.body.appendChild(viewerCountDiv);
+
+// Clear the existing clock interval if it exists
+if (window.clockInterval) {
+  clearInterval(window.clockInterval);
 }
 
-// Update clock immediately and then every second
-updateClock();
-const clockInterval = setInterval(updateClock, 1000);
+// Parameters for the countdown
+const startCount = 700;
+const endCount = 1; // Changed to 1 instead of 0
+const durationMinutes = 10;
+const durationMs = durationMinutes * 60 * 1000;
+const startTime = Date.now();
+const endTime = startTime + durationMs;
 
-// Optional: Clear interval when no longer needed
-// clearInterval(clockInterval);
+// Function to generate fluctuations - sometimes up, mostly down
+function getFluctuation(currentCount) {
+  // Bigger fluctuations for higher viewer counts
+  const baseFluctuation = Math.max(1, Math.floor(currentCount * 0.015));
+  
+  // 80% chance of dropping, 20% chance of increasing
+  if (Math.random() < 0.8) {
+    return -Math.floor(Math.random() * baseFluctuation);
+  } else {
+    return Math.floor(Math.random() * (baseFluctuation / 2));
+  }
+}
 
-// Create a chat container
-const chatContainer = document.createElement('div');
-chatContainer.style.position = 'fixed';
-chatContainer.style.bottom = '20px';
-chatContainer.style.right = '20px';
-chatContainer.style.width = '300px';
-chatContainer.style.maxHeight = '200px';
-chatContainer.style.overflowY = 'auto';
-chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-chatContainer.style.borderRadius = '10px';
-chatContainer.style.padding = '10px';
-chatContainer.style.fontFamily = '"Courier New", monospace';
-chatContainer.style.zIndex = '1000';
-document.body.appendChild(chatContainer);
+const lowViewerWarning = document.createElement('div');
+lowViewerWarning.id = 'low-viewer-warning';
+lowViewerWarning.className = 'glitch';
+lowViewerWarning.textContent = 'LOW VIEWER COUNT!';
+lowViewerWarning.style.position = 'fixed';
+lowViewerWarning.style.top = '3.5rem';
+lowViewerWarning.style.right = '1rem';
+lowViewerWarning.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+lowViewerWarning.style.color = '#ff3333';
+lowViewerWarning.style.fontFamily = 'Arial, sans-serif';
+lowViewerWarning.style.fontWeight = 'bold';
+lowViewerWarning.style.padding = '0.5rem 1rem';
+lowViewerWarning.style.borderRadius = '0.5rem';
+lowViewerWarning.style.border = '2px solid #ff3333';
+lowViewerWarning.style.display = 'none'; // Hidden initially
+lowViewerWarning.style.zIndex = '2000';
+lowViewerWarning.style.textTransform = 'uppercase';
+lowViewerWarning.style.fontSize = '0.9rem';
+lowViewerWarning.style.letterSpacing = '1px';
+lowViewerWarning.style.boxShadow = '0 0 10px rgba(255, 51, 51, 0.5)';
 
-// Arrays of possible noise messages
-const initialNoiseMessages = [
-    "Did u hear that?",
-    "Do you know which way is out??????",
-    "Hiiii",
-    "Forward",
-    "Left",
-    "Where is this lol",
-    "can u go forward & then turn:)",
-    "why is it so dark rn",
-    "😂",
-    "THIS IS EPIC",
-    "Greetings from Glasgow"
-];
+// Add the element to the DOM immediately
+// document.body.appendChild(lowViewerWarning);
 
-const laterNoiseMessages = [
-    "U all still there?",
-    "[message unavailable]",
-    "Anybody?",
-    "Did u hear it that time?",
-    "window.microphoneInput = null;",
-    "well there goes 100k",
-    "newSourceNode.start(0, window.audioState.playbackOffset);",
-    "OooOo",
-    "Connection unstable"
-];
+// Add CSS styles for animations
+const warningStyle = document.createElement('style');
+warningStyle.id = 'warning-styles';
+warningStyle.textContent = `
+  @keyframes warning-flash {
+    from { opacity: 1; box-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
+    to { opacity: 0.7; box-shadow: 0 0 20px rgba(255, 51, 51, 0.8); }
+  }
+  
+  #low-viewer-warning {
+    animation: warning-flash 0.8s infinite alternate;
+  }
+  
+  #low-viewer-warning.glitch::before,
+  #low-viewer-warning.glitch::after {
+    content: "LOW VIEWER COUNT!";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+  }
+  
+  #low-viewer-warning.glitch::before {
+    left: 2px;
+    color: #ff3333;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  }
+  
+  #low-viewer-warning.glitch::after {
+    left: -2px;
+    color: #3333ff;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+  
+  @keyframes glitch-anim-1 {
+    0% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+    20% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 1px); }
+    40% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 0); }
+    60% { clip: rect(1px, 450px, 56px, 0); transform: translate(0px, 1px); }
+    80% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, -1px); }
+    100% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+  }
+  
+  @keyframes glitch-anim-2 {
+    0% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+    20% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, -1px); }
+    40% { clip: rect(1px, 450px, 56px, 0); transform: translate(1px, 1px); }
+    60% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, -1px); }
+    80% { clip: rect(1px, 450px, 56px, 0); transform: translate(-1px, 0); }
+    100% { clip: rect(1px, 450px, 56px, 0); transform: translate(0); }
+  }
+`;
+document.head.appendChild(warningStyle);
 
-// Track when the page was loaded
-const pageLoadTime = Date.now();
-const initialPeriodDuration = 180000; // 180 seconds in milliseconds
+// Parameters for the viewer count with faster decay but no speed influence
+const baseViewerCount = 1000; // Starting viewer count base
+const minViewerCount = 1; // Changed to 1 instead of 0
+const viewerFluctuation = 50; // Random fluctuation range
+const viewerDecayRate = 0.8; // Higher value = steeper decay
+const viewerDecayTimeScale = 1.0; // Lower value = shorter total decay time (1.0 = ten mins)
 
-// Keep track of which initial message to show next
-let initialMessageIndex = 0;
+// Track if we've reached the final state
+let hasReachedOne = false;
 
-// Array of interaction-specific messages
-const interactionMessages = [
-    "console.log('Starting audio at offset:', window.secondAudioState.offset);",
-    "console.log('Audio resumed from offset:', window.audioState.playbackOffset.toFixed(3), 'seconds');",
-    "console.log('Noise increased')",
-];
-
-function showRandomChatMessage() {
-    // Determine which message set to use based on elapsed time
-    const currentTime = Date.now();
-    const useInitialMessages = (currentTime - pageLoadTime < initialPeriodDuration);
+// Update function with faster decay but no speed boost
+function updateViewerCount() {
+  const now = Date.now();
+  
+  // Calculate base count with configurable decay
+  const timeElapsed = now - startTime;
+  const timeProgress = Math.min(1, timeElapsed / (durationMs * viewerDecayTimeScale)); 
+  
+  // Use exponential decay to ensure we actually reach 1
+  // This formula ensures we go from baseViewerCount down to 1
+  let baseCount;
+  if (timeProgress >= 1) {
+    // After the decay period, force to 1
+    baseCount = 1;
+  } else {
+    // Exponential decay from baseViewerCount to 1
+    const decayFactor = Math.pow(1 - timeProgress, 3); // Cubic decay for faster drop
+    baseCount = Math.floor(1 + (baseViewerCount - 1) * decayFactor);
+  }
+  
+  // If we've reached 1, stay at 1 forever
+  if (baseCount <= 1) {
+    hasReachedOne = true;
+    countWrapper.textContent = `1 viewer`;
     
-    // Get the message text - sequential for initial period, random for later
-    let messageText;
-    if (useInitialMessages) {
-        // Get the next message in sequence
-        messageText = initialNoiseMessages[initialMessageIndex];
-        
-        // Increment the index for next time, loop back to beginning if needed
-        initialMessageIndex = (initialMessageIndex + 1) % initialNoiseMessages.length;
-    } else {
-        // Randomly select from later messages
-        const messageIndex = Math.floor(Math.random() * laterNoiseMessages.length);
-        messageText = laterNoiseMessages[messageIndex];
-    }
+    // Keep the warning visible since we're at the minimum
+    lowViewerWarning.style.display = 'block';
     
-    // Create a new message element
-    const messageElement = document.createElement('div');
-    messageElement.style.backgroundColor = 'rgba(40, 40, 40, 0.8)';
-    messageElement.style.color = '#ffffff';
-    messageElement.style.borderRadius = '8px';
-    messageElement.style.padding = '10px';
-    messageElement.style.marginBottom = '10px';
-    messageElement.style.maxWidth = '85%';
-    messageElement.style.marginLeft = 'auto'; // Align to the right
-    messageElement.style.wordWrap = 'break-word';
-    messageElement.style.position = 'relative';
-    messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateY(20px)';
-    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    messageElement.style.borderLeft = '3px solid #555555'; // Neutral border for random messages
-    
-    // Add a typing indicator that will be shown before the message
-    const typingIndicator = document.createElement('div');
-    typingIndicator.style.padding = '10px';
-    typingIndicator.style.marginBottom = '10px';
-    typingIndicator.style.borderRadius = '8px';
-    typingIndicator.style.backgroundColor = 'rgba(40, 40, 40, 0.8)';
-    typingIndicator.style.color = '#ffffff';
-    typingIndicator.style.marginLeft = 'auto';
-    typingIndicator.style.width = '60px';
-    typingIndicator.style.borderLeft = '3px solid #555555'; // Match the message border
-    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
-    typingIndicator.style.textAlign = 'center';
-    
-    // Create style for typing animation if it doesn't exist
-    if (!document.querySelector('#typing-animation')) {
-        const style = document.createElement('style');
-        style.id = 'typing-animation';
-        style.textContent = `
-            @keyframes typing {
-                0% { opacity: 0.3; }
-                50% { opacity: 1; }
-                100% { opacity: 0.3; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Generate random points for the message
-    const randomPoints = Math.floor(Math.random() * 100) + 1;
-    
-    // Message text is already selected based on the sequential/random logic above
-    
-  /*  // Add points to the end of the message
-    const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
-*/
-     const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
-    
-    // Add the typing indicator first
-    chatContainer.appendChild(typingIndicator);
-    
-    // Scroll to the bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    
-    // After showing typing indicator, show the actual message
-    setTimeout(() => {
-        // Remove the typing indicator
-        typingIndicator.remove();
-        
-        // Set the message content
-        messageElement.innerHTML = fullMessage;
-        
-        // Add a small label for random messages
-        const label = document.createElement('div');
-        label.style.position = 'absolute';
-        label.style.top = '-8px';
-        label.style.right = '10px';
-        label.style.fontSize = '10px';
-        label.style.color = '#888888';
-        label.style.backgroundColor = 'rgba(20, 20, 20, 0.8)';
-        label.style.padding = '2px 6px';
-        label.style.borderRadius = '4px';
-        label.textContent = 'BACKGROUND';
-    //    messageElement.appendChild(label);
+    // Add chat message for the lone viewer
+    if (Math.random() < 0.5) {
+      const leaveMessages = [
+        "AsunaLoveAhri: Hellloooo",
+        "AsunaLoveAhri: ??",
+        "AsunaLoveAhri: i'm still here i love ur chanel"
+      ];
+      const randomIndex = Math.floor(Math.random() * leaveMessages.length);
+      
+      // Use a slightly modified chat message function for negative messages
+      const messageText = leaveMessages[randomIndex];
+      
+      // Only add message if chatContainer exists
+      if (typeof chatContainer !== 'undefined') {
+        const messageElement = document.createElement('div');
+        messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+        messageElement.style.color = '#ffffff';
+        messageElement.style.borderRadius = '8px';
+        messageElement.style.padding = '10px';
+        messageElement.style.marginBottom = '10px';
+        messageElement.style.maxWidth = '85%';
+        messageElement.style.marginLeft = 'auto';
+        messageElement.style.wordWrap = 'break-word';
+        messageElement.style.position = 'relative';
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+        messageElement.style.borderLeft = '3px solid #8956FB';
+        messageElement.innerHTML = messageText;
         
         // Add the message to the container
         chatContainer.appendChild(messageElement);
         
-        // Trigger animation
-        setTimeout(() => {
-            messageElement.style.opacity = '1';
-            messageElement.style.transform = 'translateY(0)';
-        }, 10);
-        
-        // Scroll to the bottom again
+        // Scroll to the bottom
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
-        // Add a timestamp after a short delay
-        setTimeout(() => {
-            const timestamp = document.createElement('div');
-            timestamp.style.fontSize = '10px';
-            timestamp.style.color = '#aaaaaa';
-            timestamp.style.textAlign = 'right';
-            timestamp.style.marginTop = '5px';
-            
-            // Get current time
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            timestamp.textContent = `${hours}:${minutes}`;
-            
-            messageElement.appendChild(timestamp);
-        }, 300);
-        
-        // Sometimes add a glitch effect to the message
-        if (Math.random() > 0.5) {
-            setTimeout(() => {
-                // Create a glitch effect by briefly changing the text
-                const originalHTML = messageElement.innerHTML;
-                
-                // Generate glitched version of the text
-                const glitched = originalHTML.replace(/[a-zA-Z]/g, (char) => {
-                    return Math.random() > 0.7 ? String.fromCharCode(Math.random() > 0.5 ? 48 + Math.floor(Math.random() * 10) : 33 + Math.floor(Math.random() * 14)) : char;
-                });
-                
-                // Apply glitch briefly
-                messageElement.innerHTML = glitched;
-                
-                // Restore original after short delay
-                setTimeout(() => {
-                    messageElement.innerHTML = originalHTML;
-                }, 200);
-            }, 800);
-        }
-    }, 1500); // Show typing for 1.5 seconds
-}
-
-// Function to show interaction-triggered chat message
-function showInteractionChatMessage() {
-    // Create a new message element with distinct styling
-    const messageElement = document.createElement('div');
-    messageElement.style.backgroundColor = 'rgba(20, 60, 80, 0.9)'; // Different background color
-    messageElement.style.color = '#ffffff';
-    messageElement.style.borderRadius = '8px';
-    messageElement.style.padding = '10px';
-    messageElement.style.marginBottom = '10px';
-    messageElement.style.maxWidth = '85%';
-    messageElement.style.marginLeft = 'auto'; // Align to the right
-    messageElement.style.wordWrap = 'break-word';
-    messageElement.style.position = 'relative';
-    messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateY(20px)';
-    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    messageElement.style.borderLeft = '3px solid #00aaff'; // Blue border for interaction messages
-    
-    // Add a typing indicator with a different style
-    const typingIndicator = document.createElement('div');
-    typingIndicator.style.padding = '10px';
-    typingIndicator.style.marginBottom = '10px';
-    typingIndicator.style.borderRadius = '8px';
-    typingIndicator.style.backgroundColor = 'rgba(20, 60, 80, 0.9)';
-    typingIndicator.style.color = '#ffffff';
-    typingIndicator.style.marginLeft = 'auto';
-    typingIndicator.style.width = '60px';
-    typingIndicator.style.borderLeft = '3px solid #00aaff'; // Match the message border
-    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 0.6s infinite">...</span>';
-    typingIndicator.style.textAlign = 'center';
-    
-    // Create style for typing animation if it doesn't exist
-    if (!document.querySelector('#typing-animation')) {
-        const style = document.createElement('style');
-        style.id = 'typing-animation';
-        style.textContent = `
-            @keyframes typing {
-                0% { opacity: 0.3; }
-                50% { opacity: 1; }
-                100% { opacity: 0.3; }
-            }
-        `;
-        document.head.appendChild(style);
+      }
     }
     
-    // Generate random points for the message - higher for interactions
-    const interactionPoints = Math.floor(Math.random() * 500) + 100;
+    // Return a longer delay since we don't need frequent updates anymore
+    return 5000; // Update every 5 seconds just to maintain the live indicator
+  }
+  
+  // Add random fluctuation with negative bias (only if we haven't reached 1 yet)
+  const negativeFluctuationBias = 0.7; // 70% chance for negative fluctuation
+  let fluctuation;
+  if (Math.random() < negativeFluctuationBias) {
+    // Negative fluctuation (viewers leaving)
+    fluctuation = -Math.floor(Math.random() * viewerFluctuation);
+  } else {
+    // Positive fluctuation (viewers joining)
+    fluctuation = Math.floor(Math.random() * viewerFluctuation);
+  }
+  
+  let displayCount = Math.max(minViewerCount, baseCount + fluctuation);
+  
+  // Ensure we don't go below 1
+  displayCount = Math.max(1, displayCount);
+  
+  // Add occasional larger drops in viewers (but not below 1)
+  if (Math.random() < 0.05 && displayCount > 1) { // 5% chance of a viewer exodus
+    const viewerDrop = Math.floor(displayCount * 0.15); // Drop by up to 15% at once
+    displayCount = Math.max(minViewerCount, displayCount - viewerDrop);
     
-    // Select a random message from the interaction array
-    const messageIndex = Math.floor(Math.random() * interactionMessages.length);
-    const messageText = interactionMessages[messageIndex];
-    
-    // Add points to the end of the message with enhanced styling
-    const fullMessage = `${messageText} <span style="color: #00ffaa; font-weight: bold">+${interactionPoints} noise!</span>`;
-    
-    // Add the typing indicator first
-    chatContainer.appendChild(typingIndicator);
-    
-    // Scroll to the bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    
-    // After showing typing indicator, show the actual message
-    setTimeout(() => {
-        // Remove the typing indicator
-        typingIndicator.remove();
-        
-        // Set the message content
-        messageElement.innerHTML = fullMessage;
-        
-        // Add a distinct label for interaction messages
-        const label = document.createElement('div');
-        label.style.position = 'absolute';
-        label.style.top = '-8px';
-        label.style.right = '10px';
-        label.style.fontSize = '10px';
-        label.style.color = '#ffffff';
-        label.style.backgroundColor = 'rgba(0, 100, 200, 0.9)';
-        label.style.padding = '2px 6px';
-        label.style.borderRadius = '4px';
-        label.textContent = 'SYSTEM';
-        messageElement.appendChild(label);
+    // Add a chat message about viewers leaving
+    if (Math.random() < 0.5 && displayCount < 500) {
+      const leaveMessages = [
+        "StreamKing99: viewers dropping fast...",
+        "GameMaster33: need more action!",
+        "xXGamer4LifeXx: people are leaving 😭",
+        "TwitchQueen: chat is deadd, changing channels"
+      ];
+      const randomIndex = Math.floor(Math.random() * leaveMessages.length);
+      
+      // Use a slightly modified chat message function for negative messages
+      const messageText = leaveMessages[randomIndex];
+      
+      // Only add message if chatContainer exists
+      if (typeof chatContainer !== 'undefined') {
+        const messageElement = document.createElement('div');
+        messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+        messageElement.style.color = '#ffffff';
+        messageElement.style.borderRadius = '8px';
+        messageElement.style.padding = '10px';
+        messageElement.style.marginBottom = '10px';
+        messageElement.style.maxWidth = '85%';
+        messageElement.style.marginLeft = 'auto';
+        messageElement.style.wordWrap = 'break-word';
+        messageElement.style.position = 'relative';
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+        messageElement.style.borderLeft = '3px solid #8956FB';
+        messageElement.innerHTML = messageText;
         
         // Add the message to the container
         chatContainer.appendChild(messageElement);
         
-        // Add a pulsing glow effect to the message
-        messageElement.style.animation = 'pulse 2s ease-in-out';
-        messageElement.style.boxShadow = '0 0 10px rgba(0, 170, 255, 0.5)';
-        
-        // Create style for pulse animation if it doesn't exist
-        if (!document.querySelector('#pulse-animation')) {
-            const style = document.createElement('style');
-            style.id = 'pulse-animation';
-            style.textContent = `
-                @keyframes pulse {
-                    0% { box-shadow: 0 0 5px rgba(0, 170, 255, 0.5); }
-                    50% { box-shadow: 0 0 15px rgba(0, 170, 255, 0.8); }
-                    100% { box-shadow: 0 0 5px rgba(0, 170, 255, 0.5); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        // Trigger animation
-        setTimeout(() => {
-            messageElement.style.opacity = '1';
-            messageElement.style.transform = 'translateY(0)';
-        }, 10);
-        
-        // Scroll to the bottom again
+        // Scroll to the bottom
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
-        // Add a timestamp after a short delay
-        setTimeout(() => {
-            const timestamp = document.createElement('div');
-            timestamp.style.fontSize = '10px';
-            timestamp.style.color = '#00ccff';
-            timestamp.style.textAlign = 'right';
-            timestamp.style.marginTop = '5px';
-            
-            // Get current time
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            timestamp.textContent = `${hours}:${minutes}:${seconds}`;
-            
-            messageElement.appendChild(timestamp);
-        }, 300);
-        
-        // Add a more pronounced glitch effect
-        setTimeout(() => {
-            // Create a series of glitches for a more dramatic effect
-            const originalHTML = messageElement.innerHTML;
-            const glitchCount = 3;
-            
-            for (let i = 0; i < glitchCount; i++) {
-                setTimeout(() => {
-                    // Generate heavily glitched version
-                    const glitched = originalHTML.replace(/[a-zA-Z0-9]/g, (char) => {
-                        return Math.random() > 0.3 ? String.fromCharCode(33 + Math.floor(Math.random() * 93)) : char;
-                    });
-                    
-                    // Apply glitch
-                    messageElement.innerHTML = glitched;
-                    
-                    // Restore after brief interval
-                    setTimeout(() => {
-                        messageElement.innerHTML = originalHTML;
-                    }, 100);
-                }, i * 300); // Stagger the glitches
-            }
-        }, 800);
-    }, 1000); // Show typing for 1 second
-}
-
-// Function to show the stop message
-function showStopMessageAnimation() {
-    // Create a special error message
-    const errorMessage = document.createElement('div');
-    errorMessage.style.backgroundColor = 'rgba(80, 0, 0, 0.8)';
-    errorMessage.style.color = '#ff5555';
-    errorMessage.style.borderRadius = '8px';
-    errorMessage.style.padding = '10px';
-    errorMessage.style.marginBottom = '10px';
-    errorMessage.style.width = '85%';
-    errorMessage.style.marginLeft = 'auto';
-    errorMessage.style.wordWrap = 'break-word';
-    errorMessage.style.fontWeight = 'bold';
-    errorMessage.style.opacity = '0';
-    errorMessage.style.transform = 'translateY(20px)';
-    errorMessage.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    errorMessage.innerHTML = 'CONNECTION TERMINATED 😭';
+      }
+    }
+  }
+  
+  // Display the count with "viewer" or "viewers" text
+  const viewerText = displayCount === 1 ? 'viewer' : 'viewers';
+  countWrapper.textContent = `${displayCount.toLocaleString()} ${viewerText}`;
+  
+  // Show/hide warning based on current count
+  if (displayCount < 500) {
+    // Show warning
+    lowViewerWarning.style.display = 'block';
     
-    // Add the message to the container
-    chatContainer.appendChild(errorMessage);
+    // Add occasional glitch effect to the warning
+    if (Math.random() < 0.05) {
+      // Briefly disable animation classes
+      lowViewerWarning.classList.remove('glitch');
+      
+      // Force reflow
+      void lowViewerWarning.offsetWidth;
+      
+      // Re-add classes after a brief delay
+      setTimeout(() => {
+        lowViewerWarning.classList.add('glitch');
+      }, 50);
+    }
+  } else {
+    // Hide warning
+    lowViewerWarning.style.display = 'none';
+  }
+  
+  // Random chance for small visual glitch effect on the counter
+  if (Math.random() < 0.05) {
+    // Save original text
+    const originalText = countWrapper.textContent;
     
-    // Trigger animation
+    // Apply glitch effect
+    countWrapper.style.opacity = '0.8';
+    countWrapper.style.transform = 'translateX(2px)';
+    
+    // Restore after brief moment
     setTimeout(() => {
-        errorMessage.style.opacity = '1';
-        errorMessage.style.transform = 'translateY(0)';
-        
-        // Add shake effect
-        errorMessage.style.animation = 'shake 0.5s ease-in-out';
-        
-        // Create style for shake animation if it doesn't exist
-        if (!document.querySelector('#shake-animation')) {
-            const style = document.createElement('style');
-            style.id = 'shake-animation';
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                    20%, 40%, 60%, 80% { transform: translateX(5px); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }, 10);
+      countWrapper.style.opacity = '1';
+      countWrapper.style.transform = 'translateX(0)';
+      countWrapper.textContent = originalText;
+    }, 100);
+  }
+  
+  // Update at faster intervals when losing viewers
+  // Makes the decay feel even more rapid
+  const nextUpdateDelay = (displayCount < 700) 
+    ? 300 + Math.random() * 1200 // Update faster when viewers are low
+    : 800 + Math.random() * 2000; // Normal update rate when viewers are high
     
-    // Scroll to the bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+  return nextUpdateDelay;
 }
 
-// Start showing messages automatically
-function startRandomChatMessages() {
-    // Show first message after 8 seconds
-    setTimeout(() => {
-        showRandomChatMessage();
-        
-        // Then start showing messages periodically
-        setInterval(() => {
-            // 70% chance to show a message each time
-            if (Math.random() < 0.7) {
-                showRandomChatMessage();
-            }
-        }, 10000 + Math.random() * 15000); // Random interval between 10-25 seconds
-    }, 8000);
+// Run initially
+const initialDelay = updateViewerCount();
+
+// Update with dynamic timing
+function scheduleNextUpdate() {
+  const nextDelay = updateViewerCount();
+  setTimeout(scheduleNextUpdate, nextDelay);
 }
 
-function scheduleRandomMessages() {
-    setInterval(() => {
-        if (Math.random() < 0.5) { // 50% chance to show message
-            showRandomChatMessage();
-        }
-    }, 15000); // Every 15 seconds
-}
-scheduleRandomMessages();
+// Start the update cycle with initial delay
+setTimeout(scheduleNextUpdate, initialDelay);
 
-// Create or use existing speed meter
+// Create speed meter
 const speedMeter = document.getElementById('speed-meter') || document.createElement('div');
 speedMeter.id = 'speed-meter';
 speedMeter.style.position = 'fixed';
@@ -2438,11 +3901,11 @@ speedMeter.style.padding = '0.5rem 1rem';
 speedMeter.style.borderRadius = '0.5rem';
 speedMeter.style.fontFamily = 'monospace';
 speedMeter.style.fontSize = '.75rem';
-speedMeter.style.display = 'flex';
+speedMeter.style.display = 'none';
 speedMeter.style.alignItems = 'center';
 speedMeter.style.zIndex = '1000';
 speedMeter.innerHTML = `
-  <span>NOISE: </span>
+  <span>Noise: </span>
   <div style="margin-left: 0.5rem; width: 200px; height: 20px; background-color: rgba(50, 50, 50, 0.7); 
        border-radius: 10px; overflow: hidden; position: relative;">
     <div id="speed-marker" style="position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background-color: #ffffff; z-index: 2;"></div>
@@ -2475,16 +3938,15 @@ function setupVerticalSpeedMeter() {
     speedMeter.style.color = '#ffffff';
     speedMeter.style.padding = '0.5rem 0.75rem'; // Smaller padding
     speedMeter.style.borderRadius = '0.5rem';
-    speedMeter.style.fontFamily = 'monospace';
+    speedMeter.style.fontFamily = 'arial';
     speedMeter.style.fontSize = '.65rem'; // Smaller font
-    speedMeter.style.display = 'flex';
     speedMeter.style.flexDirection = 'column'; // Changed to column for vertical layout
     speedMeter.style.alignItems = 'center';
     speedMeter.style.zIndex = '1000';
     
     // Update inner HTML for vertical meter with labels at top and bottom
     speedMeter.innerHTML = `
-      <span style="margin-bottom: 0.2rem;">NOISE</span>
+      <span style="margin-bottom: 0rem;"></span>
       <div style="position: relative; height: 120px; width: 15px;">
         <div style="height: 120px; width: 15px; background-color: rgba(50, 50, 50, 0.7); 
              border-radius: 10px; overflow: hidden; position: relative;">
@@ -2495,7 +3957,7 @@ function setupVerticalSpeedMeter() {
                transition: height 0.15s ease, background-color 0.2s ease;"></div>
         </div>
       </div>
-      <span style="margin-top: 0.2rem;">SIGNAL</span>
+      <span style="margin-top: 0rem;"></span>
     `;
     
     console.log("Vertical speed meter with labels setup complete");
@@ -2528,11 +3990,11 @@ function updateVerticalSpeedMeter(speed) {
     // Color based on magnitude (red spectrum)
     const absSpeed = Math.abs(speed);
     if (absSpeed > 200) {
-      speedFillNegative.style.backgroundColor = '#ff3333'; // Deep red for high backward speed
+      speedFillNegative.style.backgroundColor = '#ff3333'; // high backward speed
     } else if (absSpeed > 100) {
-      speedFillNegative.style.backgroundColor = '#ff6633'; // Orange-red for medium backward speed
+      speedFillNegative.style.backgroundColor = '#ff6633'; // medium backward speed
     } else {
-      speedFillNegative.style.backgroundColor = '#ff9933'; // Orange for slow backward speed
+      speedFillNegative.style.backgroundColor = '#ff9933'; // slow backward speed
     }
   } else if (speed > 0) {
     // Positive speed - fill bottom half
@@ -2541,11 +4003,11 @@ function updateVerticalSpeedMeter(speed) {
     
     // Color based on magnitude (blue spectrum)
     if (speed > 200) {
-      speedFillPositive.style.backgroundColor = '#0066ff'; // Deep blue for high forward speed
+      speedFillPositive.style.backgroundColor = '#FF56FB'; // high forward speed
     } else if (speed > 100) {
-      speedFillPositive.style.backgroundColor = '#00aaff'; // Medium blue for medium forward speed
+      speedFillPositive.style.backgroundColor = '#C456FB'; // medium forward speed
     } else {
-      speedFillPositive.style.backgroundColor = '#00ddff'; // Light blue for slow forward speed
+      speedFillPositive.style.backgroundColor = '#8956FB'; // slow forward speed
     }
   } else {
     // Speed is exactly zero
@@ -2572,39 +4034,65 @@ installVerticalSpeedMeter();
 
   //Gamepad setup
   function handleGamepadInput() {
-    const gamepads = navigator.getGamepads();
-    const gp = gamepads[0]; // Assuming a single gamepad
+  const gamepads = navigator.getGamepads();
+  const gp = gamepads[0]; // Assuming a single gamepad
 
-    if (gp) {
-        const leftStickX = gp.axes[0]; // Left stick horizontal
-        const leftStickY = gp.axes[1]; // Left stick vertical
-        const rightStickX = gp.axes[2]; // Right stick horizontal
-        const rightStickY = gp.axes[3]; // Right stick vertical
-
-        const moveSpeed = 0; // Adjust for movement control
-        const lookSpeed = 15; // Sensitivity for mouse movement
-
-        // Move camera forward/backward
-        if (Math.abs(leftStickY) > 0.1) {
-            controls.moveForward(-leftStickY * moveSpeed);
-        }
-        // Move camera left/right
-        if (Math.abs(leftStickX) > 0.1) {
-            controls.moveRight(leftStickX * moveSpeed);
-        }
-
-        // Simulate mouse movement using right stick
-        if (Math.abs(leftStickY) > 0.1 || Math.abs(rightStickX) > 0.1) {
-            const mouseMoveEvent = new MouseEvent("mousemove", {
-                movementX: rightStickX * lookSpeed,
-                movementY: leftStickY * lookSpeed * .33
-            });
-            document.dispatchEvent(mouseMoveEvent);
-        }
+  if (gp) {
+    // Get the most recent delta time from our stored value
+    const deltaTime = window.lastDeltaTime || 0.016; // Default to ~60fps if not set
+    
+    const leftStickY = gp.axes[1]; // Left stick vertical
+    const rightStickX = gp.axes[2]; // Right stick horizontal
+    const rightStickY = gp.axes[3]; // Right stick vertical
+    
+    const deadzone = 0.05; // Ignore small stick movements
+    
+    // LEFT STICK - Movement control
+    if (Math.abs(leftStickY) > deadzone) {
+      // Direct influence on speed
+      if (window.microphoneInput) {
+        // Scale factor for analog stick's influence on speed
+        const stickInfluence = -leftStickY * 50;
+        
+        // Add the stick influence to the current targetSpeed
+        window.microphoneInput.targetSpeed += stickInfluence;
+        
+        // Also directly adjust the speed variable for immediate feedback
+        speed += -leftStickY * 10;
+      } else {
+        // Fallback if microphoneInput is not available
+        speed += -leftStickY * 10;
+      }
     }
+    
+    // RIGHT STICK - Camera control with deltaTime
+    if (Math.abs(rightStickX) > deadzone || Math.abs(rightStickY) > deadzone) {
+      // Apply deltaTime to make camera movement framerate-independent
+      // Use higher base values since we'll multiply by deltaTime (which is small)
+      const baseLookSpeedX = 500; // Higher value for horizontal look
+      const baseLookSpeedY = 400; // Slightly lower for vertical look
+      
+      // Create framerate-independent look speeds by multiplying by deltaTime
+      const lookSpeedX = baseLookSpeedX * deltaTime;
+      const lookSpeedY = baseLookSpeedY * deltaTime;
+      
+      // Apply non-linear response curve for better control precision
+      const moveX = Math.sign(rightStickX) * Math.pow(Math.abs(rightStickX), 1.5) * lookSpeedX;
+      const moveY = Math.sign(rightStickY) * Math.pow(Math.abs(rightStickY), 1.5) * lookSpeedY;
+      
+      // Create a MouseEvent with the calculated movement
+      const mouseMoveEvent = new MouseEvent("mousemove", {
+        movementX: moveX,
+        movementY: moveY
+      });
+      
+      // Dispatch the event to simulate mouse movement
+      document.dispatchEvent(mouseMoveEvent);
+    }
+  }
 }
 
-//End of gamepad setup
+//End of basic gamepad setup
 
 let speed = 0; // Movement speed
 let rms = 0;
@@ -2761,18 +4249,14 @@ function analyzeAudio() {
         const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread, context.sampleRate, bufferLength);
         
         // Log detailed analysis to console
-        console.log(`Audio Analysis: RMS=${rms.toFixed(5)}, Centroid=${centroid.toFixed(2)}Hz, Spread=${spread.toFixed(2)}, Flux=${flux.toFixed(7)}, Kurtosis=${kurtosis.toFixed(2)}`);
+   //: RMS=${rms.toFixed(5)}, Centroid=${centroid.toFixed(2)}Hz, Spread=${spread.toFixed(2)}, Flux=${flux.toFixed(7)}, Kurtosis=${kurtosis.toFixed(2)}`);
         
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
-
-            // window.microphoneInput.targetSpeed = 3 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 30; // good for breath & air noise & key clicks
-          //  window.microphoneInput.targetSpeed = 4 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)) + 300; // good for multiphonics
-
+            window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // adjust multiplier and forward bias according to microphone and mic placement
             // Log target speed
-            console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
+            // console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
         }
         
         // Save current frequencies for next flux calculation
@@ -2789,6 +4273,17 @@ function analyzeAudio() {
         // If speed variable doesn't exist in global scope, create it
         window.speed = 0;
         speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
+    }
+
+    const gamepads = navigator.getGamepads();
+    const gp = gamepads[0];
+    if (gp) {
+        const leftStickY = gp.axes[1];
+        if (Math.abs(leftStickY) > 0.1) {
+            // Direct influence on speed (not just targetSpeed)
+        speed += -leftStickY * 100; // Gamepad speed amount
+            console.log("Direct gamepad speed adjustment:", speed);
+        }
     }
     
     // Continue analysis loop
@@ -2913,9 +4408,9 @@ function renderMinimap(minimap, playerPosition) {
   
   // Define colors for special boxes
   const specialBoxColors = {
-    '-2400_3200': 'rgba(255, 0, 0, 0.7)',   // Box 13 (red)
-    '-1500_1000': 'rgba(0, 255, 0, 0.7)',   // Box 14 (green)
-    '-200_-1450': 'rgba(0, 100, 255, 0.7)'  // Box 15 (blue)
+    '-2400_3200': 'rgba(137, 86, 251, 0.7)',   // Box 13 (red)
+    '-1500_1000': 'rgba(137, 86, 251, 0.7)',   // Box 14 (green)
+    '-200_-1450': 'rgba(137, 86, 251, 0.7)'  // Box 15 (blue)
   };
   
   // Draw all walls
@@ -2985,11 +4480,12 @@ minimap = initMinimap();
    
    
 function animate() {
+    const delta = clock.getDelta();
+    window.lastDeltaTime = delta;
+    handleGamepadInput();
     updateAudioGains();
     updateSecondAudioGains();
     updateThirdAudioGains();
-    const delta = clock.getDelta();
-    handleGamepadInput();
     updateMinimap();
   
     // Update iframe visibility
@@ -3083,6 +4579,7 @@ function animate() {
 
     // Handle bell interaction when collision happens
     if (hitBox13) {
+        hasReachedBell = true;
   // Only toggle state when entering the collision zone
   if (!window.bellAnimationState.hasCollided && window.bellAnimationState.canToggle) {
     if (firstBellMixer) {
