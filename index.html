@@ -1907,9 +1907,9 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-    //    camera.position.set(-2380, 30, 2500);  //for DEVELOPMENT
+        camera.position.set(-2380, 30, 4500);  //for DEVELOPMENT
    //  camera.position.set(-850, 30, -1440);  //for development 2
-       camera.position.set(1550, 30, -500);  //for performance 
+   //    camera.position.set(1550, 30, -500);  //for performance 
 
         adjustForDisplayScaling();
 
@@ -2002,11 +2002,20 @@ const gameOverOverlay = document.getElementById('game-over-overlay');
 
 let loseSound = null;
 
-// Load the lose sound directly like your other audio
+// Load the lose sound
 const loseAudioLoader = new THREE.AudioLoader();
 loseAudioLoader.load('lose.mp3', function(buffer) {
     loseSound = buffer;
     console.log("Lose sound loaded successfully");
+});
+
+let coinSound = null;
+
+// Load the coin sound
+const coinAudioLoader = new THREE.AudioLoader();
+coinAudioLoader.load('coin-sound.mp3', function(buffer) {
+    coinSound = buffer;
+    console.log("Coin sound loaded successfully");
 });
 
 // Function to format time as MM:SS
@@ -2242,7 +2251,17 @@ function restartLevel() {
             }
         }
     }
-    
+    if (window.JBLAnimationState) {
+        window.JBLAnimationState.hasCollided = false;
+        window.JBLAnimationState.canToggle = true;
+        
+        if (window.JBLAnimationState.isPlaying && mixer4) {
+            mixer4._actions.forEach(action => {
+                action.timeScale = 0;
+            });
+            window.JBLAnimationState.isPlaying = false;
+        }
+    }
     // Restart the level timer
     startLevelTimer();
 }
@@ -2369,7 +2388,7 @@ restartButton.addEventListener('click', () => {
         const cube15 = new THREE.Mesh( geometry15, material15 ); 
         cube15.position.set(-200, 50, -1450);
         cube15.userData.collidable = true;
-      //  scene.add( cube15 ); 
+        scene.add( cube15 ); 
       
       // Add bounding box 1
       const greenBoxBoundingBox = new THREE.Box3().setFromObject(cube);
@@ -2566,7 +2585,50 @@ restartButton.addEventListener('click', () => {
         action.setEffectiveTimeScale(.25); // 0.5 for half speed, 2.0 for double speed
         action.play();
           });
+          // Initialize animation state as paused
+        window.JBLAnimationState = {
+        isPlaying: false,   // Start in paused state
+        hasCollided: false,
+        canToggle: true,
+        actions: [],
+        soundsLoaded: false
+        };
+
+        // For each animation clip
+        gltf.animations.forEach((clip) => {
+        // Create the action
+        const action = mixer4.clipAction(clip);
+
+        // Get the animation duration
+        const duration = clip.duration;
+        console.log(`JBL animation duration: ${duration} seconds`);
+
+        // Set initial time to halfway through the animation
+        const quarterwayPoint = 3 * duration / 4;
+
+        // Set effective time scale to normal (will be paused later)
+        action.setEffectiveTimeScale(1);
+
+        // Start the action
+        action.play();
+
+        // Advance the mixer to the halfway point
+        mixer4.setTime(quarterwayPoint);
+
+        // Now pause by setting timeScale to 0
+        action.timeScale = 0;
+
+        // Store the action for future resume
+        window.JBLAnimationState.actions.push({
+        action: action,
+        time: quarterwayPoint,
+        timeScale: 1
         });
+     });
+
+        console.log("JBL animation initialized and paused");
+
+});
 
         let bell2Model;
 
@@ -4166,6 +4228,71 @@ async function setupAudioInput() {
     }
 }
 
+// Keyboard event handlers for parameter adjustment
+function setupParameterControls() {
+    // Store original values as defaults
+    let currentBaseMultiplier = 2.5; // Default from your code
+    let currentForwardBias = 20;     // Default from your code
+    
+    document.addEventListener('keydown', (event) => {
+        // Prevent controls when typing in input fields
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        let parameterChanged = false;
+        
+        switch (event.code) {
+            case 'KeyM':
+                if (event.shiftKey) {
+                    // Shift + M: Decrease base multiplier by 0.2
+                    currentBaseMultiplier = Math.max(0.1, currentBaseMultiplier - 0.2);
+                } else {
+                    // M: Increase base multiplier by 0.2
+                    currentBaseMultiplier = Math.min(10, currentBaseMultiplier + 0.2);
+                }
+                parameterChanged = true;
+                break;
+                
+            case 'KeyN':
+                if (event.shiftKey) {
+                    // Shift + N: Decrease forward bias by 5
+                    currentForwardBias = Math.max(-100, currentForwardBias - 5);
+                } else {
+                    // N: Increase forward bias by 5
+                    currentForwardBias = Math.min(100, currentForwardBias + 5);
+                }
+                parameterChanged = true;
+                break;
+        }
+        
+        if (parameterChanged) {
+            // Update the global variables that are used in the analyzeAudio function
+            updateAudioParameters(currentBaseMultiplier, currentForwardBias);
+            
+            // Prevent default action
+            event.preventDefault();
+        }
+    });
+}
+
+// Function to update the audio parameters in the microphone input system
+function updateAudioParameters(baseMultiplier, forwardBias) {
+    // Store the parameters globally so they can be accessed in analyzeAudio
+    window.audioParameters = {
+        baseMultiplier: baseMultiplier,
+        forwardBias: forwardBias
+    };
+    
+    console.log(`Audio parameters updated - Base Multiplier: ${baseMultiplier.toFixed(2)}, Forward Bias: ${forwardBias.toFixed(1)}`);
+}
+
+// Initialize the parameter controls
+setupParameterControls();
+
+// Initialize with default values
+updateAudioParameters(2.5, 20);
+
 // Spectral analysis functions
 function calculateSpectralCentroid(frequencyData, sampleRate, bufferLength) {
     let numerator = 0;
@@ -4246,6 +4373,10 @@ function analyzeAudio() {
         const spread = calculateSpectralSpread(linearFrequencies, centroid, context.sampleRate, bufferLength);
         const flux = calculateSpectralFlux(linearFrequencies, previousFrequencies);
         const kurtosis = calculateSpectralKurtosis(linearFrequencies, centroid, spread, context.sampleRate, bufferLength);
+       // Get current parameters (use defaults if not set)
+        const currentParams = window.audioParameters || { baseMultiplier: 2.5, forwardBias: 20 };
+        const baseMultiplier = currentParams.baseMultiplier;
+        const forwardBias = currentParams.forwardBias;
         
         // Log detailed analysis to console
    //: RMS=${rms.toFixed(5)}, Centroid=${centroid.toFixed(2)}Hz, Spread=${spread.toFixed(2)}, Flux=${flux.toFixed(7)}, Kurtosis=${kurtosis.toFixed(2)}`);
@@ -4253,7 +4384,9 @@ function analyzeAudio() {
         // Set movement speed based on audio characteristics
         if (centroid > 0) {
             // Calculate target speed using the formula
-            window.microphoneInput.targetSpeed = 2.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+20); // adjust multiplier and forward bias according to microphone and mic placement
+     //       window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // adjust multiplier and forward bias according to microphone and mic placement
+            window.microphoneInput.targetSpeed = baseMultiplier * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+forwardBias); // adjust multiplier and forward bias according to microphone and mic placement
+
             // Log target speed
             // console.log(`Target Speed: ${window.microphoneInput.targetSpeed.toFixed(2)}`);
         }
@@ -4959,7 +5092,74 @@ if (bell2Model) {
             }
         }
     }
-        
+
+// Handle JBL interaction when collision with hitBox15 happens
+if (hitBox15) {
+    // Only toggle state when entering the collision zone
+    if (!window.JBLAnimationState.hasCollided && window.JBLAnimationState.canToggle) {
+        if (mixer4) {
+            // Toggle between play/stop based on current state
+            if (!window.JBLAnimationState.isPlaying) {
+                // START THE ANIMATION
+                console.log("Camera collided with JBL - starting animation and audio");
+                
+                // Handle animation
+                mixer4._actions.forEach(action => {
+                    action.timeScale = .25;
+                    if (!action.isRunning()) {
+                        action.play();
+                    }
+                });
+                
+                // Play sound effect ONLY when starting animation (first collision)
+                if (coinSound) {
+                    const source = audioContext.createBufferSource();
+                    source.buffer = coinSound;
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.value = 0.3;
+                    source.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    source.start();
+                    console.log("Coin sound played successfully");
+                } else {
+                    console.warn("Coin sound not loaded yet");
+                }
+                
+                // Update state
+                window.JBLAnimationState.isPlaying = true;
+                showInteractionChatMessage();
+            } else {
+                // STOP THE ANIMATION
+                console.log("Camera collided with JBL - stopping animation and audio");
+                
+                // Pause animation by setting timeScale to 0
+                mixer4._actions.forEach(action => {
+                    action.timeScale = 0;
+                });
+                
+                // Update state
+                window.JBLAnimationState.isPlaying = false;
+                showStopMessageAnimation();
+            }
+            
+            // Prevent multiple toggles while inside collision zone
+            window.JBLAnimationState.canToggle = false;
+        }
+    }
+    // Mark that we're inside the collision zone
+    window.JBLAnimationState.hasCollided = true;
+    
+    // NOTE: Sound effect code removed from here to prevent playing every frame
+   
+} else {
+    // When player moves away from JBL, allow toggling again
+    if (window.JBLAnimationState && window.JBLAnimationState.hasCollided) {
+        window.JBLAnimationState.hasCollided = false;
+        window.JBLAnimationState.canToggle = true;
+        console.log("Player exited JBL collision zone - ready for next interaction");
+    }
+}
+   
         const hitXRed = cameraBoundingBox.intersectsBox(redBoxBoundingBox);
         const hitXGreen = cameraBoundingBox.intersectsBox(greenBoxBoundingBox);
         const hitX3 = cameraBoundingBox.intersectsBox(boundingBox3);
