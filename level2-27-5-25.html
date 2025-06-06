@@ -606,7 +606,7 @@
             <div class="countdown-decoration top-right"></div>
             <div class="countdown-decoration bottom-left"></div>
             <div class="countdown-decoration bottom-right"></div>
-            10:00
+            00:10
         </div>
     </div>
 </div>
@@ -1852,7 +1852,7 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
             // After 5 seconds (when progress bar is full), hide the loading screen
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
-                document.getElementById('minimap-container').style.display = 'flex'; //hidden in this level
+                document.getElementById('minimap-container').style.display = 'flex';
            //     document.getElementById('speed-meter').style.display = 'flex'; //hidden in this level
             }, 5000);
         }, 100);
@@ -2262,8 +2262,10 @@ function restartLevel() {
             window.JBLAnimationState.isPlaying = false;
         }
     }
+    document.getElementById('minimap-container').style.display = 'none';
     // Restart the level timer
     startLevelTimer();
+    startLoadingAnimation();
 }
 
 // Function to call when player reaches the bell
@@ -3175,7 +3177,7 @@ function calculateThirdChannelGains(listenerPos, sourcePos, controls) {
     
     // Calculate distance and base gain - different falloff for third source
     const distance = Math.sqrt(rotatedRelativePos.x * rotatedRelativePos.x + rotatedRelativePos.z * rotatedRelativePos.z);
-    const maxDistance = 2500; // Different max distance for second source
+    const maxDistance = 2000; // Different max distance for second source
     const baseGain = Math.max(0, .5 - (distance / maxDistance)/2); //Floating speakers gain
 
     // Calculate angle from camera's forward direction (z-axis)
@@ -4198,7 +4200,7 @@ async function setupAudioInput() {
         
         // Analysis parameters
         const speedFactor = .95;
-      const AMPLITUDE_THRESHOLD = 0.003;
+      const AMPLITUDE_THRESHOLD = 0.001;
         let targetSpeed = 0;
         
         // Store references in the global scope
@@ -4231,8 +4233,9 @@ async function setupAudioInput() {
 // Keyboard event handlers for parameter adjustment
 function setupParameterControls() {
     // Store original values as defaults
-    let currentBaseMultiplier = 2.5; // Default from your code
-    let currentForwardBias = 20;     // Default from your code
+    let currentBaseMultiplier = 2.5; // Default
+    let currentForwardBias = 20;     // Default
+    let currentAmplitudeThreshold = 0.001; // Default
     
     document.addEventListener('keydown', (event) => {
         // Prevent controls when typing in input fields
@@ -4264,11 +4267,22 @@ function setupParameterControls() {
                 }
                 parameterChanged = true;
                 break;
+                
+            case 'KeyA':
+                if (event.shiftKey) {
+                    // Shift + A: Decrease amplitude threshold by 0.0001
+                    currentAmplitudeThreshold = Math.max(0.0001, currentAmplitudeThreshold - 0.0001);
+                } else {
+                    // A: Increase amplitude threshold by 0.0001
+                    currentAmplitudeThreshold = Math.min(0.1, currentAmplitudeThreshold + 0.0001);
+                }
+                parameterChanged = true;
+                break;
         }
         
         if (parameterChanged) {
             // Update the global variables that are used in the analyzeAudio function
-            updateAudioParameters(currentBaseMultiplier, currentForwardBias);
+            updateAudioParameters(currentBaseMultiplier, currentForwardBias, currentAmplitudeThreshold);
             
             // Prevent default action
             event.preventDefault();
@@ -4277,21 +4291,28 @@ function setupParameterControls() {
 }
 
 // Function to update the audio parameters in the microphone input system
-function updateAudioParameters(baseMultiplier, forwardBias) {
+// Function to update the audio parameters in the microphone input system
+function updateAudioParameters(baseMultiplier, forwardBias, amplitudeThreshold) {
     // Store the parameters globally so they can be accessed in analyzeAudio
     window.audioParameters = {
         baseMultiplier: baseMultiplier,
-        forwardBias: forwardBias
+        forwardBias: forwardBias,
+        amplitudeThreshold: amplitudeThreshold
     };
     
-    console.log(`Audio parameters updated - Base Multiplier: ${baseMultiplier.toFixed(2)}, Forward Bias: ${forwardBias.toFixed(1)}`);
+    // Update the microphone input system's amplitude threshold if it exists
+    if (window.microphoneInput) {
+        window.microphoneInput.amplitudeThreshold = amplitudeThreshold;
+    }
+    
+    console.log(`Audio parameters updated - Base Multiplier: ${baseMultiplier.toFixed(2)}, Forward Bias: ${forwardBias.toFixed(1)}, Amplitude Threshold: ${amplitudeThreshold.toFixed(4)}`);
 }
 
 // Initialize the parameter controls
 setupParameterControls();
 
 // Initialize with default values
-updateAudioParameters(2.5, 20);
+updateAudioParameters(2.5, 20, 0.001);
 
 // Spectral analysis functions
 function calculateSpectralCentroid(frequencyData, sampleRate, bufferLength) {
