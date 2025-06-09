@@ -2573,12 +2573,11 @@ restartButton.addEventListener('click', () => {
         loaderGlitchyBell.setPath('');
         let mixer4;
       
-         loaderGlitchyBell.load('pulsar8.glb', function (gltf) {
-            gltf.scene.position.set(-200, -15, -1425);
-            gltf.scene.scale.set(40, 40, 40);
+         loaderGlitchyBell.load('jbl_charge_3_speaker.glb', function (gltf) {
+            gltf.scene.position.set(-200, 90, -1425);
+            gltf.scene.scale.set(300, 300, 300);
          //   gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
             gltf.scene.rotation.set(0, Math.PI/4, -Math.PI/4);
-     //   gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
        
         mixer4 = new THREE.AnimationMixer(gltf.scene);
