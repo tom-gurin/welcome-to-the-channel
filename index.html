@@ -656,6 +656,8 @@
     <div id="game-over-message">You died! 1 life remaining.<br></div>
 <!--    <button id="restart-button">Restart Now</button> -->
 </div>
+<!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script> -->
+<script src="https://welcome-to-the-channel-chat.onrender.com/socket.io/socket.io.js"></script>
 <script type="module">
     import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js";
     import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.122.0/examples/jsm/controls/PointerLockControls.js';
@@ -823,10 +825,10 @@ function scheduleRandomGlitches() {
 // Create a chat container
 const chatContainer = document.createElement('div');
 chatContainer.style.position = 'fixed';
-chatContainer.style.bottom = '20px';
+chatContainer.style.bottom = '40px';
 chatContainer.style.right = '0px';
 chatContainer.style.width = '300px';
-chatContainer.style.maxHeight = '400px';
+chatContainer.style.maxHeight = '380px';
 chatContainer.style.overflowY = 'auto';
 chatContainer.style.backgroundColor = 'rgba(0, 0, 0, 0)';
 chatContainer.style.borderRadius = '10px';
@@ -844,7 +846,7 @@ const initialNoiseMessages = [
     "ShadowPlay22: Im soo exited for this 1!",
     "AsunaLoveAhri: Anybdy here new?",
     "AsunaLoveAhri: Did u heer that?",
-    "🔔 AsunaLoveAhri tipped 1.50 - 'Luv ur chanell'",
+    "🔔: 1.50 - 'Luv ur chanell'",
     "LostViewer55: Do u kno wich way is out??????",
     "StreamFan99: Hiiiii",
     "xXGamer4LifeXx: [message deleted by a moderator.]",
@@ -861,7 +863,7 @@ const initialNoiseMessages = [
     "GamerBro44: 😂😂😂😂😂",
     "HypeSquad101: thsi is epic",
     "👻👻👻: console.log('CONTROLLER LOSING POWER')",
-    "🔔 AsunaLoveAhri tipped 25.00 - 'Luvvv'",
+    "🔔: AsunaLoveAhri tipped 25.00 - 'Luvvv'",
     "HilariousGamer9: Gretings frm Glasgow"
 ];
 
@@ -953,13 +955,14 @@ function showRandomChatMessage() {
     
     // Generate random points for the message
     const randomPoints = Math.floor(Math.random() * 100) + 1;
+
     
     // Message text is already selected based on the sequential/random logic above
     
-  /*  // Add points to the end of the message
+   // Add points to the end of the message
     const fullMessage = `${messageText} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
-*/
-     const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
+
+ //    const fullMessage = `${messageText} <span style="color: #aaaaaa"></span>`;
     
     // Add the typing indicator first
     chatContainer.appendChild(typingIndicator);
@@ -977,6 +980,8 @@ function showRandomChatMessage() {
         
         // Add the message to the container
         chatContainer.appendChild(messageElement);
+
+        addNoise(randomPoints); // Track the noise after message appears!
         
         // Trigger animation
         setTimeout(() => {
@@ -1221,6 +1226,7 @@ function showInteractionChatMessage() {
     
     // Generate random points for the message - higher for interactions
     const interactionPoints = Math.floor(Math.random() * 500) + 100;
+
     
     // Select a random message from the interaction array
     const messageIndex = Math.floor(Math.random() * interactionMessages.length);
@@ -1260,6 +1266,8 @@ function showInteractionChatMessage() {
  
         // Add the message to the container
         chatContainer.appendChild(messageElement);
+
+        addNoise(interactionPoints); // Track the noise after message appears!
         
         // Add a pulsing glow effect to the message
       //  messageElement.style.animation = 'pulse 2s ease-in-out';
@@ -1380,6 +1388,194 @@ function startRandomChatMessages() {
     }, 8000);
 }
 startRandomChatMessages()
+
+//Socket.IO integration
+
+// Socket.IO client connection for the game
+let gameSocket;
+
+// Initialize Socket.IO connection for the game
+function initializeGameSocket() {
+    // Connect to your Socket.IO server
+    gameSocket = io('https://welcome-to-the-channel-chat.onrender.com'); // Change this to your server URL
+    
+    console.log('Initializing game Socket.IO connection...');
+    
+    // Connection event handlers
+    gameSocket.on('connect', () => {
+        console.log('Game connected to Socket.IO server');
+    });
+    
+    gameSocket.on('disconnect', () => {
+        console.log('Game disconnected from Socket.IO server');
+    });
+    
+    // Listen for new messages from mobile users
+    gameSocket.on('new_message', (message) => {
+        console.log('Received message from mobile user:', message);
+        showSocketMessage(message);
+    });
+    
+    // Listen for user count updates
+    gameSocket.on('user_count', (count) => {
+        console.log('Mobile users online:', count);
+        // You could display this in your game UI if desired
+    });
+}
+
+// Function to display Socket.IO messages in chat
+function showSocketMessage(message) {
+    // Create a new message element
+    const messageElement = document.createElement('div');
+    messageElement.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    messageElement.style.color = '#ffffff';
+    messageElement.style.borderRadius = '8px';
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '10px';
+    messageElement.style.maxWidth = '85%';
+    messageElement.style.marginLeft = 'auto'; // Align to the right
+    messageElement.style.wordWrap = 'break-word';
+    messageElement.style.position = 'relative';
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = 'translateY(20px)';
+    messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    messageElement.style.borderLeft = '3px solid #8956FB'; // Same border as random messages
+    
+    // Add a typing indicator (same as random messages)
+    const typingIndicator = document.createElement('div');
+    typingIndicator.style.padding = '10px';
+    typingIndicator.style.marginBottom = '10px';
+    typingIndicator.style.borderRadius = '8px';
+    typingIndicator.style.backgroundColor = 'rgba(137, 86, 251, 0.8)';
+    typingIndicator.style.color = '#ffffff';
+    typingIndicator.style.marginLeft = 'auto';
+    typingIndicator.style.width = '60px';
+    typingIndicator.style.borderLeft = '3px solid #8956FB';
+    typingIndicator.innerHTML = '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
+    typingIndicator.style.textAlign = 'center';
+    
+    // Create style for typing animation if it doesn't exist
+    if (!document.querySelector('#typing-animation')) {
+        const style = document.createElement('style');
+        style.id = 'typing-animation';
+        style.textContent = `
+            @keyframes typing {
+                0% { opacity: 0.3; }
+                50% { opacity: 1; }
+                100% { opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+     // Generate random points for the message
+    const randomPoints = Math.floor(Math.random() * 100) + 1;
+
+    
+    // Format message exactly like random messages (NO timestamp, NO bold styling)
+    const fullMessage = `${escapeHtml(message.username)}: ${escapeHtml(message.text)} <span style="color: #aaaaaa">+${randomPoints} noise</span>`;
+    
+    // Add the typing indicator first
+    chatContainer.appendChild(typingIndicator);
+    
+    // Scroll to the bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // After showing typing indicator, show the actual message (same timing as random)
+    setTimeout(() => {
+        // Remove the typing indicator
+        typingIndicator.remove();
+        
+        // Set the message content
+        messageElement.innerHTML = fullMessage;
+        
+        // Add the message to the container
+        chatContainer.appendChild(messageElement);
+
+        addNoise(randomPoints); // Track the noise after message appears!
+        
+        // Trigger animation (same as random messages)
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Scroll to the bottom of the chat
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add empty timestamp section (same as random messages)
+        setTimeout(() => {
+            const timestamp = document.createElement('div');
+            timestamp.style.fontSize = '10px';
+            timestamp.style.color = '#aaaaaa';
+            timestamp.style.textAlign = 'right';
+            timestamp.style.marginTop = '5px';
+            // No timestamp text (same as random messages)
+            messageElement.appendChild(timestamp);
+        }, 300);
+        
+        // Add the same glitch effect as random messages
+        if (Math.random() > 0.5) {
+            setTimeout(() => {
+                // Create a glitch effect by briefly changing the text
+                const originalHTML = messageElement.innerHTML;
+                
+                // Generate glitched version of the text (same as random messages)
+                const glitched = originalHTML.replace(/[a-zA-Z]/g, (char) => {
+                    return Math.random() > 0.7 ? String.fromCharCode(Math.random() > 0.5 ? 48 + Math.floor(Math.random() * 10) : 33 + Math.floor(Math.random() * 14)) : char;
+                });
+                
+                // Apply glitch briefly
+                messageElement.innerHTML = glitched;
+                
+                // Restore original after short delay
+                setTimeout(() => {
+                    messageElement.innerHTML = originalHTML;
+                }, 200);
+            }, 800);
+        }
+    }, 1500); // 1.5 second typing animation (same as random messages)
+}
+
+// Utility function to escape HTML (prevent XSS)
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Initialize the Socket.IO connection when the game starts
+// Add this call to your existing init() function or call it after the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for the page to fully load
+    setTimeout(() => {
+        initializeGameSocket();
+    }, 2000);
+});
+
+// Alternative: If you want to initialize when the start button is clicked
+// Add this line to your existing startButton.addEventListener('click', init) function:
+// initializeGameSocket();
+
+// Optional: Function to send messages from the game to mobile users
+function sendGameMessage(text, username = 'Game System') {
+    if (gameSocket && gameSocket.connected) {
+        gameSocket.emit('chat_message', {
+            username: username,
+            text: text
+        });
+        console.log('Sent message from game:', text);
+    }
+}
+
+// Example usage of sending game messages:
+// sendGameMessage('Welcome to the stream!');
+// sendGameMessage('Level completed!', 'Game');
+
+// You can also integrate this with your existing showInteractionChatMessage function
+// to send interaction messages to mobile users as well
+
+//End of Socket.IO integration
 
     // Check the maximum number of audio channels supported
 console.log("Maximum channels supported:", audioContext.destination.maxChannelCount);
@@ -1656,6 +1852,141 @@ function shrinkHudToNormal() {
   console.log('HUD shrink animation started (5 seconds)');
 }
 
+// Create noise tracking display
+function createNoiseDisplay() {
+    console.log("Setting up noise tracking display...");
+    
+    // Check if display already exists
+    if (document.getElementById('noise-display')) {
+        return;
+    }
+    
+    // Create the noise display element
+    const noiseDisplay = document.createElement('div');
+    noiseDisplay.id = 'noise-display';
+    noiseDisplay.style.position = 'fixed';
+    noiseDisplay.style.bottom = '1rem'; // Above the gamepad visualizer
+    noiseDisplay.style.right = '1rem';
+    noiseDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
+    noiseDisplay.style.color = '#8956FB';
+    noiseDisplay.style.padding = '0.3rem .3rem';
+    noiseDisplay.style.borderRadius = '0.5rem';
+    noiseDisplay.style.fontFamily = '"Arial Black", sans-serif';
+    noiseDisplay.style.fontSize = '0.8rem';
+    noiseDisplay.style.fontWeight = 'bold';
+    noiseDisplay.style.textTransform = 'uppercase';
+    noiseDisplay.style.letterSpacing = '1px';
+    noiseDisplay.style.border = '2px solid #8956FB';
+    noiseDisplay.style.boxShadow = '0 0 15px rgba(137, 86, 251, 0.5)';
+    noiseDisplay.style.zIndex = '1000';
+    noiseDisplay.style.transition = 'all 0.3s ease';
+    noiseDisplay.style.minWidth = '120px';
+    noiseDisplay.style.textAlign = 'center';
+    noiseDisplay.style.whiteSpace = 'nowrap'; // Prevent wrapping
+    
+    // Set initial content as single line
+    noiseDisplay.innerHTML = 'Total Noise: <span id="noise-value">0</span>';
+    
+    // Add to document body
+    document.body.appendChild(noiseDisplay);
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        #noise-display.updated {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(137, 86, 251, 0.8);
+            animation: noise-pulse 0.5s ease;
+        }
+        @keyframes noise-pulse {
+            0% { color: #8956FB; border-color: #8956FB; }
+            50% { color: #FF56FB; border-color: #FF56FB; text-shadow: 0 0 10px rgba(255, 86, 251, 0.8); }
+            100% { color: #8956FB; border-color: #8956FB; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Global noise tracking with delayed adding
+let totalNoise = 0;
+let speedNoiseInterval = null;
+
+function addNoise(amount, delay = 0) {
+    if (delay > 0) {
+        setTimeout(() => {
+            totalNoise += amount;
+            updateNoiseDisplay();
+            console.log(`Added ${amount} noise (delayed). Total: ${totalNoise}`);
+        }, delay);
+    } else {
+        totalNoise += amount;
+        updateNoiseDisplay();
+        console.log(`Added ${amount} noise. Total: ${totalNoise}`);
+    }
+}
+
+function updateNoiseDisplay() {
+    const noiseValueElement = document.getElementById('noise-value');
+    const noiseDisplayElement = document.getElementById('noise-display');
+    
+    if (noiseValueElement) {
+        // Format number with commas and show 1 decimal place if there are decimals
+        const displayValue = totalNoise % 1 === 0 ? 
+            totalNoise.toLocaleString() : 
+            totalNoise.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            
+        noiseValueElement.textContent = displayValue;
+    }
+}
+
+createNoiseDisplay();
+startSpeedBasedNoise();
+
+// Function to start adding noise based on targetSpeed
+function startSpeedBasedNoise() {
+    // Clear any existing interval first
+    if (speedNoiseInterval) {
+        clearInterval(speedNoiseInterval);
+    }
+    
+    console.log("Starting speed-based noise generation...");
+    
+    speedNoiseInterval = setInterval(() => {
+        // Check if microphoneInput exists and has targetSpeed
+        if (window.microphoneInput && typeof window.microphoneInput.targetSpeed === 'number') {
+            const targetSpeed = window.microphoneInput.targetSpeed;
+            const noiseToAdd = targetSpeed / 100; // Use absolute value and divide by 100
+            
+            if (noiseToAdd > 0.01 || noiseToAdd < -0.01) { // Only add if noise is significant (avoid tiny amounts)
+                totalNoise += noiseToAdd;
+                updateNoiseDisplay();
+                // Uncomment this line if you want to see speed-based noise in console:
+                // console.log(`Added ${noiseToAdd.toFixed(2)} speed-based noise (targetSpeed: ${targetSpeed.toFixed(2)}). Total: ${totalNoise.toFixed(2)}`);
+            }
+        } else {
+            // Fallback to global speed variable if available
+            if (typeof speed === 'number') {
+                const currentSpeed = speed;
+                const noiseToAdd = Math.abs(currentSpeed) / 100;
+                
+                if (noiseToAdd > 0.01) {
+                    totalNoise += noiseToAdd;
+                    updateNoiseDisplay();
+                }
+            }
+        }
+    }, 100); // Every 100ms
+}
+
+// Function to stop speed-based noise generation
+function stopSpeedBasedNoise() {
+    if (speedNoiseInterval) {
+        clearInterval(speedNoiseInterval);
+        speedNoiseInterval = null;
+        console.log("Stopped speed-based noise generation");
+    }
+}
+
 function setupGamepadOverlay() {
   console.log("Setting up canvas-based gamepad overlay...");
   
@@ -1663,7 +1994,7 @@ function setupGamepadOverlay() {
   const container = document.createElement('div');
   container.id = 'gamepad-canvas-container';
   container.style.position = 'fixed';
-  container.style.bottom = '200px';
+  container.style.bottom = '170px';
   container.style.left = '20px';
   container.style.width = '300px';
   container.style.height = '170px';
@@ -2054,7 +2385,7 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
         const cssScene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 1, 3500);
-   //     camera.position.set(-2380, 30, 4500);  //for DEVELOPMENT
+     //   camera.position.set(-2380, 30, 4500);  //for DEVELOPMENT
    //  camera.position.set(-850, 30, -1440);  //for development 2
        camera.position.set(1550, 30, -500);  //for performance 
 
@@ -2716,16 +3047,17 @@ restartButton.addEventListener('click', () => {
     
 });
 
-    //load 3d model of glitchy bell
+    //load 3d model of PULSAR-23
         const loaderGlitchyBell = new GLTFLoader();
         loaderGlitchyBell.setPath('');
         let mixer4;
       
-        loaderGlitchyBell.load('jbl_charge_3_speaker.glb', function (gltf) {
-            gltf.scene.position.set(-200, 90, -1425);
-            gltf.scene.scale.set(300, 300, 300);
+        loaderGlitchyBell.load('pulsar8.glb', function (gltf) {
+            gltf.scene.position.set(-200, -15, -1425);
+            gltf.scene.scale.set(40, 40, 40);
          //   gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
             gltf.scene.rotation.set(0, Math.PI/4, -Math.PI/4);
+     //   gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
        
         mixer4 = new THREE.AnimationMixer(gltf.scene);
@@ -4376,6 +4708,15 @@ async function setupAudioInput() {
         console.error("Error setting up microphone:", error.message);
         return false;
     }
+    async function setupAudioInput() {
+    // ... your existing microphone setup code ...
+    
+    // At the end of the function, after analysis starts:
+    startSpeedBasedNoise(); // Start continuous speed-based noise generation
+    
+    console.log("Enhanced microphone analysis started with speed-based noise");
+    return true;
+}
 }
 
 // Keyboard event handlers for parameter adjustment
@@ -5274,7 +5615,7 @@ if (hitBox15) {
                 
                 // Handle animation
                 mixer4._actions.forEach(action => {
-                    action.timeScale = .25;
+                    action.timeScale = 1.5;
                     if (!action.isRunning()) {
                         action.play();
                     }
