@@ -2568,16 +2568,17 @@ restartButton.addEventListener('click', () => {
     
 });
 
-    //load 3d model of glitchy bell
+    //load 3d model of PULSAR-23
         const loaderGlitchyBell = new GLTFLoader();
         loaderGlitchyBell.setPath('');
         let mixer4;
       
-        loaderGlitchyBell.load('jbl_charge_3_speaker.glb', function (gltf) {
-            gltf.scene.position.set(-200, 90, -1425);
-            gltf.scene.scale.set(300, 300, 300);
+         loaderGlitchyBell.load('pulsar8.glb', function (gltf) {
+            gltf.scene.position.set(-200, -15, -1425);
+            gltf.scene.scale.set(40, 40, 40);
          //   gltf.scene.rotation.set(Math.PI/4, Math.PI/4, Math.PI/2);
             gltf.scene.rotation.set(0, Math.PI/4, -Math.PI/4);
+     //   gltf.scene.rotation.set(0, 0, 0);
             scene.add(gltf.scene);
        
         mixer4 = new THREE.AnimationMixer(gltf.scene);
@@ -3008,7 +3009,7 @@ function setupLazyLoadedIframes() {
             { x: -1350, y: 0, z: 0 }, 
             [0, Math.PI/2, 0], 
             [3, .33, 1], 
-            'hydrainwebpage16.html',
+            'hydrainwebpage14.html',
             { width: '1000px', height: '1000px' }
         ],
         [
@@ -3036,7 +3037,7 @@ function setupLazyLoadedIframes() {
             { x: -2350, y: 0, z: 3244 }, 
             [0, Math.PI/2, 0], 
             [3.9, .33, 1], 
-            'hydrainwebpage15.html',
+            'hydrainwebpage14.html',
             { width: '1000px', height: '1000px' }
         ]
     ];
@@ -5127,7 +5128,7 @@ if (hitBox15) {
                 
                 // Handle animation
                 mixer4._actions.forEach(action => {
-                    action.timeScale = .25;
+                    action.timeScale = .1;
                     if (!action.isRunning()) {
                         action.play();
                     }
