@@ -97,8 +97,8 @@
             s0.initCam();
             
             src(s0)
-            .thresh(.8) //good for normal lighting
-        //    .thresh(.6) //blackbox?
+            .thresh(.6) //good for normal lighting
+        //    .thresh(.06) //blackbox?
             .luma(() => a.fft[2]/4)
             .blend(o0, 0.01)
             .pixelate(() => Math.cos((time-30)*.2)*1000,() => Math.tan((time-30)*.001)*500)
