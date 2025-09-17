@@ -98,7 +98,8 @@
 
             s0.initCam();
             src(s0)
-            .thresh(.5) // good for regular lighting
+            .thresh(.5)
+      //      .thresh(.05) // good for blackbox?
           //  .thresh(.3) // for blackbox?
             .pixelate(200, 100)
             .modulate(o3, 0.03)
