@@ -831,9 +831,22 @@
   </head>
   <script>
     function isMobileDevice() {
-      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
 
+      if (/android|iphone|ipad|ipod|mobile/i.test(ua)) {
+        return true;
+      }
+
+      if (ua.includes("Macintosh") && navigator.maxTouchPoints > 1) {
+        return true; // iPadOS in desktop disguise
+      }
+
+      if (navigator.maxTouchPoints > 1 && window.innerWidth < 1024) {
+        return true; // fallback
+      }
+
+      return false;
+    }
     function isSafari() {
       const ua = navigator.userAgent;
       return /^((?!chrome|android).)*safari/i.test(ua);
