@@ -109,8 +109,8 @@
             s0.initCam();
             
             src(s0)
-            .thresh(.405)
-          //  .thresh(.8)
+          //  .thresh(.02) //for blackbox lighting
+            .thresh(.6) //for normal lighting
             .luma(() => a.fft[2]/4)
             .blend(o0, 0.01)
         //    .modulate(o0, () => a.fft[2] * 2.5)
