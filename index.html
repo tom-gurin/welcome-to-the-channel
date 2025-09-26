@@ -5836,7 +5836,7 @@ restartButton.addEventListener('click', () => {
               // Calculate target speed using the formula
               //       window.microphoneInput.targetSpeed = 1.5 * (((spread - 2500) / 50) + (flux * 10000000) - (kurtosis * 2)+30); // adjust multiplier and forward bias according to microphone and mic placement
               window.microphoneInput.targetSpeed =
-                2.25 *
+                3.25 *
                 ((spread - 2500) / 50 + flux * 10000000 - kurtosis * 2 + 0); // adjust multiplier and forward bias according to microphone and mic placement
 
               // Log target speed
