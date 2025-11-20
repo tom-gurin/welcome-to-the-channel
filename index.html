@@ -1,5 +1,5 @@
 <!-- This is Level 1 -->
-<!-- URL for audience to join the chat: https://welcome-to-the-channel-chat.onrender.com/ -->
+<!-- URL for audience to join the chat (wake up the project before audience enters): https://welcome-to-the-channel-chat.onrender.com/ -->
 <html lang="en">
   <head>
     <title>Welcome to the channel ˙✧˖°📺⋆｡˚</title>
@@ -1616,7 +1616,7 @@
         setTimeout(typeNextCharacter, 300 + Math.random() * 400);
       }
 
-      // Add the required CSS animations if they don't exist
+      // Add the required CSS animations
       if (!document.querySelector("#cursor-blink-animation")) {
         const style = document.createElement("style");
         style.id = "cursor-blink-animation";
@@ -1694,7 +1694,7 @@
           '<span style="display: inline-block; animation: typing 0.6s infinite">...</span>';
         typingIndicator.style.textAlign = "center";
 
-        // Create style for typing animation if it doesn't exist
+        // Create style for typing animation
         if (!document.querySelector("#typing-animation")) {
           const style = document.createElement("style");
           style.id = "typing-animation";
@@ -1759,7 +1759,7 @@
           messageElement.style.animation = "shakeY 0.5s ease-in-out";
           messageElement.style.boxShadow = "0 0 10px rgba(0, 170, 255, 0.5)";
 
-          // Create style for shake animation if it doesn't exist
+          // Create style for shake animation
           if (!document.querySelector("#shakeY-animation")) {
             const style = document.createElement("style");
             style.id = "shakeY-animation";
@@ -1844,7 +1844,7 @@
           // Add shake effect
           errorMessage.style.animation = "shake 0.5s ease-in-out";
 
-          // Create style for shake animation if it doesn't exist
+          // Create style for shake animation
           if (!document.querySelector("#shake-animation")) {
             const style = document.createElement("style");
             style.id = "shake-animation";
@@ -1950,7 +1950,7 @@
           '<span style="display: inline-block; animation: typing 1s infinite">...</span>';
         typingIndicator.style.textAlign = "center";
 
-        // Create style for typing animation if it doesn't exist
+        // Create style for typing animation
         if (!document.querySelector("#typing-animation")) {
           const style = document.createElement("style");
           style.id = "typing-animation";
@@ -2258,11 +2258,11 @@ function growHudToFullscreen() {
   const scaledWidth = originalWidth * scale;
   const scaledHeight = originalHeight * scale;
   
-  // Calculate center position - but we need to account for scaling from top-right
+  // Calculate center position - account for scaling from top-right
   const centerOffsetX = (targetWidth - scaledWidth) / 2;
   const centerOffsetY = (targetHeight - scaledHeight) / 2;
   
-  // Since we're scaling from top-right, we need to position the top-right corner
+  // Since we're scaling from top-right, position the top-right corner
   // where it would be if the scaled content were centered
   const topRightX = centerOffsetX + scaledWidth;
   const topRightY = centerOffsetY;
@@ -2831,13 +2831,13 @@ function shrinkHudToNormal() {
       // Track the current state of the overlay
       let overlayState = 0; // 0 = hidden, 1 = visible with normal z-index, 2 = visible with max z-index
 
-      // Function to create and setup the blackout overlay
+      // Setup the blackout overlay
       function setupBlackoutOverlay() {
         // Check if overlay already exists
         let blackoutOverlay = document.getElementById("blackout-overlay");
 
         if (!blackoutOverlay) {
-          // Create the overlay if it doesn't exist
+          // Create the overlay
           blackoutOverlay = document.createElement("div");
           blackoutOverlay.id = "blackout-overlay";
           blackoutOverlay.style.position = "fixed";
@@ -4529,7 +4529,7 @@ restartButton.addEventListener('click', () => {
             gainNode.connect(merger, 0, i);
           }
 
-          // For mono sources (most common case), we need to send the same signal to all channels
+          // For mono sources (most common case), send the same signal to all channels
           if (numChannels === 1) {
             // Connect source directly to all gain nodes
             for (let i = 0; i < channelGains.length; i++) {
@@ -4641,7 +4641,7 @@ restartButton.addEventListener('click', () => {
             gainNode.connect(merger, 0, i);
           }
 
-          // For mono sources, we need to send the same signal to all channels
+          // For mono sources, send the same signal to all channels
           const numChannels = buffer.numberOfChannels;
           console.log(`Second audio file has ${numChannels} channels`);
 
@@ -4747,7 +4747,7 @@ restartButton.addEventListener('click', () => {
             gainNode.connect(merger, 0, i);
           }
 
-          // For mono sources, we need to send the same signal to all channels
+          // For mono sources, send the same signal to all channels
           const numChannels = buffer.numberOfChannels;
           console.log(`Third audio file has ${numChannels} channels`);
 
@@ -5065,8 +5065,8 @@ restartButton.addEventListener('click', () => {
             timeElapsed / (durationMs * viewerDecayTimeScale)
           );
 
-          // Use exponential decay to ensure we actually reach 1
-          // This formula ensures we go from baseViewerCount down to 1
+          // Use exponential decay to ensure it actually reaches 1
+          // This formula ensures going from baseViewerCount down to 1
           let baseCount;
           if (timeProgress >= 1) {
             // After the decay period, force to 1
@@ -5127,11 +5127,11 @@ restartButton.addEventListener('click', () => {
               }
             }
 
-            // Return a longer delay since we don't need frequent updates anymore
+            // Return a longer delay
             return 5000; // Update every 5 seconds just to maintain the live indicator
           }
 
-          // Add random fluctuation with negative bias (only if we haven't reached 1 yet)
+          // Add random fluctuation with negative bias (only if haven't reached 1 yet)
           const negativeFluctuationBias = 0.7; // 70% chance for negative fluctuation
           let fluctuation;
           if (Math.random() < negativeFluctuationBias) {
@@ -5144,7 +5144,7 @@ restartButton.addEventListener('click', () => {
 
           let displayCount = Math.max(minViewerCount, baseCount + fluctuation);
 
-          // Ensure we don't go below 1
+          // Ensure doesn't go below 1
           displayCount = Math.max(1, displayCount);
 
           // Add occasional larger drops in viewers (but not below 1)
@@ -5854,7 +5854,6 @@ restartButton.addEventListener('click', () => {
           if (typeof speed !== "undefined") {
             speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
           } else {
-            // If speed variable doesn't exist in global scope, create it
             window.speed = 0;
             speed += (window.microphoneInput.targetSpeed - speed) * speedFactor;
           }
@@ -5966,7 +5965,7 @@ restartButton.addEventListener('click', () => {
           // First render
           renderMinimap(minimap, camera.position);
 
-          // Return the minimap object so we can use it later
+          // Return the minimap object so it can be used later
           return minimap;
         }
 
@@ -6157,7 +6156,7 @@ restartButton.addEventListener('click', () => {
               window.bellAnimationState = {
                 isPlaying: true, // Track if animation is currently playing
                 hasCollided: false, // Track if user is currently colliding with bell
-                canToggle: true, // Track if we can perform another toggle action
+                canToggle: true, // Track if can perform another toggle action
                 actions: null, // Store paused actions
               };
             }
@@ -6245,7 +6244,7 @@ restartButton.addEventListener('click', () => {
                       "Camera collided with bell - resuming animation and audio"
                     );
 
-                    // If we have stored actions, restore them
+                    // If stored actions, restore them
                     if (
                       window.bellAnimationState.actions &&
                       window.bellAnimationState.actions.length > 0
@@ -6381,7 +6380,7 @@ restartButton.addEventListener('click', () => {
               };
             }
 
-            // Initialize second audio state tracker if it doesn't exist
+            // Initialize second audio state tracker
             if (!window.bell3AnimationState) {
               window.bell3AnimationState = {
                 isPlaying: false,
@@ -6391,7 +6390,7 @@ restartButton.addEventListener('click', () => {
               };
             }
 
-            // Initialize second audio state tracker if it doesn't exist
+            // Initialize second audio state tracker
             if (!window.secondAudioState) {
               window.secondAudioState = {
                 isPlaying: false,
